@@ -1,0 +1,73 @@
+\documentclass{siamonline181217mod}
+
+
+% Macros from Tammy
+\input{setup}
+
+
+\begin{document}
+
+\begin{figure}
+  \definecolor{mycolor1}{rgb}{0.0000,0.4470,0.7410}
+  \definecolor{mycolor2}{rgb}{0.8500,0.3250,0.0980}
+  \definecolor{mycolor3}{rgb}{0.9290,0.6940,0.1250}
+  \definecolor{mycolor4}{rgb}{0.4940,0.1840,0.5560}
+  \definecolor{mycolor5}{rgb}{0.4660,0.6740,0.1880} 
+    \pgfplotsset{
+    %tick label style={font=\tiny},
+    %label style={font=\footnotesize},
+      legend style={font=\footnotesize},
+      %title style={font=\small, at={(0.5,1.0)}},
+    scale only axis,
+    height = 2in,
+    width = 4.5in,
+    xlabel = Total Time for 10 Runs (s),
+    ylabel = Factor Match Score of Best Fit,
+    legend pos=south east,
+    legend columns=2,
+    legend cell align={left},
+    scatter,scatter src=explicit symbolic, 
+    % I explicitly had to make a class for each point.  The second class is not used because I excluded the det include
+    % The letters index the number of samples, the numbers the algorithm
+    scatter/classes={
+      a1={mark=otimes,black, mark size=4, line width = 0.75 pt},b1={mark=otimes,black, mark size=4, line width = 0.75 pt},c1={mark=otimes,black,mark size=4, line width = 0.75 pt},d1={mark=otimes,black,mark size=4, line width = 0.75 pt},e1={mark=otimes,black,mark size=4, line width = 0.75 pt},
+      %a2={mark=x,mark size=2, mycolor2},b2={mark=x,mark size=3,mycolor2},c2={mark=x,mark size=4,mycolor2},d2={mark=x,mark size=5,mycolor2},e2={mark=x,mark size=6,mycolor2},
+      a3={mark=x,mark size=2, mycolor3},b3={mark=x,mark size=3,mycolor3},c3={mark=x,mark size=4,mycolor3},d3={mark=x,mark size=5,mycolor3},e3={mark=x,mark size=6,mycolor3},
+      a4={mark=x,mark size=2, mycolor4},b4={mark=x,mark size=3,mycolor4},c4={mark=x,mark size=4,mycolor4},d4={mark=x,mark size=5,mycolor4},e4={mark=x,mark size=6,mycolor4},
+      a5={mark=x,mark size=2, mycolor5},b5={mark=x,mark size=3,mycolor5},c5={mark=x,mark size=4,mycolor5},d5={mark=x,mark size=5,mycolor5},e5={mark=x,mark size=6,mycolor5},
+      m={black}},  
+    }
+    \centering
+    \begin{tikzpicture}
+      \begin{axis}[font=\footnotesize,ymax=1,grid style={line width=.1pt, draw=gray},  grid=both,]
+        \addlegendimage{only marks, mark=x, mark size=2pt, line width = 1 pt}
+        \addlegendentry{$s=2^7$}
+        \addlegendimage{only marks, mark=otimes, mark size=4pt, line width = 0.75 pt}
+        \addlegendentry{CP-ALS (standard)}
+        \addlegendimage{only marks, mark=x, mark size=3pt, line width = 1 pt}
+        \addlegendentry{$s=2^8$}
+        % \addlegendimage{no marks, mycolor3, line width=4 pt}
+        \addlegendimage{only marks, mark=x, mark size=4pt, line width=1pt, mycolor3}
+        \addlegendentry{CP-ARLS-LEV (random)}
+        \addlegendimage{only marks, mark=x, mark size=4pt, line width = 1 pt}
+        \addlegendentry{$s=2^9$}
+        \addlegendimage{only marks, mark=x, mark size=4pt, line width=1pt, mycolor4}
+        %\addlegendimage{no marks, mycolor4, line width=4 pt}
+        \addlegendentry{CP-ARLS-MIX}
+        \addlegendimage{only marks, mark=x, mark size=5pt, line width = 1 pt}
+        \addlegendentry{$s=2^{10}$}
+        \addlegendimage{only marks, mark=x, mark size=4pt, line width=1pt, mycolor5}
+        %\addlegendimage{no marks, mycolor5, line width=4 pt}
+        \addlegendentry{CP-ARLS-UNI}
+        \addlegendimage{only marks, mark=x, mark size=6pt, line width = 1 pt}
+        \addlegendentry{$s=2^{11}$}
+        \addplot[only marks, line width = 1 pt] table[meta=meta] {data-synthetic-dense-order3.dat};
+       \end{axis}
+    \end{tikzpicture}
+    \caption{Comparing methods on a $500 \times 500 \times 500$ synthetic dense tensor engineered such that the factor matrices have a few rows with concentrated leverage scores.  Each method is run 10 times from random initializations (the same 10 initializations were used across all methods).}
+    \label{fig:syn_dense}
+\end{figure} %
+
+
+
+\end{document}

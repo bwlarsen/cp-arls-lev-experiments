@@ -1,0 +1,212 @@
+Starting diary with name artifact_als_runs_reddit_2020_06_01_0933_diary.txt
+Repository directory: /home/bwlarse/tensor_toolbox_sparse
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/tensor_toolbox)
+  Remote Branch: master
+  Short Hash: [33mc8
+  Up-to-Date: true
+Repository directory: /home/bwlarse/cparls_sparse_experiments
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/cparls_sparse_experiments)
+  Remote Branch: master
+  Short Hash: [33m26
+  Up-to-Date: false
+  Statuses...
+     [31mM[m als_runs_amazon.m
+     [31mM[m als_runs_uber.m
+     [31mM[m arls_runs_enron.m
+     [31mM[m epsilon_runs_enron.m
+     [31mM[m epsilon_runs_reddit.m
+     [31mM[m fest_test_enron.m
+     [31mM[m fest_test_reddit.m
+    [31m??[m cp_runs_reddit.m
+  ==== Diffs ====
+  [1mindex f88e0d7..e6d11fe 100644[m
+  [1m--- a/als_runs_amazon.m[m
+  [1m+++ b/als_runs_amazon.m[m
+  [36m@@ -18,8 +18,8 @@[m [mif do_gitchecks[m
+       gitstatus(pwd);[m
+   end[m
+   [m
+  [31m-%% Load in Log Count Reddit Tensor[m
+  [31m-nruns = 1;[m
+  [32m+[m[32m%% Load in Amazon Tensor[m
+  [32m+[m[32mnruns = 5;[m
+   R = 25;[m
+   fprintf('\n---Loading in Amazon Tensor---\n')[m
+   tic;[m
+  [36m@@ -29,8 +29,8 @@[m [mtoc[m
+   X = amazon;[m
+   clear amazon;[m
+   [m
+  [31m-sz = size(reddit);[m
+  [31m-N = ndims(reddit);[m
+  [32m+[m[32msz = size(X);[m
+  [32m+[m[32mN = ndims(X);[m
+   [m
+   %% Set up  output[m
+   output = struct;[m
+  [36m@@ -68,7 +68,7 @@[m [mfor rep = 1:nruns[m
+       [m
+       % Save out the model after each run[m
+       % sprintf[m
+  [31m-    save('-v7.3', sprintf('%s-model%02i', aname, rep), 'M', 'info')    [m
+  [32m+[m[32m    save('-v7.3', sprintf('%s-model%02i', aname, rep), 'info')[m[41m    [m
+   end[m
+   [m
+   % Save out the traces and fits for all runs[m
+  [1mdiff --git a/als_runs_uber.m b/als_runs_uber.m[m
+  [1mindex acba17e..c961ff9 100644[m
+  [1m--- a/als_runs_uber.m[m
+  [1m+++ b/als_runs_uber.m[m
+  [36m@@ -32,7 +32,7 @@[m [msz = size(uber);[m
+   N = ndims(uber);[m
+   [m
+   %% Set up  output[m
+  [31m-results = cell(nruns,ns,2);[m
+  [32m+[m[32mresults = cell(nruns);[m
+   [m
+   rng('shuffle')[m
+   [m
+  [1mdiff --git a/arls_runs_enron.m b/arls_runs_enron.m[m
+  [1mindex a130673..450911d 100644[m
+  [1m--- a/arls_runs_enron.m[m
+  [1m+++ b/arls_runs_enron.m[m
+  [36m@@ -19,11 +19,11 @@[m [mif do_gitchecks[m
+   end[m
+   [m
+   %% User setup for script [m
+  [31m-nruns = 2;[m
+  [32m+[m[32mnruns = 5;[m
+   R = 25;[m
+  [31m-srng = 2.^(19);[m
+  [32m+[m[32msrng = 2.^(18:19);[m
+   truefit = false;[m
+  [31m-fsamp = 2^23; [m
+  [32m+[m[32mfsamp = 2^25;[m[41m [m
+   [m
+   [m
+   %% Load in Enron Tensor[m
+  [1mdiff --git a/epsilon_runs_enron.m b/epsilon_runs_enron.m[m
+  [1mindex cfa64c9..c9ff669 100644[m
+  [1m--- a/epsilon_runs_enron.m[m
+  [1m+++ b/epsilon_runs_enron.m[m
+  [36m@@ -34,7 +34,7 @@[m [mfprintf('\tLoaded solution with R=%d\n', R);[m
+   %% Test at final solution[m
+   [m
+   krng = [1 2 4];[m
+  [31m-srng = [1e2 5e2 1e3 5e3 1e4 2.5e4 5e4 1e5 1.5e5 2.0e5];[m
+  [32m+[m[32msrng = 2.^(7:18);[m
+   crng = {@(s) []};[m
+   trng = {@(s) [], @(s) 1/s};[m
+   ntrials = 10; % Just for demo, use 10 for regular trials[m
+  [36m@@ -50,4 +50,4 @@[m [mrnginit;[m
+   [results_rand,info_rand] = epsilon_runs(X,R,krng,srng,crng,trng,ntrials);[m
+   [m
+   %%[m
+  [31m-save('-v7.3', aname,'results','info', 'results_rand', 'info_rand');[m
+  \ No newline at end of file[m
+  [32m+[m[32msave('-v7.3', aname,'results','info', 'results_rand', 'info_rand');[m
+  [1mdiff --git a/epsilon_runs_reddit.m b/epsilon_runs_reddit.m[m
+  [1mindex 530e3a8..49eb7b8 100644[m
+  [1m--- a/epsilon_runs_reddit.m[m
+  [1m+++ b/epsilon_runs_reddit.m[m
+  [36m@@ -33,11 +33,11 @@[m [mfprintf('\tLoaded solution with R=%d\n', R);[m
+   [m
+   %% Test at final solution[m
+   [m
+  [31m-krng = [1 2 3];[m
+  [32m+[m[32mkrng = [1];[m
+   srng = [2^17];[m
+   crng = {@(s) []};[m
+   trng = {@(s) [], @(s) 1/s};[m
+  [31m-ntrials = 5; % Just for demo, use 10 for regular trials[m
+  [32m+[m[32mntrials = 3; % Just for demo, use 10 for regular trials[m
+   [m
+   fprintf('\t Starting runs with loaded solution');[m
+   rnginit;[m
+  [36m@@ -50,4 +50,4 @@[m [mrnginit;[m
+   [results_rand,info_rand] = epsilon_runs_nofit(X,R,krng,srng,crng,trng,ntrials);[m
+   [m
+   %%[m
+  [31m-save('-v7.3', aname,'results','info', 'results_rand', 'info_rand');[m
+  \ No newline at end of file[m
+  [32m+[m[32msave('-v7.3', aname,'results','info', 'results_rand', 'info_rand');[m
+  [1mdiff --git a/fest_test_enron.m b/fest_test_enron.m[m
+  [1mindex e58ff41..7ee9385 100644[m
+  [1m--- a/fest_test_enron.m[m
+  [1m+++ b/fest_test_enron.m[m
+  [36m@@ -1,7 +1,7 @@[m
+   %% Estimated Fit Test for Enron Tensor[m
+   [m
+  [31m-load ('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails');[m
+  [31m-load('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_solutions')[m
+  [32m+[m[32mload ('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_log');[m
+  [32m+[m[32mload('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_log_solution')[m
+   fprintf('\n---Loading in Enron Tensor---\n')[m
+   [m
+   X = enron;[m
+  [1mdiff --git a/fest_test_reddit.m b/fest_test_reddit.m[m
+  [1mindex 224db62..4886084 100644[m
+  [1m--- a/fest_test_reddit.m[m
+  [1m+++ b/fest_test_reddit.m[m
+  [36m@@ -4,7 +4,7 @@[m [mload ('/home/bwlarse/Tensors/tensor_data_reddit/reddit_log');[m
+   load('/home/bwlarse/Tensors/tensor_data_reddit/reddit_log_solution')[m
+   fprintf('\n---Loading in Reddit Tensor (with log counts)---\n')[m
+   [m
+  [31m-X = enron;[m
+  [32m+[m[32mX = reddit;[m
+   P = M;[m
+   P_normal = normalize(P, 1);[m
+   [m
+  ==== End Diffs ====
+
+---Loading in Log Count Reddit Tensor---
+Elapsed time is 364.142727 seconds.
+
+---Starting run 1/1---
+Generating random initialization: 
+Random Seed in Hex: 41ed1d7ae8600000
+Finding CP decomposition: 
+Random Seed in Hex: 41e6085bafe00000
+
+CP_ALS (with trace):
+
+Tensor size: 8211298 x 176962 x 8116559 (1.179407e+19 total entries)
+Sparse tensor: 4687474081 (4e-08%) Nonzeros and 1.179407e+19 (100.00%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.972029e-02 f-delta = 2.0e-02 time = 10128.5 seconds 
+ Iter  2: f = 4.742906e-02 f-delta = 2.8e-02 time = 9590.5 seconds 
+ Iter  3: f = 5.160232e-02 f-delta = 4.2e-03 time = 9859.7 seconds 
+ Iter  4: f = 5.281366e-02 f-delta = 1.2e-03 time = 9755.0 seconds 
+ Iter  5: f = 5.340170e-02 f-delta = 5.9e-04 time = 9871.9 seconds 
+ Iter  6: f = 5.378587e-02 f-delta = 3.8e-04 time = 9490.9 seconds 
+ Iter  7: f = 5.409873e-02 f-delta = 3.1e-04 time = 9668.1 seconds 
+ Iter  8: f = 5.438980e-02 f-delta = 2.9e-04 time = 9697.0 seconds 
+ Iter  9: f = 5.467931e-02 f-delta = 2.9e-04 time = 9531.4 seconds 
+ Iter 10: f = 5.497485e-02 f-delta = 3.0e-04 time = 9414.7 seconds 
+ Iter 11: f = 5.527645e-02 f-delta = 3.0e-04 time = 9759.9 seconds 
+ Iter 12: f = 5.557877e-02 f-delta = 3.0e-04 time = 9381.0 seconds 
+ Iter 13: f = 5.587417e-02 f-delta = 3.0e-04 time = 9111.9 seconds 
+ Iter 14: f = 5.615625e-02 f-delta = 2.8e-04 time = 9040.2 seconds 
+ Iter 15: f = 5.642177e-02 f-delta = 2.7e-04 time = 8764.6 seconds 
+ Iter 16: f = 5.667043e-02 f-delta = 2.5e-04 time = 8940.0 seconds 
+ Iter 17: f = 5.690361e-02 f-delta = 2.3e-04 time = 8994.6 seconds 
+ Iter 18: f = 5.712315e-02 f-delta = 2.2e-04 time = 8970.6 seconds 
+ Iter 19: f = 5.733062e-02 f-delta = 2.1e-04 time = 8865.0 seconds 
+ Iter 20: f = 5.752704e-02 f-delta = 2.0e-04 time = 8900.3 seconds 
+ Iter 21: f = 5.771287e-02 f-delta = 1.9e-04 time = 9109.8 seconds 
+ Iter 22: f = 5.788830e-02 f-delta = 1.8e-04 time = 9009.4 seconds 
+ Iter 23: f = 5.805359e-02 f-delta = 1.7e-04 time = 8766.0 seconds 
+ Iter 24: f = 5.820920e-02 f-delta = 1.6e-04 time = 8776.3 seconds 
+ Iter 25: f = 5.835563e-02 f-delta = 1.5e-04 time = 8848.8 seconds 
+ Iter 26: f = 5.849316e-02 f-delta = 1.4e-04 time = 8789.2 seconds 
+ Iter 27: f = 5.862186e-02 f-delta = 1.3e-04 time = 8873.3 seconds 
+ Iter 28: f = 5.874143e-02 f-delta = 1.2e-04 time = 8885.0 seconds 
+ Iter 29: f = 5.885102e-02 f-delta = 1.1e-04 time = 8891.7 seconds 
+ Iter 30: f = 5.894949e-02 f-delta = 9.8e-05 time = 8997.0 seconds 
+ Final f = 5.894949e-02 
+Total Time (secs): 279356.650

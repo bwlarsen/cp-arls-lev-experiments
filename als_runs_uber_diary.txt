@@ -1,0 +1,615 @@
+Starting diary with name artifact_als_runs_uber_2020_05_26_1852_diary.txt
+Repository directory: /home/bwlarse/tensor_toolbox_sparse
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/tensor_toolbox)
+  Remote Branch: master
+  Short Hash: [33mc8
+  Up-to-Date: true
+Repository directory: /home/bwlarse/cparls_sparse_experiments
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/cparls_sparse_experiments)
+  Remote Branch: master
+  Short Hash: [33m26
+  Up-to-Date: false
+  Statuses...
+     [31mM[m als_runs_amazon.m
+     [31mM[m als_runs_uber.m
+     [31mM[m arls_runs_enron.m
+     [31mM[m epsilon_runs_enron.m
+     [31mM[m epsilon_runs_reddit.m
+     [31mM[m fest_test_enron.m
+     [31mM[m fest_test_reddit.m
+    [31m??[m cp_runs_reddit.m
+  ==== Diffs ====
+  [1mindex f88e0d7..e6d11fe 100644[m
+  [1m--- a/als_runs_amazon.m[m
+  [1m+++ b/als_runs_amazon.m[m
+  [36m@@ -18,8 +18,8 @@[m [mif do_gitchecks[m
+       gitstatus(pwd);[m
+   end[m
+   [m
+  [31m-%% Load in Log Count Reddit Tensor[m
+  [31m-nruns = 1;[m
+  [32m+[m[32m%% Load in Amazon Tensor[m
+  [32m+[m[32mnruns = 5;[m
+   R = 25;[m
+   fprintf('\n---Loading in Amazon Tensor---\n')[m
+   tic;[m
+  [36m@@ -29,8 +29,8 @@[m [mtoc[m
+   X = amazon;[m
+   clear amazon;[m
+   [m
+  [31m-sz = size(reddit);[m
+  [31m-N = ndims(reddit);[m
+  [32m+[m[32msz = size(X);[m
+  [32m+[m[32mN = ndims(X);[m
+   [m
+   %% Set up  output[m
+   output = struct;[m
+  [36m@@ -68,7 +68,7 @@[m [mfor rep = 1:nruns[m
+       [m
+       % Save out the model after each run[m
+       % sprintf[m
+  [31m-    save('-v7.3', sprintf('%s-model%02i', aname, rep), 'M', 'info')    [m
+  [32m+[m[32m    save('-v7.3', sprintf('%s-model%02i', aname, rep), 'info')[m[41m    [m
+   end[m
+   [m
+   % Save out the traces and fits for all runs[m
+  [1mdiff --git a/als_runs_uber.m b/als_runs_uber.m[m
+  [1mindex acba17e..c961ff9 100644[m
+  [1m--- a/als_runs_uber.m[m
+  [1m+++ b/als_runs_uber.m[m
+  [36m@@ -32,7 +32,7 @@[m [msz = size(uber);[m
+   N = ndims(uber);[m
+   [m
+   %% Set up  output[m
+  [31m-results = cell(nruns,ns,2);[m
+  [32m+[m[32mresults = cell(nruns);[m
+   [m
+   rng('shuffle')[m
+   [m
+  [1mdiff --git a/arls_runs_enron.m b/arls_runs_enron.m[m
+  [1mindex a130673..450911d 100644[m
+  [1m--- a/arls_runs_enron.m[m
+  [1m+++ b/arls_runs_enron.m[m
+  [36m@@ -19,11 +19,11 @@[m [mif do_gitchecks[m
+   end[m
+   [m
+   %% User setup for script [m
+  [31m-nruns = 2;[m
+  [32m+[m[32mnruns = 5;[m
+   R = 25;[m
+  [31m-srng = 2.^(19);[m
+  [32m+[m[32msrng = 2.^(18:19);[m
+   truefit = false;[m
+  [31m-fsamp = 2^23; [m
+  [32m+[m[32mfsamp = 2^25;[m[41m [m
+   [m
+   [m
+   %% Load in Enron Tensor[m
+  [1mdiff --git a/epsilon_runs_enron.m b/epsilon_runs_enron.m[m
+  [1mindex cfa64c9..c9ff669 100644[m
+  [1m--- a/epsilon_runs_enron.m[m
+  [1m+++ b/epsilon_runs_enron.m[m
+  [36m@@ -34,7 +34,7 @@[m [mfprintf('\tLoaded solution with R=%d\n', R);[m
+   %% Test at final solution[m
+   [m
+   krng = [1 2 4];[m
+  [31m-srng = [1e2 5e2 1e3 5e3 1e4 2.5e4 5e4 1e5 1.5e5 2.0e5];[m
+  [32m+[m[32msrng = 2.^(7:18);[m
+   crng = {@(s) []};[m
+   trng = {@(s) [], @(s) 1/s};[m
+   ntrials = 10; % Just for demo, use 10 for regular trials[m
+  [36m@@ -50,4 +50,4 @@[m [mrnginit;[m
+   [results_rand,info_rand] = epsilon_runs(X,R,krng,srng,crng,trng,ntrials);[m
+   [m
+   %%[m
+  [31m-save('-v7.3', aname,'results','info', 'results_rand', 'info_rand');[m
+  \ No newline at end of file[m
+  [32m+[m[32msave('-v7.3', aname,'results','info', 'results_rand', 'info_rand');[m
+  [1mdiff --git a/epsilon_runs_reddit.m b/epsilon_runs_reddit.m[m
+  [1mindex 530e3a8..49eb7b8 100644[m
+  [1m--- a/epsilon_runs_reddit.m[m
+  [1m+++ b/epsilon_runs_reddit.m[m
+  [36m@@ -33,11 +33,11 @@[m [mfprintf('\tLoaded solution with R=%d\n', R);[m
+   [m
+   %% Test at final solution[m
+   [m
+  [31m-krng = [1 2 3];[m
+  [32m+[m[32mkrng = [1];[m
+   srng = [2^17];[m
+   crng = {@(s) []};[m
+   trng = {@(s) [], @(s) 1/s};[m
+  [31m-ntrials = 5; % Just for demo, use 10 for regular trials[m
+  [32m+[m[32mntrials = 3; % Just for demo, use 10 for regular trials[m
+   [m
+   fprintf('\t Starting runs with loaded solution');[m
+   rnginit;[m
+  [36m@@ -50,4 +50,4 @@[m [mrnginit;[m
+   [results_rand,info_rand] = epsilon_runs_nofit(X,R,krng,srng,crng,trng,ntrials);[m
+   [m
+   %%[m
+  [31m-save('-v7.3', aname,'results','info', 'results_rand', 'info_rand');[m
+  \ No newline at end of file[m
+  [32m+[m[32msave('-v7.3', aname,'results','info', 'results_rand', 'info_rand');[m
+  [1mdiff --git a/fest_test_enron.m b/fest_test_enron.m[m
+  [1mindex e58ff41..7ee9385 100644[m
+  [1m--- a/fest_test_enron.m[m
+  [1m+++ b/fest_test_enron.m[m
+  [36m@@ -1,7 +1,7 @@[m
+   %% Estimated Fit Test for Enron Tensor[m
+   [m
+  [31m-load ('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails');[m
+  [31m-load('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_solutions')[m
+  [32m+[m[32mload ('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_log');[m
+  [32m+[m[32mload('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_log_solution')[m
+   fprintf('\n---Loading in Enron Tensor---\n')[m
+   [m
+   X = enron;[m
+  [1mdiff --git a/fest_test_reddit.m b/fest_test_reddit.m[m
+  [1mindex 224db62..4886084 100644[m
+  [1m--- a/fest_test_reddit.m[m
+  [1m+++ b/fest_test_reddit.m[m
+  [36m@@ -4,7 +4,7 @@[m [mload ('/home/bwlarse/Tensors/tensor_data_reddit/reddit_log');[m
+   load('/home/bwlarse/Tensors/tensor_data_reddit/reddit_log_solution')[m
+   fprintf('\n---Loading in Reddit Tensor (with log counts)---\n')[m
+   [m
+  [31m-X = enron;[m
+  [32m+[m[32mX = reddit;[m
+   P = M;[m
+   P_normal = normalize(P, 1);[m
+   [m
+  ==== End Diffs ====
+Elapsed time is 0.290180 seconds.
+
+---Loading in Uber Tensor---
+
+---Starting run 1/10---
+Generating random initialization: 
+Random Seed in Hex: 41ebba2242000000
+Finding CP decomposition: 
+Random Seed in Hex: 41dcbfe2cd400000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.247968e-01 f-delta = 1.2e-01 time = 10.7 seconds 
+ Iter  2: f = 1.637465e-01 f-delta = 3.9e-02 time = 10.0 seconds 
+ Iter  3: f = 1.718630e-01 f-delta = 8.1e-03 time = 10.2 seconds 
+ Iter  4: f = 1.761841e-01 f-delta = 4.3e-03 time = 9.6 seconds 
+ Iter  5: f = 1.787694e-01 f-delta = 2.6e-03 time = 9.8 seconds 
+ Iter  6: f = 1.805394e-01 f-delta = 1.8e-03 time = 9.8 seconds 
+ Iter  7: f = 1.818258e-01 f-delta = 1.3e-03 time = 9.7 seconds 
+ Iter  8: f = 1.828096e-01 f-delta = 9.8e-04 time = 9.8 seconds 
+ Iter  9: f = 1.835937e-01 f-delta = 7.8e-04 time = 9.4 seconds 
+ Iter 10: f = 1.842293e-01 f-delta = 6.4e-04 time = 9.5 seconds 
+ Iter 11: f = 1.847540e-01 f-delta = 5.2e-04 time = 9.6 seconds 
+ Iter 12: f = 1.852012e-01 f-delta = 4.5e-04 time = 9.7 seconds 
+ Iter 13: f = 1.855959e-01 f-delta = 3.9e-04 time = 9.4 seconds 
+ Iter 14: f = 1.859530e-01 f-delta = 3.6e-04 time = 9.4 seconds 
+ Iter 15: f = 1.862806e-01 f-delta = 3.3e-04 time = 9.4 seconds 
+ Iter 16: f = 1.865848e-01 f-delta = 3.0e-04 time = 9.9 seconds 
+ Iter 17: f = 1.868712e-01 f-delta = 2.9e-04 time = 10.1 seconds 
+ Iter 18: f = 1.871441e-01 f-delta = 2.7e-04 time = 9.7 seconds 
+ Iter 19: f = 1.874051e-01 f-delta = 2.6e-04 time = 9.8 seconds 
+ Iter 20: f = 1.876524e-01 f-delta = 2.5e-04 time = 9.6 seconds 
+ Iter 21: f = 1.878812e-01 f-delta = 2.3e-04 time = 10.2 seconds 
+ Iter 22: f = 1.880855e-01 f-delta = 2.0e-04 time = 9.4 seconds 
+ Iter 23: f = 1.882617e-01 f-delta = 1.8e-04 time = 9.4 seconds 
+ Iter 24: f = 1.884100e-01 f-delta = 1.5e-04 time = 9.6 seconds 
+ Iter 25: f = 1.885340e-01 f-delta = 1.2e-04 time = 9.6 seconds 
+ Iter 26: f = 1.886381e-01 f-delta = 1.0e-04 time = 9.6 seconds 
+ Iter 27: f = 1.887269e-01 f-delta = 8.9e-05 time = 9.6 seconds 
+ Final f = 1.887269e-01 
+Total Time (secs): 265.774
+
+---Starting run 2/10---
+Generating random initialization: 
+Random Seed in Hex: 41efd2bdc0e00000
+Finding CP decomposition: 
+Random Seed in Hex: 41c5f24104800000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.193655e-01 f-delta = 1.2e-01 time = 9.5 seconds 
+ Iter  2: f = 1.631367e-01 f-delta = 4.4e-02 time = 9.4 seconds 
+ Iter  3: f = 1.713462e-01 f-delta = 8.2e-03 time = 9.4 seconds 
+ Iter  4: f = 1.749552e-01 f-delta = 3.6e-03 time = 9.4 seconds 
+ Iter  5: f = 1.775000e-01 f-delta = 2.5e-03 time = 9.4 seconds 
+ Iter  6: f = 1.795010e-01 f-delta = 2.0e-03 time = 9.4 seconds 
+ Iter  7: f = 1.810646e-01 f-delta = 1.6e-03 time = 9.4 seconds 
+ Iter  8: f = 1.822586e-01 f-delta = 1.2e-03 time = 9.5 seconds 
+ Iter  9: f = 1.831597e-01 f-delta = 9.0e-04 time = 9.6 seconds 
+ Iter 10: f = 1.838460e-01 f-delta = 6.9e-04 time = 9.4 seconds 
+ Iter 11: f = 1.843863e-01 f-delta = 5.4e-04 time = 9.9 seconds 
+ Iter 12: f = 1.848332e-01 f-delta = 4.5e-04 time = 10.7 seconds 
+ Iter 13: f = 1.852227e-01 f-delta = 3.9e-04 time = 9.9 seconds 
+ Iter 14: f = 1.855753e-01 f-delta = 3.5e-04 time = 9.7 seconds 
+ Iter 15: f = 1.858978e-01 f-delta = 3.2e-04 time = 9.5 seconds 
+ Iter 16: f = 1.861884e-01 f-delta = 2.9e-04 time = 9.5 seconds 
+ Iter 17: f = 1.864438e-01 f-delta = 2.6e-04 time = 9.5 seconds 
+ Iter 18: f = 1.866643e-01 f-delta = 2.2e-04 time = 9.6 seconds 
+ Iter 19: f = 1.868537e-01 f-delta = 1.9e-04 time = 9.6 seconds 
+ Iter 20: f = 1.870179e-01 f-delta = 1.6e-04 time = 9.7 seconds 
+ Iter 21: f = 1.871635e-01 f-delta = 1.5e-04 time = 9.8 seconds 
+ Iter 22: f = 1.872968e-01 f-delta = 1.3e-04 time = 9.6 seconds 
+ Iter 23: f = 1.874238e-01 f-delta = 1.3e-04 time = 9.6 seconds 
+ Iter 24: f = 1.875497e-01 f-delta = 1.3e-04 time = 9.8 seconds 
+ Iter 25: f = 1.876789e-01 f-delta = 1.3e-04 time = 9.7 seconds 
+ Iter 26: f = 1.878146e-01 f-delta = 1.4e-04 time = 9.6 seconds 
+ Iter 27: f = 1.879582e-01 f-delta = 1.4e-04 time = 9.6 seconds 
+ Iter 28: f = 1.881082e-01 f-delta = 1.5e-04 time = 9.6 seconds 
+ Iter 29: f = 1.882605e-01 f-delta = 1.5e-04 time = 10.0 seconds 
+ Iter 30: f = 1.884082e-01 f-delta = 1.5e-04 time = 9.6 seconds 
+ Iter 31: f = 1.885438e-01 f-delta = 1.4e-04 time = 9.6 seconds 
+ Iter 32: f = 1.886623e-01 f-delta = 1.2e-04 time = 9.6 seconds 
+ Iter 33: f = 1.887626e-01 f-delta = 1.0e-04 time = 9.6 seconds 
+ Iter 34: f = 1.888478e-01 f-delta = 8.5e-05 time = 9.6 seconds 
+ Final f = 1.888478e-01 
+Total Time (secs): 329.946
+
+---Starting run 3/10---
+Generating random initialization: 
+Random Seed in Hex: 41b9b77871000000
+Finding CP decomposition: 
+Random Seed in Hex: 41c949f4bd000000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.148882e-01 f-delta = 1.1e-01 time = 9.9 seconds 
+ Iter  2: f = 1.621426e-01 f-delta = 4.7e-02 time = 9.9 seconds 
+ Iter  3: f = 1.700165e-01 f-delta = 7.9e-03 time = 9.7 seconds 
+ Iter  4: f = 1.745469e-01 f-delta = 4.5e-03 time = 9.6 seconds 
+ Iter  5: f = 1.777651e-01 f-delta = 3.2e-03 time = 10.0 seconds 
+ Iter  6: f = 1.800409e-01 f-delta = 2.3e-03 time = 10.0 seconds 
+ Iter  7: f = 1.816699e-01 f-delta = 1.6e-03 time = 9.4 seconds 
+ Iter  8: f = 1.828764e-01 f-delta = 1.2e-03 time = 9.8 seconds 
+ Iter  9: f = 1.837921e-01 f-delta = 9.2e-04 time = 9.5 seconds 
+ Iter 10: f = 1.844961e-01 f-delta = 7.0e-04 time = 9.5 seconds 
+ Iter 11: f = 1.850579e-01 f-delta = 5.6e-04 time = 9.4 seconds 
+ Iter 12: f = 1.855333e-01 f-delta = 4.8e-04 time = 9.4 seconds 
+ Iter 13: f = 1.859588e-01 f-delta = 4.3e-04 time = 9.5 seconds 
+ Iter 14: f = 1.863519e-01 f-delta = 3.9e-04 time = 9.5 seconds 
+ Iter 15: f = 1.867148e-01 f-delta = 3.6e-04 time = 9.8 seconds 
+ Iter 16: f = 1.870424e-01 f-delta = 3.3e-04 time = 9.5 seconds 
+ Iter 17: f = 1.873316e-01 f-delta = 2.9e-04 time = 9.6 seconds 
+ Iter 18: f = 1.875852e-01 f-delta = 2.5e-04 time = 9.9 seconds 
+ Iter 19: f = 1.878106e-01 f-delta = 2.3e-04 time = 9.5 seconds 
+ Iter 20: f = 1.880158e-01 f-delta = 2.1e-04 time = 9.5 seconds 
+ Iter 21: f = 1.882066e-01 f-delta = 1.9e-04 time = 9.5 seconds 
+ Iter 22: f = 1.883851e-01 f-delta = 1.8e-04 time = 9.9 seconds 
+ Iter 23: f = 1.885508e-01 f-delta = 1.7e-04 time = 9.6 seconds 
+ Iter 24: f = 1.887019e-01 f-delta = 1.5e-04 time = 9.9 seconds 
+ Iter 25: f = 1.888365e-01 f-delta = 1.3e-04 time = 9.8 seconds 
+ Iter 26: f = 1.889544e-01 f-delta = 1.2e-04 time = 9.5 seconds 
+ Iter 27: f = 1.890560e-01 f-delta = 1.0e-04 time = 9.5 seconds 
+ Iter 28: f = 1.891430e-01 f-delta = 8.7e-05 time = 9.5 seconds 
+ Final f = 1.891430e-01 
+Total Time (secs): 272.704
+
+---Starting run 4/10---
+Generating random initialization: 
+Random Seed in Hex: 41e9521d2a800000
+Finding CP decomposition: 
+Random Seed in Hex: 41d3807445800000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.233265e-01 f-delta = 1.2e-01 time = 9.5 seconds 
+ Iter  2: f = 1.632061e-01 f-delta = 4.0e-02 time = 9.5 seconds 
+ Iter  3: f = 1.718359e-01 f-delta = 8.6e-03 time = 9.5 seconds 
+ Iter  4: f = 1.758351e-01 f-delta = 4.0e-03 time = 9.7 seconds 
+ Iter  5: f = 1.779861e-01 f-delta = 2.2e-03 time = 9.6 seconds 
+ Iter  6: f = 1.793564e-01 f-delta = 1.4e-03 time = 9.5 seconds 
+ Iter  7: f = 1.804230e-01 f-delta = 1.1e-03 time = 9.5 seconds 
+ Iter  8: f = 1.813670e-01 f-delta = 9.4e-04 time = 9.5 seconds 
+ Iter  9: f = 1.822564e-01 f-delta = 8.9e-04 time = 9.7 seconds 
+ Iter 10: f = 1.831045e-01 f-delta = 8.5e-04 time = 9.9 seconds 
+ Iter 11: f = 1.838893e-01 f-delta = 7.8e-04 time = 9.4 seconds 
+ Iter 12: f = 1.845856e-01 f-delta = 7.0e-04 time = 9.4 seconds 
+ Iter 13: f = 1.851979e-01 f-delta = 6.1e-04 time = 9.4 seconds 
+ Iter 14: f = 1.857532e-01 f-delta = 5.6e-04 time = 9.4 seconds 
+ Iter 15: f = 1.862740e-01 f-delta = 5.2e-04 time = 9.5 seconds 
+ Iter 16: f = 1.867665e-01 f-delta = 4.9e-04 time = 9.4 seconds 
+ Iter 17: f = 1.872224e-01 f-delta = 4.6e-04 time = 9.4 seconds 
+ Iter 18: f = 1.876299e-01 f-delta = 4.1e-04 time = 9.4 seconds 
+ Iter 19: f = 1.879833e-01 f-delta = 3.5e-04 time = 9.4 seconds 
+ Iter 20: f = 1.882856e-01 f-delta = 3.0e-04 time = 9.4 seconds 
+ Iter 21: f = 1.885445e-01 f-delta = 2.6e-04 time = 9.4 seconds 
+ Iter 22: f = 1.887675e-01 f-delta = 2.2e-04 time = 9.4 seconds 
+ Iter 23: f = 1.889606e-01 f-delta = 1.9e-04 time = 9.4 seconds 
+ Iter 24: f = 1.891286e-01 f-delta = 1.7e-04 time = 9.8 seconds 
+ Iter 25: f = 1.892754e-01 f-delta = 1.5e-04 time = 9.6 seconds 
+ Iter 26: f = 1.894036e-01 f-delta = 1.3e-04 time = 9.6 seconds 
+ Iter 27: f = 1.895155e-01 f-delta = 1.1e-04 time = 9.6 seconds 
+ Iter 28: f = 1.896128e-01 f-delta = 9.7e-05 time = 9.5 seconds 
+ Final f = 1.896128e-01 
+Total Time (secs): 268.776
+
+---Starting run 5/10---
+Generating random initialization: 
+Random Seed in Hex: 41e1f6fd57000000
+Finding CP decomposition: 
+Random Seed in Hex: 41db8fcae2000000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.243635e-01 f-delta = 1.2e-01 time = 9.6 seconds 
+ Iter  2: f = 1.654882e-01 f-delta = 4.1e-02 time = 9.9 seconds 
+ Iter  3: f = 1.724659e-01 f-delta = 7.0e-03 time = 10.0 seconds 
+ Iter  4: f = 1.754582e-01 f-delta = 3.0e-03 time = 9.6 seconds 
+ Iter  5: f = 1.774626e-01 f-delta = 2.0e-03 time = 9.6 seconds 
+ Iter  6: f = 1.790997e-01 f-delta = 1.6e-03 time = 9.6 seconds 
+ Iter  7: f = 1.805257e-01 f-delta = 1.4e-03 time = 9.6 seconds 
+ Iter  8: f = 1.817720e-01 f-delta = 1.2e-03 time = 9.6 seconds 
+ Iter  9: f = 1.828380e-01 f-delta = 1.1e-03 time = 9.8 seconds 
+ Iter 10: f = 1.837290e-01 f-delta = 8.9e-04 time = 9.4 seconds 
+ Iter 11: f = 1.844517e-01 f-delta = 7.2e-04 time = 9.5 seconds 
+ Iter 12: f = 1.850221e-01 f-delta = 5.7e-04 time = 9.4 seconds 
+ Iter 13: f = 1.854663e-01 f-delta = 4.4e-04 time = 9.4 seconds 
+ Iter 14: f = 1.858135e-01 f-delta = 3.5e-04 time = 9.4 seconds 
+ Iter 15: f = 1.860897e-01 f-delta = 2.8e-04 time = 9.7 seconds 
+ Iter 16: f = 1.863159e-01 f-delta = 2.3e-04 time = 9.4 seconds 
+ Iter 17: f = 1.865069e-01 f-delta = 1.9e-04 time = 9.4 seconds 
+ Iter 18: f = 1.866726e-01 f-delta = 1.7e-04 time = 10.1 seconds 
+ Iter 19: f = 1.868201e-01 f-delta = 1.5e-04 time = 10.2 seconds 
+ Iter 20: f = 1.869545e-01 f-delta = 1.3e-04 time = 9.5 seconds 
+ Iter 21: f = 1.870793e-01 f-delta = 1.2e-04 time = 9.5 seconds 
+ Iter 22: f = 1.871974e-01 f-delta = 1.2e-04 time = 9.5 seconds 
+ Iter 23: f = 1.873108e-01 f-delta = 1.1e-04 time = 9.5 seconds 
+ Iter 24: f = 1.874210e-01 f-delta = 1.1e-04 time = 9.9 seconds 
+ Iter 25: f = 1.875289e-01 f-delta = 1.1e-04 time = 9.5 seconds 
+ Iter 26: f = 1.876348e-01 f-delta = 1.1e-04 time = 9.7 seconds 
+ Iter 27: f = 1.877388e-01 f-delta = 1.0e-04 time = 9.9 seconds 
+ Iter 28: f = 1.878404e-01 f-delta = 1.0e-04 time = 9.9 seconds 
+ Iter 29: f = 1.879391e-01 f-delta = 9.9e-05 time = 9.6 seconds 
+ Final f = 1.879391e-01 
+Total Time (secs): 282.466
+
+---Starting run 6/10---
+Generating random initialization: 
+Random Seed in Hex: 41c4804c01000000
+Finding CP decomposition: 
+Random Seed in Hex: 41ca6f3b30800000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.135034e-01 f-delta = 1.1e-01 time = 9.7 seconds 
+ Iter  2: f = 1.605753e-01 f-delta = 4.7e-02 time = 9.6 seconds 
+ Iter  3: f = 1.705929e-01 f-delta = 1.0e-02 time = 9.8 seconds 
+ Iter  4: f = 1.750394e-01 f-delta = 4.4e-03 time = 10.2 seconds 
+ Iter  5: f = 1.777733e-01 f-delta = 2.7e-03 time = 9.8 seconds 
+ Iter  6: f = 1.795579e-01 f-delta = 1.8e-03 time = 9.6 seconds 
+ Iter  7: f = 1.808745e-01 f-delta = 1.3e-03 time = 9.9 seconds 
+ Iter  8: f = 1.819357e-01 f-delta = 1.1e-03 time = 9.9 seconds 
+ Iter  9: f = 1.828463e-01 f-delta = 9.1e-04 time = 9.7 seconds 
+ Iter 10: f = 1.836686e-01 f-delta = 8.2e-04 time = 9.8 seconds 
+ Iter 11: f = 1.844186e-01 f-delta = 7.5e-04 time = 9.5 seconds 
+ Iter 12: f = 1.850835e-01 f-delta = 6.6e-04 time = 9.5 seconds 
+ Iter 13: f = 1.856526e-01 f-delta = 5.7e-04 time = 9.9 seconds 
+ Iter 14: f = 1.861260e-01 f-delta = 4.7e-04 time = 9.4 seconds 
+ Iter 15: f = 1.865124e-01 f-delta = 3.9e-04 time = 9.5 seconds 
+ Iter 16: f = 1.868286e-01 f-delta = 3.2e-04 time = 9.5 seconds 
+ Iter 17: f = 1.870941e-01 f-delta = 2.7e-04 time = 9.4 seconds 
+ Iter 18: f = 1.873242e-01 f-delta = 2.3e-04 time = 9.4 seconds 
+ Iter 19: f = 1.875292e-01 f-delta = 2.1e-04 time = 9.9 seconds 
+ Iter 20: f = 1.877154e-01 f-delta = 1.9e-04 time = 9.5 seconds 
+ Iter 21: f = 1.878858e-01 f-delta = 1.7e-04 time = 9.5 seconds 
+ Iter 22: f = 1.880418e-01 f-delta = 1.6e-04 time = 9.5 seconds 
+ Iter 23: f = 1.881835e-01 f-delta = 1.4e-04 time = 9.5 seconds 
+ Iter 24: f = 1.883111e-01 f-delta = 1.3e-04 time = 9.5 seconds 
+ Iter 25: f = 1.884247e-01 f-delta = 1.1e-04 time = 9.5 seconds 
+ Iter 26: f = 1.885254e-01 f-delta = 1.0e-04 time = 9.5 seconds 
+ Iter 27: f = 1.886146e-01 f-delta = 8.9e-05 time = 9.9 seconds 
+ Final f = 1.886146e-01 
+Total Time (secs): 263.270
+
+---Starting run 7/10---
+Generating random initialization: 
+Random Seed in Hex: 41edf11dc0a00000
+Finding CP decomposition: 
+Random Seed in Hex: 41b5724c73000000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.218115e-01 f-delta = 1.2e-01 time = 9.5 seconds 
+ Iter  2: f = 1.610369e-01 f-delta = 3.9e-02 time = 9.5 seconds 
+ Iter  3: f = 1.693385e-01 f-delta = 8.3e-03 time = 9.5 seconds 
+ Iter  4: f = 1.734996e-01 f-delta = 4.2e-03 time = 9.5 seconds 
+ Iter  5: f = 1.762460e-01 f-delta = 2.7e-03 time = 9.5 seconds 
+ Iter  6: f = 1.783036e-01 f-delta = 2.1e-03 time = 9.6 seconds 
+ Iter  7: f = 1.799802e-01 f-delta = 1.7e-03 time = 9.5 seconds 
+ Iter  8: f = 1.813657e-01 f-delta = 1.4e-03 time = 9.5 seconds 
+ Iter  9: f = 1.824469e-01 f-delta = 1.1e-03 time = 9.5 seconds 
+ Iter 10: f = 1.832611e-01 f-delta = 8.1e-04 time = 9.7 seconds 
+ Iter 11: f = 1.838881e-01 f-delta = 6.3e-04 time = 9.7 seconds 
+ Iter 12: f = 1.843951e-01 f-delta = 5.1e-04 time = 9.5 seconds 
+ Iter 13: f = 1.848293e-01 f-delta = 4.3e-04 time = 9.5 seconds 
+ Iter 14: f = 1.852244e-01 f-delta = 4.0e-04 time = 9.5 seconds 
+ Iter 15: f = 1.856021e-01 f-delta = 3.8e-04 time = 9.5 seconds 
+ Iter 16: f = 1.859716e-01 f-delta = 3.7e-04 time = 9.5 seconds 
+ Iter 17: f = 1.863265e-01 f-delta = 3.5e-04 time = 9.7 seconds 
+ Iter 18: f = 1.866498e-01 f-delta = 3.2e-04 time = 9.6 seconds 
+ Iter 19: f = 1.869272e-01 f-delta = 2.8e-04 time = 9.7 seconds 
+ Iter 20: f = 1.871573e-01 f-delta = 2.3e-04 time = 9.6 seconds 
+ Iter 21: f = 1.873481e-01 f-delta = 1.9e-04 time = 9.6 seconds 
+ Iter 22: f = 1.875092e-01 f-delta = 1.6e-04 time = 9.6 seconds 
+ Iter 23: f = 1.876479e-01 f-delta = 1.4e-04 time = 9.6 seconds 
+ Iter 24: f = 1.877687e-01 f-delta = 1.2e-04 time = 9.6 seconds 
+ Iter 25: f = 1.878747e-01 f-delta = 1.1e-04 time = 9.7 seconds 
+ Iter 26: f = 1.879684e-01 f-delta = 9.4e-05 time = 9.4 seconds 
+ Final f = 1.879684e-01 
+Total Time (secs): 251.344
+
+---Starting run 8/10---
+Generating random initialization: 
+Random Seed in Hex: 41ed109736400000
+Finding CP decomposition: 
+Random Seed in Hex: 41ea52f7ba200000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.256504e-01 f-delta = 1.3e-01 time = 9.5 seconds 
+ Iter  2: f = 1.655621e-01 f-delta = 4.0e-02 time = 9.5 seconds 
+ Iter  3: f = 1.732192e-01 f-delta = 7.7e-03 time = 9.5 seconds 
+ Iter  4: f = 1.766074e-01 f-delta = 3.4e-03 time = 9.4 seconds 
+ Iter  5: f = 1.787470e-01 f-delta = 2.1e-03 time = 9.4 seconds 
+ Iter  6: f = 1.803684e-01 f-delta = 1.6e-03 time = 9.4 seconds 
+ Iter  7: f = 1.816204e-01 f-delta = 1.3e-03 time = 9.6 seconds 
+ Iter  8: f = 1.826133e-01 f-delta = 9.9e-04 time = 9.8 seconds 
+ Iter  9: f = 1.834446e-01 f-delta = 8.3e-04 time = 9.4 seconds 
+ Iter 10: f = 1.841669e-01 f-delta = 7.2e-04 time = 9.4 seconds 
+ Iter 11: f = 1.848093e-01 f-delta = 6.4e-04 time = 9.4 seconds 
+ Iter 12: f = 1.853887e-01 f-delta = 5.8e-04 time = 9.4 seconds 
+ Iter 13: f = 1.859129e-01 f-delta = 5.2e-04 time = 9.8 seconds 
+ Iter 14: f = 1.863809e-01 f-delta = 4.7e-04 time = 9.7 seconds 
+ Iter 15: f = 1.867878e-01 f-delta = 4.1e-04 time = 9.7 seconds 
+ Iter 16: f = 1.871320e-01 f-delta = 3.4e-04 time = 9.7 seconds 
+ Iter 17: f = 1.874206e-01 f-delta = 2.9e-04 time = 9.6 seconds 
+ Iter 18: f = 1.876655e-01 f-delta = 2.4e-04 time = 9.7 seconds 
+ Iter 19: f = 1.878774e-01 f-delta = 2.1e-04 time = 9.8 seconds 
+ Iter 20: f = 1.880633e-01 f-delta = 1.9e-04 time = 9.6 seconds 
+ Iter 21: f = 1.882274e-01 f-delta = 1.6e-04 time = 9.6 seconds 
+ Iter 22: f = 1.883728e-01 f-delta = 1.5e-04 time = 9.6 seconds 
+ Iter 23: f = 1.885027e-01 f-delta = 1.3e-04 time = 9.6 seconds 
+ Iter 24: f = 1.886199e-01 f-delta = 1.2e-04 time = 10.1 seconds 
+ Iter 25: f = 1.887265e-01 f-delta = 1.1e-04 time = 9.5 seconds 
+ Iter 26: f = 1.888243e-01 f-delta = 9.8e-05 time = 9.5 seconds 
+ Final f = 1.888243e-01 
+Total Time (secs): 251.818
+
+---Starting run 9/10---
+Generating random initialization: 
+Random Seed in Hex: 41c5de43f6000000
+Finding CP decomposition: 
+Random Seed in Hex: 41eab94cafa00000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.208892e-01 f-delta = 1.2e-01 time = 9.5 seconds 
+ Iter  2: f = 1.649214e-01 f-delta = 4.4e-02 time = 9.5 seconds 
+ Iter  3: f = 1.726676e-01 f-delta = 7.7e-03 time = 9.5 seconds 
+ Iter  4: f = 1.760861e-01 f-delta = 3.4e-03 time = 9.6 seconds 
+ Iter  5: f = 1.780439e-01 f-delta = 2.0e-03 time = 9.8 seconds 
+ Iter  6: f = 1.793302e-01 f-delta = 1.3e-03 time = 9.5 seconds 
+ Iter  7: f = 1.803020e-01 f-delta = 9.7e-04 time = 9.6 seconds 
+ Iter  8: f = 1.811257e-01 f-delta = 8.2e-04 time = 9.6 seconds 
+ Iter  9: f = 1.818852e-01 f-delta = 7.6e-04 time = 9.7 seconds 
+ Iter 10: f = 1.826261e-01 f-delta = 7.4e-04 time = 9.7 seconds 
+ Iter 11: f = 1.833623e-01 f-delta = 7.4e-04 time = 9.5 seconds 
+ Iter 12: f = 1.840755e-01 f-delta = 7.1e-04 time = 9.7 seconds 
+ Iter 13: f = 1.847327e-01 f-delta = 6.6e-04 time = 9.5 seconds 
+ Iter 14: f = 1.853133e-01 f-delta = 5.8e-04 time = 9.6 seconds 
+ Iter 15: f = 1.858169e-01 f-delta = 5.0e-04 time = 9.5 seconds 
+ Iter 16: f = 1.862535e-01 f-delta = 4.4e-04 time = 9.5 seconds 
+ Iter 17: f = 1.866362e-01 f-delta = 3.8e-04 time = 9.8 seconds 
+ Iter 18: f = 1.869773e-01 f-delta = 3.4e-04 time = 9.8 seconds 
+ Iter 19: f = 1.872864e-01 f-delta = 3.1e-04 time = 9.5 seconds 
+ Iter 20: f = 1.875708e-01 f-delta = 2.8e-04 time = 9.5 seconds 
+ Iter 21: f = 1.878366e-01 f-delta = 2.7e-04 time = 9.7 seconds 
+ Iter 22: f = 1.880877e-01 f-delta = 2.5e-04 time = 9.5 seconds 
+ Iter 23: f = 1.883251e-01 f-delta = 2.4e-04 time = 9.4 seconds 
+ Iter 24: f = 1.885466e-01 f-delta = 2.2e-04 time = 9.4 seconds 
+ Iter 25: f = 1.887499e-01 f-delta = 2.0e-04 time = 9.4 seconds 
+ Iter 26: f = 1.889350e-01 f-delta = 1.9e-04 time = 9.4 seconds 
+ Iter 27: f = 1.891012e-01 f-delta = 1.7e-04 time = 9.4 seconds 
+ Iter 28: f = 1.892452e-01 f-delta = 1.4e-04 time = 9.4 seconds 
+ Iter 29: f = 1.893637e-01 f-delta = 1.2e-04 time = 9.4 seconds 
+ Iter 30: f = 1.894571e-01 f-delta = 9.3e-05 time = 9.4 seconds 
+ Final f = 1.894571e-01 
+Total Time (secs): 289.383
+
+---Starting run 10/10---
+Generating random initialization: 
+Random Seed in Hex: 41c8b45257800000
+Finding CP decomposition: 
+Random Seed in Hex: 41d04ebce7c00000
+
+CP_ALS (with trace):
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.229218e-01 f-delta = 1.2e-01 time = 9.7 seconds 
+ Iter  2: f = 1.644952e-01 f-delta = 4.2e-02 time = 9.5 seconds 
+ Iter  3: f = 1.725283e-01 f-delta = 8.0e-03 time = 10.0 seconds 
+ Iter  4: f = 1.757642e-01 f-delta = 3.2e-03 time = 9.8 seconds 
+ Iter  5: f = 1.778129e-01 f-delta = 2.0e-03 time = 9.7 seconds 
+ Iter  6: f = 1.793922e-01 f-delta = 1.6e-03 time = 9.5 seconds 
+ Iter  7: f = 1.806650e-01 f-delta = 1.3e-03 time = 9.5 seconds 
+ Iter  8: f = 1.817280e-01 f-delta = 1.1e-03 time = 9.7 seconds 
+ Iter  9: f = 1.826662e-01 f-delta = 9.4e-04 time = 9.6 seconds 
+ Iter 10: f = 1.835328e-01 f-delta = 8.7e-04 time = 9.6 seconds 
+ Iter 11: f = 1.843462e-01 f-delta = 8.1e-04 time = 9.6 seconds 
+ Iter 12: f = 1.850917e-01 f-delta = 7.5e-04 time = 9.7 seconds 
+ Iter 13: f = 1.857425e-01 f-delta = 6.5e-04 time = 9.6 seconds 
+ Iter 14: f = 1.862941e-01 f-delta = 5.5e-04 time = 9.9 seconds 
+ Iter 15: f = 1.867642e-01 f-delta = 4.7e-04 time = 9.6 seconds 
+ Iter 16: f = 1.871727e-01 f-delta = 4.1e-04 time = 9.6 seconds 
+ Iter 17: f = 1.875326e-01 f-delta = 3.6e-04 time = 9.6 seconds 
+ Iter 18: f = 1.878504e-01 f-delta = 3.2e-04 time = 9.9 seconds 
+ Iter 19: f = 1.881287e-01 f-delta = 2.8e-04 time = 9.9 seconds 
+ Iter 20: f = 1.883685e-01 f-delta = 2.4e-04 time = 9.7 seconds 
+ Iter 21: f = 1.885719e-01 f-delta = 2.0e-04 time = 9.5 seconds 
+ Iter 22: f = 1.887420e-01 f-delta = 1.7e-04 time = 9.5 seconds 
+ Iter 23: f = 1.888830e-01 f-delta = 1.4e-04 time = 9.6 seconds 
+ Iter 24: f = 1.889995e-01 f-delta = 1.2e-04 time = 9.6 seconds 
+ Iter 25: f = 1.890961e-01 f-delta = 9.7e-05 time = 9.6 seconds 
+ Final f = 1.890961e-01 
+Total Time (secs): 244.249

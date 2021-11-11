@@ -1,0 +1,2950 @@
+Starting diary with name artifact_epsilon_runs_amazon_2020_10_05_1034_diary.txt
+Repository directory: /home/bwlarse/tensor_toolbox
+  Local Branch: cp_arls_lev
+  Remote: origin (https://gitlab.com/tensors/tensor_toolbox)
+  Remote Branch: cp_arls_lev
+  Short Hash: [33ma0
+  Up-to-Date: true
+Repository directory: /home/bwlarse/cparls_sparse_experiments
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/cparls_sparse_experiments)
+  Remote Branch: master
+  Short Hash: [33ma4
+  Up-to-Date: false
+  Statuses...
+     [31mM[m als_runs_enron.m
+     [31mM[m arls_model_reddit.m
+     [31mM[m arls_runs_coil.m
+     [31mM[m arls_runs_synthetic_dense.m
+     [31mM[m epsilon_runs_amazon.m
+     [31mM[m epsilon_runs_nofit.m
+     [31mM[m kahuna_slurm_batch.sh
+     [31mM[m kahuna_slurm_batch_zen.sh
+     [31mM[m saveLeverage.m
+    [31m??[m cp_runs_reddit.m
+    [31m??[m sdet_amazon.png
+  ==== Diffs ====
+  [1mindex 0130793..1f3c63d 100644[m
+  [1m--- a/als_runs_enron.m[m
+  [1m+++ b/als_runs_enron.m[m
+  [36m@@ -20,7 +20,7 @@[m [mend[m
+   [m
+   %% Load in Enron Tensor[m
+   nruns = 10;[m
+  [31m-R = 25;[m
+  [32m+[m[32mR = 50;[m
+   load ('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_log');[m
+   fprintf('---Loading in Enron Tensor---\n')[m
+   [m
+  [36m@@ -57,4 +57,4 @@[m [mfor rep = 1:nruns[m
+   end[m
+   [m
+   % Save out the traces and fits for all runs[m
+  [31m-save('-v7.3', sprintf('%s-results', aname), 'output')[m
+  [32m+[m[32msave('-v7.3', sprintf('%s-results', aname), 'results')[m
+  [1mdiff --git a/arls_model_reddit.m b/arls_model_reddit.m[m
+  [1mindex c19d754..33fb699 100644[m
+  [1m--- a/arls_model_reddit.m[m
+  [1m+++ b/arls_model_reddit.m[m
+  [36m@@ -47,7 +47,7 @@[m [mfsampler = @() deal(xsubs, xvals, wghts);[m
+   [m
+   [m
+   %% Run cp_leverage[m
+  [31m-fprintf('\n~~~~~Generating random initialization for run %d~~~~ \n', rep)[m
+  [32m+[m[32mfprintf('\n~~~~~Generating random initialization~~~~ \n')[m
+   rnginit('41eb28b040800000');[m
+   Uinit = cell(d,1);[m
+   for k = 1:d[m
+  [36m@@ -55,7 +55,6 @@[m [mfor k = 1:d[m
+   end[m
+   [m
+   [m
+  [31m-fprintf('\n---Starting run %i/%i with %i samples---\n', rep, nruns, s)[m
+   sharedparams = {'init', Uinit, 'truefit', truefit, 'finalfit', true, 'nsamplsq', s, 'fsampler', fsampler};[m
+   [m
+   fprintf('\nFinding CP decomposition (Deterministic Inclusion): \n')[m
+  [36m@@ -67,7 +66,6 @@[m [mfprintf('Total Time (secs): %.3f\n', time)[m
+   [m
+   info.params.fsampler = 'removed';[m
+   info.params.init = 'removed';[m
+  [31m-results{rep,sidx,1} = info;[m
+   [m
+           [m
+   [m
+  [1mdiff --git a/arls_runs_coil.m b/arls_runs_coil.m[m
+  [1mindex a34a20b..f3c8fa1 100644[m
+  [1m--- a/arls_runs_coil.m[m
+  [1m+++ b/arls_runs_coil.m[m
+  [36m@@ -19,9 +19,9 @@[m [mif do_gitchecks[m
+   end[m
+   [m
+   %% User setup for script [m
+  [31m-nruns = 10;[m
+  [32m+[m[32mnruns = 5;[m
+   R = 20;[m
+  [31m-srng = 2.^(9:11);[m
+  [32m+[m[32msrng = 2.^(9:10);[m
+   truefit = false;[m
+   [m
+   [m
+  [36m@@ -92,7 +92,7 @@[m [mfor rep = 1:nruns[m
+           fprintf('\nFinding CP decomposition (ARLS-Mixing): \n')[m
+           rnginit;[m
+           tic[m
+  [31m-        [M, ~, info] = cp_arls_trace(X,R,'init', Uinit, 'truefit', true,'epoch', 1,'newitol',5,'tol', 1e-4);[m
+  [32m+[m[32m        [M, ~, info] = cp_arls_trace(X,R,'init', Uinit, 'truefit', true,'epoch', 1,'newitol',5,'tol', 1e-4, 'nsamplsq', s);[m
+           time = toc;[m
+           fprintf('Total Time (secs): %.3f\n', time)[m
+   [m
+  [1mdiff --git a/arls_runs_synthetic_dense.m b/arls_runs_synthetic_dense.m[m
+  [1mindex cf2f4f7..aab981b 100644[m
+  [1m--- a/arls_runs_synthetic_dense.m[m
+  [1m+++ b/arls_runs_synthetic_dense.m[m
+  [36m@@ -25,9 +25,10 @@[m [mcheckfit = 0;[m
+   srng = 2.^(7:11);[m
+   [m
+   % This option allows loading in tensors from previous runs[m
+  [31m-loadproblem = 1;[m
+  [32m+[m[32mloadproblem = 0;[m
+   if loadproblem[m
+  [31m-    loadfile = 'artifact_arls_runs_synthetic_dense_2020_09_10_2008-results_small';[m
+  [32m+[m[32m    loadfile = 'artifact_arls_runs_synthetic_dense_2020_09_10_2008-results';[m
+  [32m+[m[32m    load(loadfile);[m
+       clear results;[m
+   end[m
+   [m
+  [36m@@ -39,8 +40,8 @@[m [mend[m
+   [m
+   %% Parameters for problem generation[m
+   R = 25;[m
+  [31m-d = 3;[m
+  [31m-num_rows = 500;[m
+  [32m+[m[32md = 4;[m
+  [32m+[m[32mnum_rows = 250;[m
+   sz = num_rows*ones(1, d);[m
+   [m
+   % nconcentrated is the number of columns with concentrated leverage scores[m
+  [36m@@ -63,7 +64,9 @@[m [mns = length(srng); % Number of s-values[m
+   [m
+   %% Set up  output[m
+   results = cell(nproblems,nruns,ns,5);[m
+  [31m-tensors = cell(nproblems, 2);[m
+  [32m+[m[32mif ~loadproblem[m
+  [32m+[m[32m    tensors = cell(nproblems, 2);[m
+  [32m+[m[32mend[m
+   [m
+   %% Main runs[m
+   rng('shuffle')[m
+  [36m@@ -75,6 +78,7 @@[m [mfor p = 1:nproblems[m
+           X = tensors{p, 1};[m
+           Mtrue = tensors{p, 2};[m
+           U = Mtrue;[m
+  [32m+[m	[32mwhos[m
+       else[m
+           fprintf('---Generating Tensor---\n')[m
+           rnginit;[m
+  [1mdiff --git a/epsilon_runs_amazon.m b/epsilon_runs_amazon.m[m
+  [1mindex 17e885e..c91df38 100644[m
+  [1m--- a/epsilon_runs_amazon.m[m
+  [1m+++ b/epsilon_runs_amazon.m[m
+  [36m@@ -37,7 +37,7 @@[m [mkrng = [1 2 3];[m
+   srng = [2^17];[m
+   crng = {@(s) []};[m
+   trng = {@(s) [], @(s) 1/s};[m
+  [31m-ntrials = 5; % Just for demo, use 10 for regular trials[m
+  [32m+[m[32mntrials = 10; % Just for demo, use 10 for regular trials[m
+   [m
+   % Run without combine[m
+   fprintf('\t Starting runs with loaded solution (No Combine)');[m
+  [36m@@ -56,4 +56,4 @@[m [mrnginit;[m
+   % [results_rand,info_rand] = epsilon_runs_nofit(X,R,krng,srng,crng,trng,ntrials);[m
+   [m
+   %%[m
+  [31m-save('-v7.3', aname,'results','info','results_combine','info_combine');[m
+  \ No newline at end of file[m
+  [32m+[m[32msave('-v7.3', aname,'results','info','results_combine','info_combine');[m
+  [1mdiff --git a/epsilon_runs_nofit.m b/epsilon_runs_nofit.m[m
+  [1mindex 696733f..9c69c53 100644[m
+  [1m--- a/epsilon_runs_nofit.m[m
+  [1m+++ b/epsilon_runs_nofit.m[m
+  [36m@@ -102,7 +102,7 @@[m [mfor kidx = 1:nk[m
+                       [m
+                       % Compute sampled solve[m
+                       tic[m
+  [31m-                    [Vs,info] = tt_sampled_solve(X,A,Alev,k,s,c,t,Xfidxs(:,k),combrep,1);[m
+  [32m+[m[32m                    [Vs,info] = tt_sampled_solve(X,A,Alev,k,s,c,t,Xfidxs(:,k),1,combrep);[m
+                       itr.sampled_solve_time_plus_post = toc;[m
+                       [m
+                       % Extract sample-sample residual[m
+  [36m@@ -148,10 +148,10 @@[m [mfor kidx = 1:nk[m
+   [m
+                       fprintf('\tMin/Max weight: %g / %g\n', itr.minwgt, itr.maxwgt);[m
+                       fprintf('\tTop-10 Most Frequent Samples:\n');[m
+  [31m-                    fprintf('\t\t cnt=%d midx=[%d %d %d]\n', itr.midx_top10')[m
+  [32m+[m[32m                    fprintf('\t\t cnt=%d midx=[%d %d]\n', itr.midx_top10')[m
+                       fprintf('\t %i Deterministic Indices with Total Probability %f \n', itr.sdet, itr.pdet);[m
+                       if itr.sdet > 0[m
+  [31m-                        fprintf('\t\t prob=%.3e midx=[%d %d %d]\n', itr.midx_det_top10')[m
+  [32m+[m[32m                        fprintf('\t\t prob=%.3e midx=[%d %d]\n', itr.midx_det_top10')[m
+                       end[m
+                       [m
+                       % Save everything[m
+  [36m@@ -166,4 +166,4 @@[m [mfor kidx = 1:nk[m
+       end % sidx[m
+       [m
+       [m
+  [31m-end % kidx[m
+  \ No newline at end of file[m
+  [32m+[m[32mend % kidx[m
+  [1mdiff --git a/kahuna_slurm_batch.sh b/kahuna_slurm_batch.sh[m
+  [1mindex 24e744c..df9d03c 100644[m
+  [1m--- a/kahuna_slurm_batch.sh[m
+  [1m+++ b/kahuna_slurm_batch.sh[m
+  [36m@@ -8,7 +8,7 @@[m
+   #SBATCH -p compute[m
+   [m
+   # --- Set the max time to 10 hours ---[m
+  [31m-#SBATCH -t 5-10:00:00[m
+  [32m+[m[32m#SBATCH -t 8:00:00[m
+   [m
+   # --- Use one single node, with 1 process, and 4 cores ---[m
+   # --- Plus exclusively claim the resources ---[m
+  [36m@@ -22,4 +22,4 @@[m [mmodule load matlab[m
+   echo Hostname:[m
+   hostname[m
+   echo MATLAB Command: $1[m
+  [31m-matlab -nosplash -nodesktop -nodisplay -r "addpath('/home/bwlarse/tensor_toolbox_sparse'); addpath('/home/bwlarse/matlab-tools'); $1; quit"[m
+  [32m+[m[32mmatlab -nosplash -nodesktop -nodisplay -r "addpath('/home/bwlarse/tensor_toolbox'); addpath('/home/bwlarse/matlab-tools'); $1; quit"[m
+  [1mdiff --git a/kahuna_slurm_batch_zen.sh b/kahuna_slurm_batch_zen.sh[m
+  [1mindex 111a4d7..20accd6 100644[m
+  [1m--- a/kahuna_slurm_batch_zen.sh[m
+  [1m+++ b/kahuna_slurm_batch_zen.sh[m
+  [36m@@ -8,7 +8,7 @@[m
+   #SBATCH -p zen[m
+   [m
+   # --- Set the max time to 6 days, 12 hours ---[m
+  [31m-#SBATCH -t 6-12:00:00[m
+  [32m+[m[32m#SBATCH -t 3-12:00:00[m
+   [m
+   # --- Use one single node, with 1 process, and 4 cores ---[m
+   # --- Plus exclusively claim the resources ---[m
+  [36m@@ -22,4 +22,4 @@[m [mmodule load matlab[m
+   echo Hostname:[m
+   hostname[m
+   echo MATLAB Command: $1[m
+  [31m-matlab -nosplash -nodesktop -nodisplay -r "addpath('/home/bwlarse/tensor_toolbox_sparse'); addpath('/home/bwlarse/matlab-tools'); $1; quit"[m
+  [32m+[m[32mmatlab -nosplash -nodesktop -nodisplay -r "addpath('/home/bwlarse/tensor_toolbox'); addpath('/home/bwlarse/matlab-tools'); $1; quit"[m
+  [1mdiff --git a/saveLeverage.m b/saveLeverage.m[m
+  [1mindex 09a5526..e7a349d 100644[m
+  [1m--- a/saveLeverage.m[m
+  [1m+++ b/saveLeverage.m[m
+  [36m@@ -9,18 +9,18 @@[m [mfprintf('\tLoaded solution with R=%d\n', R);[m
+   s = 2^17;[m
+   tau = 1/s;[m
+   [m
+  [31m-N = ndims(A);[m
+  [32m+[m[32mN = 3;[m
+   [m
+   u = cell(N, 1);[m
+   det = cell(N, 1);[m
+   [m
+   for i = 1:N[m
+  [31m-   u{i} = calculate_leverage(A{i}); [m
+  [32m+[m[32m   u{i} = tt_leverage_scores(A{i});[m[41m [m
+      u{i} = sort(u{i});[m
+   end[m
+   [m
+   for i = 1:N[m
+  [31m-    [~, ~,~,det{i}] = find_deterministic_krp(Alev(1:i-1,i+1:N), tau, s);[m
+  [32m+[m[32m    [~, ~,~,det{i}] = find_deterministic_krp(u([1:i-1,i+1:N]), tau, s);[m
+       det{i} = sort(det{i});[m
+   end[m
+   [m
+  ==== End Diffs ====
+---Load in Amazon---
+	Loaded in tensor of size [ 4821207 1774269 1805187 ] with 1741809018 nonzeros
+	Loaded solution with R=10
+	 Starting runs with loaded solution (No Combine)Random Seed in Hex: 41ea123768800000
+
+*** Epsilon Runs ***
+
+---Extracting data from tensor---
+Tensor is of size [ 4821207 1774269 1805187 ] with nnz = 1741809018
+
+---Calculating fiber indices---
+Elapsed time is 114.980033 seconds.
+
+---Setup Factor Matrices---
+Using provided factor matrices
+Rank = 10
+
+---Calculating leverage scores---
+Elapsed time is 2.015604 seconds.
+
+---Full Solve for k=1---
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=1---
+Random Seed in Hex: 41e6ecbcb4000000
+	Sampled solve time: 15.189098s
+	Min/Max weight: 0.0475063 / 237480
+	Top-10 Most Frequent Samples:
+		 cnt=470 midx=[960680 792105]
+		 cnt=437 midx=[1732647 792105]
+		 cnt=434 midx=[960680 1113300]
+		 cnt=432 midx=[1732647 252987]
+		 cnt=422 midx=[1732647 1113300]
+		 cnt=415 midx=[960680 252987]
+		 cnt=381 midx=[1732647 228496]
+		 cnt=353 midx=[960680 228496]
+		 cnt=217 midx=[1504230 792105]
+		 cnt=204 midx=[1665202 252987]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=2---
+Random Seed in Hex: 41e4f8de0d800000
+	Sampled solve time: 14.789113s
+	Min/Max weight: 0.0475063 / 319006
+	Top-10 Most Frequent Samples:
+		 cnt=459 midx=[960680 792105]
+		 cnt=458 midx=[960680 1113300]
+		 cnt=455 midx=[1732647 252987]
+		 cnt=440 midx=[1732647 1113300]
+		 cnt=439 midx=[960680 252987]
+		 cnt=400 midx=[1732647 792105]
+		 cnt=368 midx=[960680 228496]
+		 cnt=342 midx=[1732647 228496]
+		 cnt=235 midx=[1504230 792105]
+		 cnt=211 midx=[1665202 1113300]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=3---
+Random Seed in Hex: 41ea8bc5ba800000
+	Sampled solve time: 14.784892s
+	Min/Max weight: 0.0475063 / 66445.2
+	Top-10 Most Frequent Samples:
+		 cnt=447 midx=[960680 792105]
+		 cnt=440 midx=[960680 1113300]
+		 cnt=429 midx=[1732647 792105]
+		 cnt=416 midx=[1732647 1113300]
+		 cnt=413 midx=[960680 252987]
+		 cnt=398 midx=[1732647 252987]
+		 cnt=349 midx=[960680 228496]
+		 cnt=342 midx=[1732647 228496]
+		 cnt=219 midx=[1665202 792105]
+		 cnt=215 midx=[1665202 1113300]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=4---
+Random Seed in Hex: 41cac4757d800000
+	Sampled solve time: 14.829249s
+	Min/Max weight: 0.0475063 / 72487.7
+	Top-10 Most Frequent Samples:
+		 cnt=473 midx=[960680 792105]
+		 cnt=444 midx=[1732647 792105]
+		 cnt=444 midx=[960680 252987]
+		 cnt=439 midx=[1732647 252987]
+		 cnt=398 midx=[960680 1113300]
+		 cnt=397 midx=[1732647 1113300]
+		 cnt=378 midx=[960680 228496]
+		 cnt=373 midx=[1732647 228496]
+		 cnt=222 midx=[1665202 792105]
+		 cnt=206 midx=[1504230 252987]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=5---
+Random Seed in Hex: 41e6674377400000
+	Sampled solve time: 15.644705s
+	Min/Max weight: 0.0475063 / 84557.8
+	Top-10 Most Frequent Samples:
+		 cnt=479 midx=[960680 792105]
+		 cnt=447 midx=[1732647 792105]
+		 cnt=429 midx=[960680 1113300]
+		 cnt=426 midx=[1732647 252987]
+		 cnt=420 midx=[1732647 1113300]
+		 cnt=414 midx=[960680 252987]
+		 cnt=382 midx=[1732647 228496]
+		 cnt=353 midx=[960680 228496]
+		 cnt=213 midx=[1504230 252987]
+		 cnt=203 midx=[1504230 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=6---
+Random Seed in Hex: 41e632adc4c00000
+	Sampled solve time: 14.902290s
+	Min/Max weight: 0.0475063 / 64325.7
+	Top-10 Most Frequent Samples:
+		 cnt=451 midx=[1732647 792105]
+		 cnt=449 midx=[960680 252987]
+		 cnt=441 midx=[1732647 252987]
+		 cnt=434 midx=[960680 792105]
+		 cnt=426 midx=[960680 1113300]
+		 cnt=405 midx=[1732647 1113300]
+		 cnt=354 midx=[1732647 228496]
+		 cnt=337 midx=[960680 228496]
+		 cnt=218 midx=[1665202 792105]
+		 cnt=211 midx=[1504230 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=7---
+Random Seed in Hex: 41d01b3834800000
+	Sampled solve time: 14.889558s
+	Min/Max weight: 0.0475063 / 88144.4
+	Top-10 Most Frequent Samples:
+		 cnt=470 midx=[1732647 252987]
+		 cnt=433 midx=[1732647 1113300]
+		 cnt=432 midx=[1732647 792105]
+		 cnt=432 midx=[960680 792105]
+		 cnt=413 midx=[960680 1113300]
+		 cnt=406 midx=[960680 252987]
+		 cnt=368 midx=[960680 228496]
+		 cnt=353 midx=[1732647 228496]
+		 cnt=234 midx=[1665202 792105]
+		 cnt=220 midx=[1504230 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=8---
+Random Seed in Hex: 41ce29f74e000000
+	Sampled solve time: 14.631286s
+	Min/Max weight: 0.0475063 / 54888.7
+	Top-10 Most Frequent Samples:
+		 cnt=473 midx=[960680 792105]
+		 cnt=434 midx=[1732647 792105]
+		 cnt=420 midx=[960680 252987]
+		 cnt=415 midx=[1732647 252987]
+		 cnt=413 midx=[1732647 1113300]
+		 cnt=394 midx=[960680 1113300]
+		 cnt=375 midx=[1732647 228496]
+		 cnt=357 midx=[960680 228496]
+		 cnt=235 midx=[1504230 792105]
+		 cnt=229 midx=[1665202 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=9---
+Random Seed in Hex: 41c9be81c9000000
+	Sampled solve time: 14.706820s
+	Min/Max weight: 0.0475063 / 71103.1
+	Top-10 Most Frequent Samples:
+		 cnt=461 midx=[1732647 1113300]
+		 cnt=448 midx=[1732647 792105]
+		 cnt=437 midx=[1732647 252987]
+		 cnt=435 midx=[960680 792105]
+		 cnt=429 midx=[960680 252987]
+		 cnt=416 midx=[960680 1113300]
+		 cnt=375 midx=[1732647 228496]
+		 cnt=367 midx=[960680 228496]
+		 cnt=202 midx=[1504230 1113300]
+		 cnt=202 midx=[1504230 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=10---
+Random Seed in Hex: 41a943e2c8000000
+	Sampled solve time: 14.626464s
+	Min/Max weight: 0.0475063 / 41115.3
+	Top-10 Most Frequent Samples:
+		 cnt=466 midx=[960680 792105]
+		 cnt=437 midx=[1732647 792105]
+		 cnt=431 midx=[1732647 252987]
+		 cnt=427 midx=[960680 1113300]
+		 cnt=418 midx=[1732647 1113300]
+		 cnt=377 midx=[960680 252987]
+		 cnt=367 midx=[1732647 228496]
+		 cnt=352 midx=[960680 228496]
+		 cnt=208 midx=[1504230 792105]
+		 cnt=204 midx=[1732647 67692]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=1---
+Random Seed in Hex: 419841d5a8000000
+	Sampled solve time: 15.841850s
+	Min/Max weight: 0.73884 / 45802.7
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[1256310 67692]
+		 cnt=7 midx=[1217801 281769]
+		 cnt=7 midx=[1217457 1113300]
+		 cnt=7 midx=[1210762 281769]
+		 cnt=7 midx=[974052 806116]
+		 cnt=7 midx=[874149 1455689]
+		 cnt=7 midx=[424917 1113300]
+		 cnt=6 midx=[1752689 1113300]
+		 cnt=6 midx=[1747247 1297447]
+		 cnt=6 midx=[1732647 1176167]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=2---
+Random Seed in Hex: 41e184d195a00000
+	Sampled solve time: 15.805914s
+	Min/Max weight: 0.73884 / 36582.4
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[553155 1434639]
+		 cnt=8 midx=[526625 716206]
+		 cnt=7 midx=[1588496 1113300]
+		 cnt=7 midx=[1423782 241628]
+		 cnt=7 midx=[1417172 868954]
+		 cnt=7 midx=[1398843 1309370]
+		 cnt=7 midx=[1266546 252987]
+		 cnt=7 midx=[1216271 944990]
+		 cnt=7 midx=[1188378 1074074]
+		 cnt=7 midx=[521575 852390]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=3---
+Random Seed in Hex: 41d60854ec000000
+	Sampled solve time: 15.932974s
+	Min/Max weight: 0.73884 / 40007.4
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[185438 465660]
+		 cnt=7 midx=[1513786 1113300]
+		 cnt=7 midx=[1420832 762829]
+		 cnt=7 midx=[1380086 1074074]
+		 cnt=7 midx=[1231784 280928]
+		 cnt=7 midx=[1174275 67692]
+		 cnt=7 midx=[878576 852390]
+		 cnt=7 midx=[488492 539099]
+		 cnt=7 midx=[296818 782043]
+		 cnt=7 midx=[177389 1074715]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=4---
+Random Seed in Hex: 41bd445df1000000
+	Sampled solve time: 15.690234s
+	Min/Max weight: 0.73884 / 17585.4
+	Top-10 Most Frequent Samples:
+		 cnt=9 midx=[1753859 580394]
+		 cnt=9 midx=[501716 73768]
+		 cnt=8 midx=[907159 1520411]
+		 cnt=8 midx=[407941 1434639]
+		 cnt=7 midx=[1732647 467022]
+		 cnt=7 midx=[1542227 1074074]
+		 cnt=7 midx=[399036 228496]
+		 cnt=6 midx=[1732647 479652]
+		 cnt=6 midx=[1703074 158295]
+		 cnt=6 midx=[1699631 1117634]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=5---
+Random Seed in Hex: 41e564e5a6800000
+	Sampled solve time: 15.658479s
+	Min/Max weight: 0.73884 / 17222.4
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[1497768 67692]
+		 cnt=8 midx=[1293436 73768]
+		 cnt=8 midx=[113498 360809]
+		 cnt=7 midx=[1699631 24673]
+		 cnt=7 midx=[1694682 228496]
+		 cnt=7 midx=[1588162 73768]
+		 cnt=7 midx=[1292937 228496]
+		 cnt=7 midx=[1084037 287279]
+		 cnt=7 midx=[1069501 1520411]
+		 cnt=7 midx=[1023981 1113300]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=6---
+Random Seed in Hex: 41b838e64a000000
+	Sampled solve time: 15.660255s
+	Min/Max weight: 0.73884 / 2.19246e+06
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[960680 918690]
+		 cnt=8 midx=[638954 792105]
+		 cnt=7 midx=[1674435 852390]
+		 cnt=7 midx=[1668328 1523199]
+		 cnt=7 midx=[1264616 73768]
+		 cnt=7 midx=[1084279 1074074]
+		 cnt=7 midx=[960680 1765789]
+		 cnt=7 midx=[891644 360809]
+		 cnt=7 midx=[484379 252987]
+		 cnt=7 midx=[444099 1773628]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=7---
+Random Seed in Hex: 41e425cadb200000
+	Sampled solve time: 16.215854s
+	Min/Max weight: 0.73884 / 42480.8
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[853822 709648]
+		 cnt=8 midx=[512526 792105]
+		 cnt=7 midx=[1561630 818033]
+		 cnt=7 midx=[1378844 67692]
+		 cnt=7 midx=[1261107 360809]
+		 cnt=7 midx=[1213272 1074074]
+		 cnt=7 midx=[1188378 360809]
+		 cnt=7 midx=[1146858 241628]
+		 cnt=7 midx=[1129138 709648]
+		 cnt=7 midx=[887538 826629]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=8---
+Random Seed in Hex: 41ee977d0ec00000
+	Sampled solve time: 15.574709s
+	Min/Max weight: 0.738842 / 317961
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[774894 228496]
+		 cnt=7 midx=[1299261 228496]
+		 cnt=7 midx=[997381 527036]
+		 cnt=7 midx=[821925 67692]
+		 cnt=7 midx=[724225 1659293]
+		 cnt=7 midx=[696023 1520411]
+		 cnt=7 midx=[455446 1092186]
+		 cnt=7 midx=[422174 852390]
+		 cnt=7 midx=[168309 1113300]
+		 cnt=7 midx=[76480 150863]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=9---
+Random Seed in Hex: 41ee35c78b200000
+	Sampled solve time: 15.535888s
+	Min/Max weight: 0.738842 / 38688.3
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[1277207 158295]
+		 cnt=7 midx=[1709912 73768]
+		 cnt=7 midx=[1653178 228496]
+		 cnt=7 midx=[1424510 252987]
+		 cnt=7 midx=[1419427 1434639]
+		 cnt=7 midx=[1272642 252987]
+		 cnt=7 midx=[980191 281769]
+		 cnt=7 midx=[976225 527036]
+		 cnt=7 midx=[943632 1387936]
+		 cnt=7 midx=[696558 792105]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=10---
+Random Seed in Hex: 41c5ade447800000
+	Sampled solve time: 15.490047s
+	Min/Max weight: 0.738842 / 64015.9
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[44734 792105]
+		 cnt=7 midx=[1487874 158295]
+		 cnt=7 midx=[1328625 1523199]
+		 cnt=7 midx=[1113743 1520411]
+		 cnt=7 midx=[1084707 55119]
+		 cnt=7 midx=[923932 158295]
+		 cnt=7 midx=[271250 55119]
+		 cnt=7 midx=[119857 1041511]
+		 cnt=7 midx=[91994 1113300]
+		 cnt=6 midx=[1648319 1455689]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Full Solve for k=2---
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=1---
+Random Seed in Hex: 41bd13895c000000
+	Sampled solve time: 98.007811s
+	Min/Max weight: 0.0326048 / 50121.5
+	Top-10 Most Frequent Samples:
+		 cnt=903 midx=[893180 792105]
+		 cnt=883 midx=[893180 1113300]
+		 cnt=840 midx=[893180 252987]
+		 cnt=760 midx=[893180 228496]
+		 cnt=652 midx=[1983278 792105]
+		 cnt=626 midx=[1983278 1113300]
+		 cnt=557 midx=[1983278 252987]
+		 cnt=514 midx=[1983278 228496]
+		 cnt=508 midx=[830322 1113300]
+		 cnt=498 midx=[830322 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=2---
+Random Seed in Hex: 41b5c407d2000000
+	Sampled solve time: 89.655488s
+	Min/Max weight: 0.0326048 / 44195.1
+	Top-10 Most Frequent Samples:
+		 cnt=923 midx=[893180 1113300]
+		 cnt=918 midx=[893180 792105]
+		 cnt=907 midx=[893180 252987]
+		 cnt=752 midx=[893180 228496]
+		 cnt=669 midx=[1983278 792105]
+		 cnt=627 midx=[1983278 1113300]
+		 cnt=575 midx=[1983278 252987]
+		 cnt=501 midx=[1983278 228496]
+		 cnt=494 midx=[830322 1113300]
+		 cnt=470 midx=[830322 252987]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=3---
+Random Seed in Hex: 41e1467545000000
+	Sampled solve time: 100.523890s
+	Min/Max weight: 0.0326048 / 74990.2
+	Top-10 Most Frequent Samples:
+		 cnt=968 midx=[893180 792105]
+		 cnt=938 midx=[893180 252987]
+		 cnt=895 midx=[893180 1113300]
+		 cnt=737 midx=[893180 228496]
+		 cnt=618 midx=[1983278 792105]
+		 cnt=601 midx=[1983278 252987]
+		 cnt=586 midx=[1983278 1113300]
+		 cnt=513 midx=[830322 792105]
+		 cnt=498 midx=[1983278 228496]
+		 cnt=449 midx=[830322 252987]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=4---
+Random Seed in Hex: 41e3e7fcb2400000
+	Sampled solve time: 93.100494s
+	Min/Max weight: 0.0326048 / 89800.9
+	Top-10 Most Frequent Samples:
+		 cnt=931 midx=[893180 792105]
+		 cnt=924 midx=[893180 1113300]
+		 cnt=906 midx=[893180 252987]
+		 cnt=793 midx=[893180 228496]
+		 cnt=620 midx=[1983278 792105]
+		 cnt=590 midx=[1983278 252987]
+		 cnt=566 midx=[1983278 1113300]
+		 cnt=561 midx=[1983278 228496]
+		 cnt=512 midx=[830322 252987]
+		 cnt=507 midx=[830322 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=5---
+Random Seed in Hex: 41ee4828ba200000
+	Sampled solve time: 123.039434s
+	Min/Max weight: 0.0326048 / 88801.8
+	Top-10 Most Frequent Samples:
+		 cnt=948 midx=[893180 792105]
+		 cnt=945 midx=[893180 252987]
+		 cnt=901 midx=[893180 1113300]
+		 cnt=775 midx=[893180 228496]
+		 cnt=623 midx=[1983278 792105]
+		 cnt=590 midx=[1983278 252987]
+		 cnt=573 midx=[1983278 1113300]
+		 cnt=545 midx=[1983278 228496]
+		 cnt=512 midx=[830322 792105]
+		 cnt=508 midx=[830322 1113300]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=6---
+Random Seed in Hex: 41edb61c5e200000
+	Sampled solve time: 96.057290s
+	Min/Max weight: 0.0326048 / 48688.1
+	Top-10 Most Frequent Samples:
+		 cnt=931 midx=[893180 792105]
+		 cnt=855 midx=[893180 1113300]
+		 cnt=840 midx=[893180 252987]
+		 cnt=780 midx=[893180 228496]
+		 cnt=641 midx=[1983278 792105]
+		 cnt=615 midx=[1983278 1113300]
+		 cnt=611 midx=[1983278 252987]
+		 cnt=524 midx=[1983278 228496]
+		 cnt=485 midx=[830322 1113300]
+		 cnt=469 midx=[830322 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=7---
+Random Seed in Hex: 41e54e16ca200000
+	Sampled solve time: 90.630940s
+	Min/Max weight: 0.0326048 / 75396.6
+	Top-10 Most Frequent Samples:
+		 cnt=954 midx=[893180 792105]
+		 cnt=892 midx=[893180 1113300]
+		 cnt=870 midx=[893180 252987]
+		 cnt=781 midx=[893180 228496]
+		 cnt=657 midx=[1983278 792105]
+		 cnt=618 midx=[1983278 252987]
+		 cnt=583 midx=[1983278 1113300]
+		 cnt=499 midx=[1983278 228496]
+		 cnt=487 midx=[830322 1113300]
+		 cnt=475 midx=[830322 252987]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=8---
+Random Seed in Hex: 41e2f0ee3e000000
+	Sampled solve time: 113.416334s
+	Min/Max weight: 0.0326048 / 22711.4
+	Top-10 Most Frequent Samples:
+		 cnt=977 midx=[893180 792105]
+		 cnt=945 midx=[893180 1113300]
+		 cnt=893 midx=[893180 252987]
+		 cnt=767 midx=[893180 228496]
+		 cnt=668 midx=[1983278 792105]
+		 cnt=615 midx=[1983278 252987]
+		 cnt=583 midx=[1983278 1113300]
+		 cnt=542 midx=[1983278 228496]
+		 cnt=494 midx=[830322 792105]
+		 cnt=453 midx=[830322 1113300]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=9---
+Random Seed in Hex: 41ef986a33400000
+	Sampled solve time: 90.298077s
+	Min/Max weight: 0.0326048 / 50359.8
+	Top-10 Most Frequent Samples:
+		 cnt=958 midx=[893180 792105]
+		 cnt=917 midx=[893180 1113300]
+		 cnt=873 midx=[893180 252987]
+		 cnt=766 midx=[893180 228496]
+		 cnt=616 midx=[1983278 792105]
+		 cnt=593 midx=[1983278 252987]
+		 cnt=564 midx=[1983278 1113300]
+		 cnt=526 midx=[830322 792105]
+		 cnt=500 midx=[1983278 228496]
+		 cnt=460 midx=[830322 252987]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=10---
+Random Seed in Hex: 41d7d803e4400000
+	Sampled solve time: 88.500332s
+	Min/Max weight: 0.0326048 / 670574
+	Top-10 Most Frequent Samples:
+		 cnt=959 midx=[893180 792105]
+		 cnt=906 midx=[893180 252987]
+		 cnt=868 midx=[893180 1113300]
+		 cnt=791 midx=[893180 228496]
+		 cnt=626 midx=[1983278 1113300]
+		 cnt=615 midx=[1983278 252987]
+		 cnt=599 midx=[1983278 792105]
+		 cnt=545 midx=[1983278 228496]
+		 cnt=518 midx=[830322 792105]
+		 cnt=486 midx=[830322 1113300]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=1---
+Random Seed in Hex: 41c02a9b66800000
+	Sampled solve time: 29.217428s
+	Min/Max weight: 0.799843 / 64715.5
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[1428379 1113300]
+		 cnt=6 midx=[4323960 67692]
+		 cnt=6 midx=[4063929 1113300]
+		 cnt=6 midx=[3291765 228496]
+		 cnt=6 midx=[3267979 290369]
+		 cnt=6 midx=[3154740 1113300]
+		 cnt=6 midx=[3080499 281769]
+		 cnt=6 midx=[2940895 228496]
+		 cnt=6 midx=[2892380 252987]
+		 cnt=6 midx=[2146915 55119]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=2---
+Random Seed in Hex: 41d38f2695c00000
+	Sampled solve time: 30.873404s
+	Min/Max weight: 0.799843 / 33696
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[3916370 1752768]
+		 cnt=7 midx=[1266411 158295]
+		 cnt=7 midx=[20138 792105]
+		 cnt=6 midx=[4063929 228496]
+		 cnt=6 midx=[3864486 67692]
+		 cnt=6 midx=[3843048 792105]
+		 cnt=6 midx=[3146627 158295]
+		 cnt=6 midx=[2834514 1551766]
+		 cnt=6 midx=[2605010 1113300]
+		 cnt=6 midx=[2385624 1504582]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=3---
+Random Seed in Hex: 41d279fbfac00000
+	Sampled solve time: 28.905802s
+	Min/Max weight: 0.799843 / 24904.4
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[3125451 252987]
+		 cnt=7 midx=[2117422 1113300]
+		 cnt=6 midx=[4629997 281769]
+		 cnt=6 midx=[4600404 1523199]
+		 cnt=6 midx=[4476232 252987]
+		 cnt=6 midx=[4306069 792105]
+		 cnt=6 midx=[2839906 1074715]
+		 cnt=6 midx=[2834514 969912]
+		 cnt=6 midx=[2733834 1555924]
+		 cnt=6 midx=[1640628 792105]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=4---
+Random Seed in Hex: 41ed47a562400000
+	Sampled solve time: 29.664338s
+	Min/Max weight: 0.799849 / 60247.9
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[3108289 1520411]
+		 cnt=7 midx=[3072150 792105]
+		 cnt=7 midx=[2780512 252987]
+		 cnt=7 midx=[1676178 1297447]
+		 cnt=6 midx=[4643813 580394]
+		 cnt=6 midx=[4620090 792105]
+		 cnt=6 midx=[4239161 1297447]
+		 cnt=6 midx=[4080408 281769]
+		 cnt=6 midx=[3763428 1504582]
+		 cnt=6 midx=[3720231 252987]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=5---
+Random Seed in Hex: 41b5ff535e000000
+	Sampled solve time: 29.119840s
+	Min/Max weight: 0.799843 / 53766.4
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[1983278 45623]
+		 cnt=7 midx=[4577527 1113300]
+		 cnt=7 midx=[3324237 67692]
+		 cnt=6 midx=[4740029 241628]
+		 cnt=6 midx=[4405109 1773628]
+		 cnt=6 midx=[4231893 1101839]
+		 cnt=6 midx=[3091921 252987]
+		 cnt=6 midx=[2820909 1113300]
+		 cnt=6 midx=[2614893 806116]
+		 cnt=6 midx=[2442566 252987]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=6---
+Random Seed in Hex: 41eec35f6c000000
+	Sampled solve time: 30.781687s
+	Min/Max weight: 0.799843 / 88293.1
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[4643813 928747]
+		 cnt=7 midx=[4500457 228496]
+		 cnt=7 midx=[3731515 792105]
+		 cnt=7 midx=[956390 646902]
+		 cnt=6 midx=[3961454 1129845]
+		 cnt=6 midx=[3293881 73768]
+		 cnt=6 midx=[2897184 792105]
+		 cnt=6 midx=[2782129 709648]
+		 cnt=6 midx=[2614893 260628]
+		 cnt=6 midx=[2099382 1623587]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=7---
+Random Seed in Hex: 41e99de639e00000
+	Sampled solve time: 30.432615s
+	Min/Max weight: 0.799843 / 78760.4
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[3010826 158295]
+		 cnt=7 midx=[2910148 228496]
+		 cnt=7 midx=[2843753 158295]
+		 cnt=6 midx=[4493791 241628]
+		 cnt=6 midx=[4081081 1407266]
+		 cnt=6 midx=[3969758 158295]
+		 cnt=6 midx=[3037805 1113300]
+		 cnt=6 midx=[2385624 55119]
+		 cnt=6 midx=[2246903 1455689]
+		 cnt=6 midx=[2186967 281769]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=8---
+Random Seed in Hex: 41d205f9d1400000
+	Sampled solve time: 29.968609s
+	Min/Max weight: 0.799849 / 87815.8
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[1983278 1074721]
+		 cnt=7 midx=[1059350 1154338]
+		 cnt=7 midx=[893180 252686]
+		 cnt=6 midx=[4740029 158295]
+		 cnt=6 midx=[4477549 228496]
+		 cnt=6 midx=[4448355 1113300]
+		 cnt=6 midx=[4307973 252987]
+		 cnt=6 midx=[4031016 228496]
+		 cnt=6 midx=[3425729 1551766]
+		 cnt=6 midx=[2799804 228496]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=9---
+Random Seed in Hex: 41e5034814800000
+	Sampled solve time: 29.019667s
+	Min/Max weight: 0.799843 / 127208
+	Top-10 Most Frequent Samples:
+		 cnt=8 midx=[2848859 1773628]
+		 cnt=7 midx=[925219 901225]
+		 cnt=6 midx=[4173763 792105]
+		 cnt=6 midx=[3843048 792105]
+		 cnt=6 midx=[3525756 228496]
+		 cnt=6 midx=[3268382 1113300]
+		 cnt=6 midx=[3110568 252987]
+		 cnt=6 midx=[3037475 241628]
+		 cnt=6 midx=[2571794 1113300]
+		 cnt=6 midx=[2563638 1773628]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=10---
+Random Seed in Hex: 41cc3059b6000000
+	Sampled solve time: 28.941371s
+	Min/Max weight: 0.799849 / 136195
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[4173763 792105]
+		 cnt=7 midx=[3414071 150863]
+		 cnt=7 midx=[893180 1101539]
+		 cnt=6 midx=[4703386 73768]
+		 cnt=6 midx=[4643813 1455689]
+		 cnt=6 midx=[4476232 252987]
+		 cnt=6 midx=[4291109 150863]
+		 cnt=6 midx=[4154648 228496]
+		 cnt=6 midx=[3458963 228496]
+		 cnt=6 midx=[3243159 158295]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Full Solve for k=3---
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=1---
+Random Seed in Hex: 41edb792fe000000
+	Sampled solve time: 13.995954s
+	Min/Max weight: 0.0402494 / 418346
+	Top-10 Most Frequent Samples:
+		 cnt=634 midx=[893180 1732647]
+		 cnt=620 midx=[893180 960680]
+		 cnt=407 midx=[1983278 960680]
+		 cnt=401 midx=[1983278 1732647]
+		 cnt=320 midx=[893180 1504230]
+		 cnt=314 midx=[830322 1732647]
+		 cnt=313 midx=[830322 960680]
+		 cnt=278 midx=[893180 1665202]
+		 cnt=206 midx=[1983278 1504230]
+		 cnt=180 midx=[1983278 1665202]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=2---
+Random Seed in Hex: 41e63739bac00000
+	Sampled solve time: 13.613207s
+	Min/Max weight: 0.0402494 / 303152
+	Top-10 Most Frequent Samples:
+		 cnt=601 midx=[893180 960680]
+		 cnt=598 midx=[893180 1732647]
+		 cnt=420 midx=[1983278 960680]
+		 cnt=401 midx=[1983278 1732647]
+		 cnt=335 midx=[830322 1732647]
+		 cnt=314 midx=[830322 960680]
+		 cnt=285 midx=[893180 1504230]
+		 cnt=274 midx=[893180 1665202]
+		 cnt=219 midx=[1983278 1504230]
+		 cnt=185 midx=[1983278 1665202]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=3---
+Random Seed in Hex: 41db84b7fe800000
+	Sampled solve time: 14.160986s
+	Min/Max weight: 0.0402494 / 189272
+	Top-10 Most Frequent Samples:
+		 cnt=667 midx=[893180 960680]
+		 cnt=564 midx=[893180 1732647]
+		 cnt=431 midx=[1983278 1732647]
+		 cnt=406 midx=[1983278 960680]
+		 cnt=304 midx=[893180 1665202]
+		 cnt=301 midx=[893180 1504230]
+		 cnt=298 midx=[830322 1732647]
+		 cnt=282 midx=[830322 960680]
+		 cnt=229 midx=[1983278 1665202]
+		 cnt=228 midx=[1983278 1504230]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=4---
+Random Seed in Hex: 41e83bd97f600000
+	Sampled solve time: 13.889211s
+	Min/Max weight: 0.0402494 / 205835
+	Top-10 Most Frequent Samples:
+		 cnt=614 midx=[893180 960680]
+		 cnt=557 midx=[893180 1732647]
+		 cnt=425 midx=[1983278 1732647]
+		 cnt=415 midx=[1983278 960680]
+		 cnt=313 midx=[830322 960680]
+		 cnt=301 midx=[830322 1732647]
+		 cnt=295 midx=[893180 1504230]
+		 cnt=265 midx=[893180 1665202]
+		 cnt=220 midx=[1983278 1504230]
+		 cnt=193 midx=[1983278 1665202]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=5---
+Random Seed in Hex: 41cd04b077800000
+	Sampled solve time: 13.923295s
+	Min/Max weight: 0.0402494 / 165231
+	Top-10 Most Frequent Samples:
+		 cnt=660 midx=[893180 1732647]
+		 cnt=616 midx=[893180 960680]
+		 cnt=431 midx=[1983278 960680]
+		 cnt=390 midx=[1983278 1732647]
+		 cnt=334 midx=[830322 1732647]
+		 cnt=321 midx=[893180 1665202]
+		 cnt=320 midx=[830322 960680]
+		 cnt=319 midx=[893180 1504230]
+		 cnt=198 midx=[1983278 1504230]
+		 cnt=191 midx=[1983278 1665202]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=6---
+Random Seed in Hex: 41bab479eb000000
+	Sampled solve time: 13.442095s
+	Min/Max weight: 0.0402494 / 86076.9
+	Top-10 Most Frequent Samples:
+		 cnt=661 midx=[893180 960680]
+		 cnt=594 midx=[893180 1732647]
+		 cnt=406 midx=[1983278 1732647]
+		 cnt=387 midx=[1983278 960680]
+		 cnt=328 midx=[830322 960680]
+		 cnt=324 midx=[830322 1732647]
+		 cnt=283 midx=[893180 1504230]
+		 cnt=265 midx=[893180 1665202]
+		 cnt=216 midx=[1983278 1504230]
+		 cnt=185 midx=[1983278 1665202]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=7---
+Random Seed in Hex: 41e16e7fca000000
+	Sampled solve time: 14.094001s
+	Min/Max weight: 0.0402494 / 887897
+	Top-10 Most Frequent Samples:
+		 cnt=619 midx=[893180 960680]
+		 cnt=600 midx=[893180 1732647]
+		 cnt=415 midx=[1983278 960680]
+		 cnt=402 midx=[1983278 1732647]
+		 cnt=334 midx=[830322 1732647]
+		 cnt=323 midx=[830322 960680]
+		 cnt=295 midx=[893180 1504230]
+		 cnt=291 midx=[893180 1665202]
+		 cnt=193 midx=[1983278 1504230]
+		 cnt=175 midx=[1983278 1665202]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=8---
+Random Seed in Hex: 41e5d6f9d1800000
+	Sampled solve time: 14.530566s
+	Min/Max weight: 0.0402494 / 768633
+	Top-10 Most Frequent Samples:
+		 cnt=630 midx=[893180 1732647]
+		 cnt=620 midx=[893180 960680]
+		 cnt=421 midx=[1983278 960680]
+		 cnt=401 midx=[1983278 1732647]
+		 cnt=320 midx=[830322 1732647]
+		 cnt=318 midx=[830322 960680]
+		 cnt=294 midx=[893180 1665202]
+		 cnt=270 midx=[893180 1504230]
+		 cnt=208 midx=[1983278 1665202]
+		 cnt=201 midx=[1983278 1504230]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=9---
+Random Seed in Hex: 41c854adea800000
+	Sampled solve time: 13.236071s
+	Min/Max weight: 0.0402494 / 297730
+	Top-10 Most Frequent Samples:
+		 cnt=662 midx=[893180 1732647]
+		 cnt=615 midx=[893180 960680]
+		 cnt=439 midx=[1983278 960680]
+		 cnt=401 midx=[1983278 1732647]
+		 cnt=357 midx=[830322 1732647]
+		 cnt=340 midx=[830322 960680]
+		 cnt=285 midx=[893180 1504230]
+		 cnt=260 midx=[893180 1665202]
+		 cnt=213 midx=[1983278 1665202]
+		 cnt=189 midx=[1983278 1504230]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=10---
+Random Seed in Hex: 41cf939ac7800000
+	Sampled solve time: 13.079435s
+	Min/Max weight: 0.0402494 / 315598
+	Top-10 Most Frequent Samples:
+		 cnt=603 midx=[893180 1732647]
+		 cnt=585 midx=[893180 960680]
+		 cnt=420 midx=[1983278 1732647]
+		 cnt=373 midx=[1983278 960680]
+		 cnt=368 midx=[830322 960680]
+		 cnt=326 midx=[830322 1732647]
+		 cnt=311 midx=[893180 1504230]
+		 cnt=278 midx=[893180 1665202]
+		 cnt=216 midx=[1983278 1504230]
+		 cnt=183 midx=[1983278 1665202]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=1---
+Random Seed in Hex: 41da15aa99800000
+	Sampled solve time: 12.268715s
+	Min/Max weight: 0.893319 / 292100
+	Top-10 Most Frequent Samples:
+		 cnt=6 midx=[1983278 1114652]
+		 cnt=5 midx=[4513790 434218]
+		 cnt=5 midx=[4072136 960680]
+		 cnt=5 midx=[3267979 1504230]
+		 cnt=5 midx=[3227732 1504230]
+		 cnt=5 midx=[2791330 1732647]
+		 cnt=5 midx=[2708095 22900]
+		 cnt=5 midx=[2637812 1433959]
+		 cnt=5 midx=[1983278 835197]
+		 cnt=5 midx=[1072390 434218]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=2---
+Random Seed in Hex: 41d6334358800000
+	Sampled solve time: 12.422815s
+	Min/Max weight: 0.893319 / 136190
+	Top-10 Most Frequent Samples:
+		 cnt=6 midx=[4739386 1699631]
+		 cnt=6 midx=[1983278 977163]
+		 cnt=6 midx=[1983278 830544]
+		 cnt=6 midx=[1587934 1732647]
+		 cnt=6 midx=[830322 1408357]
+		 cnt=5 midx=[4081081 33758]
+		 cnt=5 midx=[3499342 960680]
+		 cnt=5 midx=[2963706 958434]
+		 cnt=5 midx=[2571957 148023]
+		 cnt=5 midx=[2179051 1561337]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=3---
+Random Seed in Hex: 41ea5fa706400000
+	Sampled solve time: 12.500291s
+	Min/Max weight: 0.893385 / 118663
+	Top-10 Most Frequent Samples:
+		 cnt=6 midx=[2218369 960680]
+		 cnt=6 midx=[2099382 434218]
+		 cnt=6 midx=[2003310 816303]
+		 cnt=6 midx=[830322 1720767]
+		 cnt=5 midx=[4555842 960680]
+		 cnt=5 midx=[4414812 960680]
+		 cnt=5 midx=[4213557 567338]
+		 cnt=5 midx=[4168819 960680]
+		 cnt=5 midx=[3853441 1732647]
+		 cnt=5 midx=[3469026 1504230]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=4---
+Random Seed in Hex: 419b498b28000000
+	Sampled solve time: 12.570929s
+	Min/Max weight: 0.893319 / 151985
+	Top-10 Most Frequent Samples:
+		 cnt=6 midx=[4213557 1419427]
+		 cnt=6 midx=[1059350 7431]
+		 cnt=6 midx=[893180 117338]
+		 cnt=6 midx=[519828 853822]
+		 cnt=5 midx=[4775422 1231784]
+		 cnt=5 midx=[4608862 1732647]
+		 cnt=5 midx=[4384443 960680]
+		 cnt=5 midx=[4081081 816303]
+		 cnt=5 midx=[4070860 13652]
+		 cnt=5 midx=[3747135 960680]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=5---
+Random Seed in Hex: 41e77d6603400000
+	Sampled solve time: 12.371969s
+	Min/Max weight: 0.893319 / 288451
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[4797522 1732647]
+		 cnt=6 midx=[893180 527057]
+		 cnt=5 midx=[4213557 231301]
+		 cnt=5 midx=[3425729 1707072]
+		 cnt=5 midx=[3263948 1420832]
+		 cnt=5 midx=[3204979 407030]
+		 cnt=5 midx=[2956051 165155]
+		 cnt=5 midx=[1983278 1073615]
+		 cnt=5 midx=[1890006 530236]
+		 cnt=5 midx=[1545801 1398843]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=6---
+Random Seed in Hex: 41d74339d0400000
+	Sampled solve time: 11.962395s
+	Min/Max weight: 0.893319 / 723686
+	Top-10 Most Frequent Samples:
+		 cnt=6 midx=[4601535 13652]
+		 cnt=6 midx=[1644987 1665202]
+		 cnt=5 midx=[4601535 360843]
+		 cnt=5 midx=[3892058 960680]
+		 cnt=5 midx=[3028101 1084279]
+		 cnt=5 midx=[2839906 1420832]
+		 cnt=5 midx=[2708095 1417172]
+		 cnt=5 midx=[2676476 1732647]
+		 cnt=5 midx=[1890006 526625]
+		 cnt=5 midx=[1417032 1732647]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=7---
+Random Seed in Hex: 41d43e3cd3800000
+	Sampled solve time: 12.226855s
+	Min/Max weight: 0.893385 / 260033
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[4231893 398091]
+		 cnt=7 midx=[2825465 1732647]
+		 cnt=6 midx=[1983278 536275]
+		 cnt=6 midx=[893180 652868]
+		 cnt=6 midx=[830322 917539]
+		 cnt=5 midx=[4739386 165155]
+		 cnt=5 midx=[4231893 1556910]
+		 cnt=5 midx=[2963706 755101]
+		 cnt=5 midx=[2963706 33681]
+		 cnt=5 midx=[2614893 1493328]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=8---
+Random Seed in Hex: 41b5e4579c000000
+	Sampled solve time: 12.123882s
+	Min/Max weight: 0.893319 / 133234
+	Top-10 Most Frequent Samples:
+		 cnt=6 midx=[1857838 208646]
+		 cnt=6 midx=[860792 960680]
+		 cnt=6 midx=[220684 960680]
+		 cnt=5 midx=[4739386 1699631]
+		 cnt=5 midx=[4521864 960680]
+		 cnt=5 midx=[3808931 816303]
+		 cnt=5 midx=[2954272 22900]
+		 cnt=5 midx=[2708095 124080]
+		 cnt=5 midx=[2149864 1702100]
+		 cnt=5 midx=[1983278 1441053]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=9---
+Random Seed in Hex: 41e79dac4d200000
+	Sampled solve time: 13.376983s
+	Min/Max weight: 0.893319 / 308824
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[830322 162297]
+		 cnt=6 midx=[3219272 360843]
+		 cnt=6 midx=[830322 1173812]
+		 cnt=6 midx=[273930 960680]
+		 cnt=5 midx=[4213557 1723748]
+		 cnt=5 midx=[4213557 634046]
+		 cnt=5 midx=[4196463 1732647]
+		 cnt=5 midx=[3401342 113401]
+		 cnt=5 midx=[3219272 644971]
+		 cnt=5 midx=[2708095 1215934]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=10---
+Random Seed in Hex: 41dfb5eee2400000
+	Sampled solve time: 13.037303s
+	Min/Max weight: 0.893319 / 540334
+	Top-10 Most Frequent Samples:
+		 cnt=7 midx=[1983278 1577670]
+		 cnt=7 midx=[519828 111127]
+		 cnt=6 midx=[4070860 1420832]
+		 cnt=6 midx=[2963706 470370]
+		 cnt=6 midx=[2688039 593490]
+		 cnt=6 midx=[893180 806126]
+		 cnt=5 midx=[4601535 440369]
+		 cnt=5 midx=[3641409 960680]
+		 cnt=5 midx=[3254603 153518]
+		 cnt=5 midx=[2963706 1113651]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+	 Starting runs with loaded solution (Combine)Random Seed in Hex: 41e214394ba00000
+
+*** Epsilon Runs ***
+
+---Extracting data from tensor---
+Tensor is of size [ 4821207 1774269 1805187 ] with nnz = 1741809018
+
+---Calculating fiber indices---
+Elapsed time is 115.388437 seconds.
+
+---Setup Factor Matrices---
+Using provided factor matrices
+Rank = 10
+
+---Calculating leverage scores---
+Elapsed time is 1.744722 seconds.
+
+---Full Solve for k=1---
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=1---
+Random Seed in Hex: 41ef3c9be9a00000
+	Sampled solve time: 14.353785s
+	Min/Max weight: 0.355112 / 22815.9
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1752768]
+		 cnt=1 midx=[1774257 1585685]
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 928747]
+		 cnt=1 midx=[1774257 487590]
+		 cnt=1 midx=[1774257 281769]
+		 cnt=1 midx=[1774257 150863]
+		 cnt=1 midx=[1774257 73768]
+		 cnt=1 midx=[1774118 1113300]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=2---
+Random Seed in Hex: 41e73798d7c00000
+	Sampled solve time: 14.280342s
+	Min/Max weight: 0.34699 / 37046.1
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 837356]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 360809]
+		 cnt=1 midx=[1774257 241628]
+		 cnt=1 midx=[1774257 228496]
+		 cnt=1 midx=[1774257 150863]
+		 cnt=1 midx=[1774105 1523199]
+		 cnt=1 midx=[1774105 1129845]
+		 cnt=1 midx=[1774105 852390]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=3---
+Random Seed in Hex: 41dfdf33de000000
+	Sampled solve time: 14.462324s
+	Min/Max weight: 0.371179 / 20485.5
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1523199]
+		 cnt=1 midx=[1774257 1407266]
+		 cnt=1 midx=[1774257 1387936]
+		 cnt=1 midx=[1774257 1044236]
+		 cnt=1 midx=[1774257 868954]
+		 cnt=1 midx=[1774257 852390]
+		 cnt=1 midx=[1774257 843648]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 228496]
+		 cnt=1 midx=[1774257 67692]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=4---
+Random Seed in Hex: 41dede2b44800000
+	Sampled solve time: 14.582572s
+	Min/Max weight: 0.38623 / 92336.9
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1509712]
+		 cnt=1 midx=[1774257 1334560]
+		 cnt=1 midx=[1774257 1145079]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 818033]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 682299]
+		 cnt=1 midx=[1774257 465660]
+		 cnt=1 midx=[1774257 281769]
+		 cnt=1 midx=[1774257 252987]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=5---
+Random Seed in Hex: 41e9f365e8200000
+	Sampled solve time: 14.111512s
+	Min/Max weight: 0.320009 / 168423
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 1074074]
+		 cnt=1 midx=[1774257 969912]
+		 cnt=1 midx=[1774257 910137]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 780229]
+		 cnt=1 midx=[1774257 649797]
+		 cnt=1 midx=[1774257 529093]
+		 cnt=1 midx=[1774257 290369]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=6---
+Random Seed in Hex: 418a549a28000000
+	Sampled solve time: 14.739316s
+	Min/Max weight: 0.390826 / 25138.2
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1129845]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 943725]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 539099]
+		 cnt=1 midx=[1774257 527036]
+		 cnt=1 midx=[1774257 419046]
+		 cnt=1 midx=[1774257 281769]
+		 cnt=1 midx=[1774257 252987]
+		 cnt=1 midx=[1774257 241628]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=7---
+Random Seed in Hex: 41e07c1f95c00000
+	Sampled solve time: 14.190597s
+	Min/Max weight: 0.357302 / 58473.9
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1523199]
+		 cnt=1 midx=[1774257 1460618]
+		 cnt=1 midx=[1774257 852390]
+		 cnt=1 midx=[1774257 725414]
+		 cnt=1 midx=[1774257 682299]
+		 cnt=1 midx=[1774257 485317]
+		 cnt=1 midx=[1774257 290369]
+		 cnt=1 midx=[1774257 287279]
+		 cnt=1 midx=[1774257 228496]
+		 cnt=1 midx=[1774257 158295]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=8---
+Random Seed in Hex: 41e2e4d9e9800000
+	Sampled solve time: 14.278421s
+	Min/Max weight: 0.304447 / 23371.6
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774268 1041511]
+		 cnt=1 midx=[1774257 1773628]
+		 cnt=1 midx=[1774257 1523199]
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 1197711]
+		 cnt=1 midx=[1774257 1129845]
+		 cnt=1 midx=[1774257 1051431]
+		 cnt=1 midx=[1774257 885390]
+		 cnt=1 midx=[1774257 691889]
+		 cnt=1 midx=[1774257 252987]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=9---
+Random Seed in Hex: 41e1682594200000
+	Sampled solve time: 14.402813s
+	Min/Max weight: 0.344681 / 51129.4
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1635760]
+		 cnt=1 midx=[1774257 1551766]
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 901225]
+		 cnt=1 midx=[1774257 885390]
+		 cnt=1 midx=[1774257 852390]
+		 cnt=1 midx=[1774257 438201]
+		 cnt=1 midx=[1774257 340432]
+		 cnt=1 midx=[1774257 67692]
+		 cnt=1 midx=[1774105 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=, trial=10---
+Random Seed in Hex: 41c38cfa60800000
+	Sampled solve time: 14.431806s
+	Min/Max weight: 0.327363 / 454826
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774268 1523199]
+		 cnt=1 midx=[1774268 762829]
+		 cnt=1 midx=[1774257 1612263]
+		 cnt=1 midx=[1774257 1551766]
+		 cnt=1 midx=[1774257 1434639]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 1074715]
+		 cnt=1 midx=[1774257 1074074]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 631554]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=1---
+Random Seed in Hex: 41ea27d7ed400000
+	Sampled solve time: 16.168035s
+	Min/Max weight: 0.738842 / 30614.6
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1774137]
+		 cnt=1 midx=[1774257 1523199]
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 1504582]
+		 cnt=1 midx=[1774257 1118928]
+		 cnt=1 midx=[1774257 1084628]
+		 cnt=1 midx=[1774257 1074715]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 580394]
+		 cnt=1 midx=[1774257 562019]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=2---
+Random Seed in Hex: 41ec4e5040200000
+	Sampled solve time: 16.007676s
+	Min/Max weight: 0.73884 / 72461.8
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1781537]
+		 cnt=1 midx=[1774257 1741513]
+		 cnt=1 midx=[1774257 1551766]
+		 cnt=1 midx=[1774257 1523199]
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 1455689]
+		 cnt=1 midx=[1774257 1176167]
+		 cnt=1 midx=[1774257 1129845]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 792105]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=3---
+Random Seed in Hex: 41d7034066800000
+	Sampled solve time: 15.923910s
+	Min/Max weight: 0.738848 / 22306.3
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1773628]
+		 cnt=1 midx=[1774257 1685085]
+		 cnt=1 midx=[1774257 1523199]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 1074715]
+		 cnt=1 midx=[1774257 580394]
+		 cnt=1 midx=[1774257 479855]
+		 cnt=1 midx=[1774257 281769]
+		 cnt=1 midx=[1774257 252987]
+		 cnt=1 midx=[1774257 228496]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=4---
+Random Seed in Hex: 41ecf911c2600000
+	Sampled solve time: 15.908541s
+	Min/Max weight: 0.738842 / 30469.9
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1555924]
+		 cnt=1 midx=[1774257 1523199]
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 1074715]
+		 cnt=1 midx=[1774257 901225]
+		 cnt=1 midx=[1774257 871105]
+		 cnt=1 midx=[1774257 578331]
+		 cnt=1 midx=[1774257 564228]
+		 cnt=1 midx=[1774257 539099]
+		 cnt=1 midx=[1774257 476680]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=5---
+Random Seed in Hex: 41e4cbd11fa00000
+	Sampled solve time: 16.275150s
+	Min/Max weight: 0.738848 / 222106
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1711611]
+		 cnt=1 midx=[1774257 1659293]
+		 cnt=1 midx=[1774257 1623587]
+		 cnt=1 midx=[1774257 1555924]
+		 cnt=1 midx=[1774257 1504582]
+		 cnt=1 midx=[1774257 1407266]
+		 cnt=1 midx=[1774257 1262284]
+		 cnt=1 midx=[1774257 1224799]
+		 cnt=1 midx=[1774257 1170098]
+		 cnt=1 midx=[1774257 1113300]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=6---
+Random Seed in Hex: 41e5e95799000000
+	Sampled solve time: 15.750441s
+	Min/Max weight: 0.73884 / 67280.8
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1728294]
+		 cnt=1 midx=[1774257 1407266]
+		 cnt=1 midx=[1774257 1281263]
+		 cnt=1 midx=[1774257 1257293]
+		 cnt=1 midx=[1774257 1041511]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 749564]
+		 cnt=1 midx=[1774257 691889]
+		 cnt=1 midx=[1774257 596552]
+		 cnt=1 midx=[1774257 485317]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=7---
+Random Seed in Hex: 418f4562d0000000
+	Sampled solve time: 15.682583s
+	Min/Max weight: 0.738848 / 57802.2
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 1275255]
+		 cnt=1 midx=[1774257 1252280]
+		 cnt=1 midx=[1774257 1041511]
+		 cnt=1 midx=[1774257 950201]
+		 cnt=1 midx=[1774257 939910]
+		 cnt=1 midx=[1774257 885390]
+		 cnt=1 midx=[1774257 842462]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 290369]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=8---
+Random Seed in Hex: 41d62ba63a000000
+	Sampled solve time: 15.706795s
+	Min/Max weight: 0.738848 / 47075.1
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1657492]
+		 cnt=1 midx=[1774257 1551766]
+		 cnt=1 midx=[1774257 1545365]
+		 cnt=1 midx=[1774257 1520411]
+		 cnt=1 midx=[1774257 1309370]
+		 cnt=1 midx=[1774257 1278411]
+		 cnt=1 midx=[1774257 1275894]
+		 cnt=1 midx=[1774257 1168194]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 969912]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=9---
+Random Seed in Hex: 41dd709953c00000
+	Sampled solve time: 15.663620s
+	Min/Max weight: 0.738846 / 23940.7
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1802049]
+		 cnt=1 midx=[1774257 1773628]
+		 cnt=1 midx=[1774257 1661291]
+		 cnt=1 midx=[1774257 1523199]
+		 cnt=1 midx=[1774257 1504969]
+		 cnt=1 midx=[1774257 1504582]
+		 cnt=1 midx=[1774257 1297447]
+		 cnt=1 midx=[1774257 1275255]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 852390]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Sampled Solve for k=1, s=131072, c=, t=7.62939e-06, trial=10---
+Random Seed in Hex: 41edcfc421600000
+	Sampled solve time: 15.728723s
+	Min/Max weight: 0.738842 / 59774.3
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[1774257 1773628]
+		 cnt=1 midx=[1774257 1665491]
+		 cnt=1 midx=[1774257 1455689]
+		 cnt=1 midx=[1774257 1113300]
+		 cnt=1 midx=[1774257 1074074]
+		 cnt=1 midx=[1774257 857267]
+		 cnt=1 midx=[1774257 803689]
+		 cnt=1 midx=[1774257 792105]
+		 cnt=1 midx=[1774257 757492]
+		 cnt=1 midx=[1774257 631554]
+	 14959 Deterministic Indices with Total Probability 0.516443 
+		 prob=3.381e-03 midx=[1732647 792105]
+		 prob=3.374e-03 midx=[960680 792105]
+		 prob=3.222e-03 midx=[1732647 1113300]
+		 prob=3.216e-03 midx=[960680 1113300]
+		 prob=3.202e-03 midx=[1732647 252987]
+		 prob=3.196e-03 midx=[960680 252987]
+		 prob=2.760e-03 midx=[1732647 228496]
+		 prob=2.755e-03 midx=[960680 228496]
+		 prob=1.599e-03 midx=[1665202 792105]
+		 prob=1.591e-03 midx=[1504230 792105]
+
+---Full Solve for k=2---
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=1---
+Random Seed in Hex: 41e65c8c5c400000
+	Sampled solve time: 26.979463s
+	Min/Max weight: 0.34994 / 455113
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820410 379434]
+		 cnt=1 midx=[4820037 1520411]
+		 cnt=1 midx=[4820037 1475119]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 1074074]
+		 cnt=1 midx=[4820037 792105]
+		 cnt=1 midx=[4820037 290369]
+		 cnt=1 midx=[4820037 228496]
+		 cnt=1 midx=[4820037 67692]
+		 cnt=1 midx=[4819677 1523199]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=2---
+Random Seed in Hex: 41e4650034000000
+	Sampled solve time: 25.860714s
+	Min/Max weight: 0.33309 / 33597.8
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4821084 67692]
+		 cnt=1 midx=[4820430 1728294]
+		 cnt=1 midx=[4820037 1773628]
+		 cnt=1 midx=[4820037 1129845]
+		 cnt=1 midx=[4820037 901225]
+		 cnt=1 midx=[4820037 252987]
+		 cnt=1 midx=[4820037 228496]
+		 cnt=1 midx=[4820037 217337]
+		 cnt=1 midx=[4820037 67692]
+		 cnt=1 midx=[4819677 1084628]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=3---
+Random Seed in Hex: 41d3c24caa000000
+	Sampled solve time: 26.339766s
+	Min/Max weight: 0.390123 / 1.01021e+06
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820430 792105]
+		 cnt=1 midx=[4820410 228496]
+		 cnt=1 midx=[4820160 1041511]
+		 cnt=1 midx=[4820037 1555924]
+		 cnt=1 midx=[4820037 1275255]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 1084628]
+		 cnt=1 midx=[4820037 1074074]
+		 cnt=1 midx=[4820037 885390]
+		 cnt=1 midx=[4820037 792105]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=4---
+Random Seed in Hex: 41eec8dde5800000
+	Sampled solve time: 28.215965s
+	Min/Max weight: 0.379696 / 31479
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820787 1074715]
+		 cnt=1 midx=[4820037 1728294]
+		 cnt=1 midx=[4820037 1690218]
+		 cnt=1 midx=[4820037 1665978]
+		 cnt=1 midx=[4820037 1074715]
+		 cnt=1 midx=[4820037 1074074]
+		 cnt=1 midx=[4820037 928747]
+		 cnt=1 midx=[4820037 792105]
+		 cnt=1 midx=[4820037 535817]
+		 cnt=1 midx=[4820037 150863]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=5---
+Random Seed in Hex: 41bc076081000000
+	Sampled solve time: 25.332484s
+	Min/Max weight: 0.350953 / 34316.4
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820524 854518]
+		 cnt=1 midx=[4820410 281769]
+		 cnt=1 midx=[4820037 1796375]
+		 cnt=1 midx=[4820037 1711611]
+		 cnt=1 midx=[4820037 1523199]
+		 cnt=1 midx=[4820037 1407266]
+		 cnt=1 midx=[4820037 1197711]
+		 cnt=1 midx=[4820037 1196131]
+		 cnt=1 midx=[4820037 1074715]
+		 cnt=1 midx=[4820037 782043]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=6---
+Random Seed in Hex: 41ec45bb64e00000
+	Sampled solve time: 26.303448s
+	Min/Max weight: 0.373727 / 336691
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820733 852390]
+		 cnt=1 midx=[4820037 1578885]
+		 cnt=1 midx=[4820037 1551766]
+		 cnt=1 midx=[4820037 1523199]
+		 cnt=1 midx=[4820037 1465418]
+		 cnt=1 midx=[4820037 1434639]
+		 cnt=1 midx=[4820037 1168194]
+		 cnt=1 midx=[4820037 1129845]
+		 cnt=1 midx=[4820037 792105]
+		 cnt=1 midx=[4820037 645916]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=7---
+Random Seed in Hex: 41edf38840400000
+	Sampled solve time: 24.821885s
+	Min/Max weight: 0.377948 / 36363.5
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820037 1692142]
+		 cnt=1 midx=[4820037 1683077]
+		 cnt=1 midx=[4820037 1659293]
+		 cnt=1 midx=[4820037 1504582]
+		 cnt=1 midx=[4820037 806116]
+		 cnt=1 midx=[4820037 539099]
+		 cnt=1 midx=[4820037 252987]
+		 cnt=1 midx=[4820037 228496]
+		 cnt=1 midx=[4820037 158295]
+		 cnt=1 midx=[4820037 150863]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=8---
+Random Seed in Hex: 41e46d6524a00000
+	Sampled solve time: 28.860552s
+	Min/Max weight: 0.373394 / 40177.5
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820410 792105]
+		 cnt=1 midx=[4820037 1555924]
+		 cnt=1 midx=[4820037 1551766]
+		 cnt=1 midx=[4820037 1455689]
+		 cnt=1 midx=[4820037 1129845]
+		 cnt=1 midx=[4820037 1074715]
+		 cnt=1 midx=[4820037 836344]
+		 cnt=1 midx=[4820037 792105]
+		 cnt=1 midx=[4820037 260628]
+		 cnt=1 midx=[4820037 67692]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=9---
+Random Seed in Hex: 41e153a232800000
+	Sampled solve time: 26.058075s
+	Min/Max weight: 0.313846 / 153159
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820684 1074715]
+		 cnt=1 midx=[4820037 1258940]
+		 cnt=1 midx=[4820037 1129845]
+		 cnt=1 midx=[4820037 965756]
+		 cnt=1 midx=[4820037 852390]
+		 cnt=1 midx=[4820037 716206]
+		 cnt=1 midx=[4820037 691889]
+		 cnt=1 midx=[4820037 476680]
+		 cnt=1 midx=[4820037 290369]
+		 cnt=1 midx=[4820037 73768]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=, trial=10---
+Random Seed in Hex: 41c0294efe000000
+	Sampled solve time: 27.038056s
+	Min/Max weight: 0.395976 / 45235.5
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4821101 1455689]
+		 cnt=1 midx=[4820425 716206]
+		 cnt=1 midx=[4820037 1711611]
+		 cnt=1 midx=[4820037 1665741]
+		 cnt=1 midx=[4820037 1555924]
+		 cnt=1 midx=[4820037 1455689]
+		 cnt=1 midx=[4820037 1411477]
+		 cnt=1 midx=[4820037 1154338]
+		 cnt=1 midx=[4820037 1125348]
+		 cnt=1 midx=[4820037 972805]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=1---
+Random Seed in Hex: 41e77087c9400000
+	Sampled solve time: 30.236959s
+	Min/Max weight: 0.799843 / 66233.1
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820787 792105]
+		 cnt=1 midx=[4820037 1520411]
+		 cnt=1 midx=[4820037 1455689]
+		 cnt=1 midx=[4820037 1297447]
+		 cnt=1 midx=[4820037 1275894]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 1074715]
+		 cnt=1 midx=[4820037 792105]
+		 cnt=1 midx=[4820037 762829]
+		 cnt=1 midx=[4820037 691889]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=2---
+Random Seed in Hex: 41d75a30ec400000
+	Sampled solve time: 30.340191s
+	Min/Max weight: 0.799843 / 70066.7
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4821024 1773628]
+		 cnt=1 midx=[4820733 379434]
+		 cnt=1 midx=[4820037 1773628]
+		 cnt=1 midx=[4820037 1523199]
+		 cnt=1 midx=[4820037 1374765]
+		 cnt=1 midx=[4820037 1322893]
+		 cnt=1 midx=[4820037 1297447]
+		 cnt=1 midx=[4820037 1172254]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 1092186]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=3---
+Random Seed in Hex: 417b50a370000000
+	Sampled solve time: 29.771449s
+	Min/Max weight: 0.799849 / 49782.9
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820800 901225]
+		 cnt=1 midx=[4820733 290369]
+		 cnt=1 midx=[4820516 277]
+		 cnt=1 midx=[4820430 899678]
+		 cnt=1 midx=[4820079 173695]
+		 cnt=1 midx=[4820044 1101839]
+		 cnt=1 midx=[4820037 1573871]
+		 cnt=1 midx=[4820037 1486616]
+		 cnt=1 midx=[4820037 1308175]
+		 cnt=1 midx=[4820037 1113300]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=4---
+Random Seed in Hex: 41c4859f3b000000
+	Sampled solve time: 29.731577s
+	Min/Max weight: 0.799849 / 94829
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820972 1308175]
+		 cnt=1 midx=[4820800 901225]
+		 cnt=1 midx=[4820430 1692142]
+		 cnt=1 midx=[4820224 1094757]
+		 cnt=1 midx=[4820160 1510961]
+		 cnt=1 midx=[4820037 1704524]
+		 cnt=1 midx=[4820037 1520411]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 852390]
+		 cnt=1 midx=[4820037 792105]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=5---
+Random Seed in Hex: 41b4c14dbe000000
+	Sampled solve time: 29.207023s
+	Min/Max weight: 0.799959 / 107633
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820037 1551766]
+		 cnt=1 midx=[4820037 1409428]
+		 cnt=1 midx=[4820037 1129845]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 1084628]
+		 cnt=1 midx=[4820037 1074715]
+		 cnt=1 midx=[4820037 852390]
+		 cnt=1 midx=[4820037 806116]
+		 cnt=1 midx=[4820037 252987]
+		 cnt=1 midx=[4820037 228496]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=6---
+Random Seed in Hex: 41d0f15c12c00000
+	Sampled solve time: 29.416866s
+	Min/Max weight: 0.799852 / 631519
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4821016 1510961]
+		 cnt=1 midx=[4820733 241628]
+		 cnt=1 midx=[4820684 73768]
+		 cnt=1 midx=[4820430 1659293]
+		 cnt=1 midx=[4820037 1773628]
+		 cnt=1 midx=[4820037 1504582]
+		 cnt=1 midx=[4820037 1486616]
+		 cnt=1 midx=[4820037 1473890]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 1074715]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=7---
+Random Seed in Hex: 41eb3d3e5be00000
+	Sampled solve time: 29.624494s
+	Min/Max weight: 0.799849 / 49195.5
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820571 158295]
+		 cnt=1 midx=[4820430 663217]
+		 cnt=1 midx=[4820430 241628]
+		 cnt=1 midx=[4820037 1711611]
+		 cnt=1 midx=[4820037 1625909]
+		 cnt=1 midx=[4820037 1520411]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 1074715]
+		 cnt=1 midx=[4820037 1041511]
+		 cnt=1 midx=[4820037 965756]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=8---
+Random Seed in Hex: 41d9839b28800000
+	Sampled solve time: 29.681915s
+	Min/Max weight: 0.799843 / 33556.9
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820430 1411477]
+		 cnt=1 midx=[4820430 899678]
+		 cnt=1 midx=[4820430 252987]
+		 cnt=1 midx=[4820224 852390]
+		 cnt=1 midx=[4820224 228496]
+		 cnt=1 midx=[4820210 852390]
+		 cnt=1 midx=[4820037 1773628]
+		 cnt=1 midx=[4820037 1524664]
+		 cnt=1 midx=[4820037 1509712]
+		 cnt=1 midx=[4820037 1243591]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=9---
+Random Seed in Hex: 41e40c0c30e00000
+	Sampled solve time: 29.464877s
+	Min/Max weight: 0.799872 / 56514.2
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4821016 1074715]
+		 cnt=1 midx=[4820664 1692362]
+		 cnt=1 midx=[4820524 852390]
+		 cnt=1 midx=[4820524 228496]
+		 cnt=1 midx=[4820037 1773628]
+		 cnt=1 midx=[4820037 1523199]
+		 cnt=1 midx=[4820037 1113300]
+		 cnt=1 midx=[4820037 1023110]
+		 cnt=1 midx=[4820037 901225]
+		 cnt=1 midx=[4820037 846967]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Sampled Solve for k=2, s=131072, c=, t=7.62939e-06, trial=10---
+Random Seed in Hex: 41a8aecc28000000
+	Sampled solve time: 29.633997s
+	Min/Max weight: 0.799905 / 127804
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4821016 274966]
+		 cnt=1 midx=[4820664 803689]
+		 cnt=1 midx=[4820430 792105]
+		 cnt=1 midx=[4820410 228496]
+		 cnt=1 midx=[4820037 1773628]
+		 cnt=1 midx=[4820037 1523199]
+		 cnt=1 midx=[4820037 1309054]
+		 cnt=1 midx=[4820037 1074074]
+		 cnt=1 midx=[4820037 852390]
+		 cnt=1 midx=[4820037 844520]
+	 10396 Deterministic Indices with Total Probability 0.411073 
+		 prob=7.177e-03 midx=[893180 792105]
+		 prob=6.840e-03 midx=[893180 1113300]
+		 prob=6.797e-03 midx=[893180 252987]
+		 prob=5.859e-03 midx=[893180 228496]
+		 prob=4.799e-03 midx=[1983278 792105]
+		 prob=4.574e-03 midx=[1983278 1113300]
+		 prob=4.546e-03 midx=[1983278 252987]
+		 prob=3.918e-03 midx=[1983278 228496]
+		 prob=3.766e-03 midx=[830322 792105]
+		 prob=3.589e-03 midx=[830322 1113300]
+
+---Full Solve for k=3---
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=1---
+Random Seed in Hex: 41e5c35ccda00000
+	Sampled solve time: 11.261203s
+	Min/Max weight: 0.412332 / 315968
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820516 1064158]
+		 cnt=1 midx=[4820044 302781]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1284946]
+		 cnt=1 midx=[4820037 1207105]
+		 cnt=1 midx=[4820037 977114]
+		 cnt=1 midx=[4820037 540793]
+		 cnt=1 midx=[4820037 148023]
+		 cnt=1 midx=[4820037 78441]
+		 cnt=1 midx=[4819677 1713258]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=2---
+Random Seed in Hex: 41ef7a064b200000
+	Sampled solve time: 11.408325s
+	Min/Max weight: 0.358907 / 348473
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820524 434218]
+		 cnt=1 midx=[4820160 1420832]
+		 cnt=1 midx=[4820037 1665202]
+		 cnt=1 midx=[4820037 960680]
+		 cnt=1 midx=[4820037 887538]
+		 cnt=1 midx=[4820037 838426]
+		 cnt=1 midx=[4820037 812158]
+		 cnt=1 midx=[4820037 521325]
+		 cnt=1 midx=[4820037 22900]
+		 cnt=1 midx=[4820037 20604]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=3---
+Random Seed in Hex: 41d7a24fcfc00000
+	Sampled solve time: 11.518127s
+	Min/Max weight: 0.346609 / 862808
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820044 606717]
+		 cnt=1 midx=[4820037 1665202]
+		 cnt=1 midx=[4820037 1291608]
+		 cnt=1 midx=[4820037 1197304]
+		 cnt=1 midx=[4820037 960680]
+		 cnt=1 midx=[4820037 946864]
+		 cnt=1 midx=[4820037 902121]
+		 cnt=1 midx=[4820037 600389]
+		 cnt=1 midx=[4820037 374416]
+		 cnt=1 midx=[4820037 326417]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=4---
+Random Seed in Hex: 41e29cb8cec00000
+	Sampled solve time: 11.363557s
+	Min/Max weight: 0.384319 / 292022
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820664 560142]
+		 cnt=1 midx=[4820430 124080]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1665202]
+		 cnt=1 midx=[4820037 1561337]
+		 cnt=1 midx=[4820037 1543607]
+		 cnt=1 midx=[4820037 1482450]
+		 cnt=1 midx=[4820037 1188378]
+		 cnt=1 midx=[4820037 687285]
+		 cnt=1 midx=[4820037 652481]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=5---
+Random Seed in Hex: 41edbd6a06600000
+	Sampled solve time: 10.933779s
+	Min/Max weight: 0.349962 / 235819
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820430 1220049]
+		 cnt=1 midx=[4820430 960680]
+		 cnt=1 midx=[4820410 960680]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1272657]
+		 cnt=1 midx=[4820037 724799]
+		 cnt=1 midx=[4820037 652481]
+		 cnt=1 midx=[4820037 600389]
+		 cnt=1 midx=[4820037 585478]
+		 cnt=1 midx=[4820037 179582]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=6---
+Random Seed in Hex: 41e012cbd1800000
+	Sampled solve time: 11.071816s
+	Min/Max weight: 0.391437 / 145955
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820524 22900]
+		 cnt=1 midx=[4820483 1240478]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1665202]
+		 cnt=1 midx=[4820037 1538051]
+		 cnt=1 midx=[4820037 1231784]
+		 cnt=1 midx=[4820037 164833]
+		 cnt=1 midx=[4820037 113401]
+		 cnt=1 midx=[4819677 1333246]
+		 cnt=1 midx=[4819677 1289863]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=7---
+Random Seed in Hex: 41ec1fe8cd000000
+	Sampled solve time: 10.865789s
+	Min/Max weight: 0.321614 / 996897
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820516 1192387]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1665202]
+		 cnt=1 midx=[4820037 1460071]
+		 cnt=1 midx=[4820037 1419427]
+		 cnt=1 midx=[4820037 1308803]
+		 cnt=1 midx=[4820037 1213272]
+		 cnt=1 midx=[4820037 1188378]
+		 cnt=1 midx=[4820037 1169187]
+		 cnt=1 midx=[4820037 1076984]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=8---
+Random Seed in Hex: 41eaa93b73200000
+	Sampled solve time: 11.030629s
+	Min/Max weight: 0.377859 / 131630
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820800 20970]
+		 cnt=1 midx=[4820037 1542227]
+		 cnt=1 midx=[4820037 1215934]
+		 cnt=1 midx=[4820037 1113651]
+		 cnt=1 midx=[4820037 622576]
+		 cnt=1 midx=[4820037 603084]
+		 cnt=1 midx=[4820037 182527]
+		 cnt=1 midx=[4820037 7858]
+		 cnt=1 midx=[4820037 3465]
+		 cnt=1 midx=[4819677 1732647]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=9---
+Random Seed in Hex: 41d6b6279c400000
+	Sampled solve time: 11.563378s
+	Min/Max weight: 0.416164 / 400516
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820571 231301]
+		 cnt=1 midx=[4820410 13652]
+		 cnt=1 midx=[4820037 1650955]
+		 cnt=1 midx=[4820037 909590]
+		 cnt=1 midx=[4820037 843383]
+		 cnt=1 midx=[4820037 802996]
+		 cnt=1 midx=[4820037 639313]
+		 cnt=1 midx=[4820037 636651]
+		 cnt=1 midx=[4820037 325649]
+		 cnt=1 midx=[4819677 1732647]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=, trial=10---
+Random Seed in Hex: 41dcefe54e000000
+	Sampled solve time: 11.102537s
+	Min/Max weight: 0.379111 / 501940
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820800 478505]
+		 cnt=1 midx=[4820037 1561337]
+		 cnt=1 midx=[4820037 1409496]
+		 cnt=1 midx=[4820037 1216271]
+		 cnt=1 midx=[4820037 1033282]
+		 cnt=1 midx=[4820037 943066]
+		 cnt=1 midx=[4820037 683848]
+		 cnt=1 midx=[4820037 33758]
+		 cnt=1 midx=[4819870 277895]
+		 cnt=1 midx=[4819677 1231784]
+	 0 Deterministic Indices with Total Probability 0.000000 
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=1---
+Random Seed in Hex: 41ef34c0e9600000
+	Sampled solve time: 12.011547s
+	Min/Max weight: 0.893319 / 1.55804e+06
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820664 1662516]
+		 cnt=1 midx=[4820410 22900]
+		 cnt=1 midx=[4820037 1637816]
+		 cnt=1 midx=[4820037 1622153]
+		 cnt=1 midx=[4820037 1504230]
+		 cnt=1 midx=[4820037 1420832]
+		 cnt=1 midx=[4820037 1402612]
+		 cnt=1 midx=[4820037 1110225]
+		 cnt=1 midx=[4820037 960680]
+		 cnt=1 midx=[4820037 910262]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=2---
+Random Seed in Hex: 41e3c9e5c9400000
+	Sampled solve time: 12.210851s
+	Min/Max weight: 0.893403 / 258706
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820410 360843]
+		 cnt=1 midx=[4820210 208646]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1371455]
+		 cnt=1 midx=[4820037 1264616]
+		 cnt=1 midx=[4820037 1125378]
+		 cnt=1 midx=[4820037 1084279]
+		 cnt=1 midx=[4820037 883703]
+		 cnt=1 midx=[4820037 874813]
+		 cnt=1 midx=[4820037 862351]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=3---
+Random Seed in Hex: 41e61186b9200000
+	Sampled solve time: 12.635887s
+	Min/Max weight: 0.893319 / 768710
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820037 1665202]
+		 cnt=1 midx=[4820037 1240688]
+		 cnt=1 midx=[4820037 960680]
+		 cnt=1 midx=[4820037 954130]
+		 cnt=1 midx=[4820037 853822]
+		 cnt=1 midx=[4820037 679965]
+		 cnt=1 midx=[4820037 165155]
+		 cnt=1 midx=[4819677 1732647]
+		 cnt=1 midx=[4819677 1723748]
+		 cnt=1 midx=[4819677 1665202]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=4---
+Random Seed in Hex: 41d36ed2c4800000
+	Sampled solve time: 12.898067s
+	Min/Max weight: 0.893319 / 953314
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820524 1420832]
+		 cnt=1 midx=[4820516 138955]
+		 cnt=1 midx=[4820160 507023]
+		 cnt=1 midx=[4820037 1417172]
+		 cnt=1 midx=[4820037 958434]
+		 cnt=1 midx=[4820037 943632]
+		 cnt=1 midx=[4820037 637181]
+		 cnt=1 midx=[4820037 474971]
+		 cnt=1 midx=[4820037 434218]
+		 cnt=1 midx=[4820037 421575]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=5---
+Random Seed in Hex: 41ef35bf7f800000
+	Sampled solve time: 12.564867s
+	Min/Max weight: 0.893385 / 316365
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820524 257638]
+		 cnt=1 midx=[4820430 93425]
+		 cnt=1 midx=[4820037 1767700]
+		 cnt=1 midx=[4820037 1568808]
+		 cnt=1 midx=[4820037 1420832]
+		 cnt=1 midx=[4820037 1326464]
+		 cnt=1 midx=[4820037 1231784]
+		 cnt=1 midx=[4820037 1197304]
+		 cnt=1 midx=[4820037 1129138]
+		 cnt=1 midx=[4820037 755101]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=6---
+Random Seed in Hex: 41e760e99a000000
+	Sampled solve time: 12.273360s
+	Min/Max weight: 0.893404 / 86789.8
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820126 1580792]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1543607]
+		 cnt=1 midx=[4820037 1530158]
+		 cnt=1 midx=[4820037 1443128]
+		 cnt=1 midx=[4820037 1197304]
+		 cnt=1 midx=[4820037 980191]
+		 cnt=1 midx=[4820037 864165]
+		 cnt=1 midx=[4820037 816303]
+		 cnt=1 midx=[4820037 806442]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=7---
+Random Seed in Hex: 41e7e2db87c00000
+	Sampled solve time: 11.958349s
+	Min/Max weight: 0.893319 / 467362
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4821156 621998]
+		 cnt=1 midx=[4820664 960680]
+		 cnt=1 midx=[4820410 1523243]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1714366]
+		 cnt=1 midx=[4820037 1665202]
+		 cnt=1 midx=[4820037 1504230]
+		 cnt=1 midx=[4820037 1341970]
+		 cnt=1 midx=[4820037 1312478]
+		 cnt=1 midx=[4820037 1292463]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=8---
+Random Seed in Hex: 41e63bb458400000
+	Sampled solve time: 11.809691s
+	Min/Max weight: 0.893385 / 107617
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820524 960680]
+		 cnt=1 midx=[4820430 634046]
+		 cnt=1 midx=[4820410 1561730]
+		 cnt=1 midx=[4820210 1732647]
+		 cnt=1 midx=[4820037 1610825]
+		 cnt=1 midx=[4820037 1586206]
+		 cnt=1 midx=[4820037 1576950]
+		 cnt=1 midx=[4820037 1504230]
+		 cnt=1 midx=[4820037 1260911]
+		 cnt=1 midx=[4820037 976729]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=9---
+Random Seed in Hex: 41e7e49565000000
+	Sampled solve time: 12.013111s
+	Min/Max weight: 0.893319 / 478198
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4820972 1504230]
+		 cnt=1 midx=[4820787 537489]
+		 cnt=1 midx=[4820664 693238]
+		 cnt=1 midx=[4820430 879514]
+		 cnt=1 midx=[4820410 816303]
+		 cnt=1 midx=[4820174 1714366]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1665202]
+		 cnt=1 midx=[4820037 1561337]
+		 cnt=1 midx=[4820037 1480612]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]
+
+---Sampled Solve for k=3, s=131072, c=, t=7.62939e-06, trial=10---
+Random Seed in Hex: 41e8b5aad5400000
+	Sampled solve time: 12.135598s
+	Min/Max weight: 0.893385 / 86438.8
+	Top-10 Most Frequent Samples:
+		 cnt=1 midx=[4821016 334013]
+		 cnt=1 midx=[4820800 600857]
+		 cnt=1 midx=[4820516 1637053]
+		 cnt=1 midx=[4820516 407941]
+		 cnt=1 midx=[4820037 1732647]
+		 cnt=1 midx=[4820037 1699631]
+		 cnt=1 midx=[4820037 1631154]
+		 cnt=1 midx=[4820037 1556910]
+		 cnt=1 midx=[4820037 1554260]
+		 cnt=1 midx=[4820037 1546868]
+	 7055 Deterministic Indices with Total Probability 0.244985 
+		 prob=4.709e-03 midx=[893180 1732647]
+		 prob=4.701e-03 midx=[893180 960680]
+		 prob=3.149e-03 midx=[1983278 1732647]
+		 prob=3.143e-03 midx=[1983278 960680]
+		 prob=2.471e-03 midx=[830322 1732647]
+		 prob=2.467e-03 midx=[830322 960680]
+		 prob=2.228e-03 midx=[893180 1665202]
+		 prob=2.216e-03 midx=[893180 1504230]
+		 prob=1.490e-03 midx=[1983278 1665202]
+		 prob=1.482e-03 midx=[1983278 1504230]

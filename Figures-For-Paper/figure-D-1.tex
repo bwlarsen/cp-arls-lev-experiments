@@ -1,0 +1,94 @@
+\documentclass{siamonline181217mod}
+
+
+% Macros from Tammy
+\input{setup}
+
+
+\begin{document}
+
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\uberraw}{data-uber-fittrace-raw.csv}
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\uberitp}{data-uber-fittrace-interpl.csv}
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\ubertime}{data-uber-totaltimes.csv}
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\uberfit}{data-uber-finalfits.csv}
+\begin{figure}
+  \centering
+  \pgfplotsset{
+    height=2in,
+    width=0.95\textwidth,
+    xlabel = time (s),
+    ylabel = fit,
+    ymin = 0.17, ymax = 0.191,
+    xmax = 400,
+    yticklabel style={%
+      /pgf/number format/.cd,
+      fixed,
+      fixed zerofill,
+      precision=3,
+    },
+    unbounded coords=jump,
+    legend pos = south east,
+  }
+\subfloat[Random ($\tau{=}1$) versus standard]{\label{fig:supp-uber-runs-random}%
+    \begin{tikzpicture}
+      \begin{axis}[font=\footnotesize,    
+        cycle list={
+          {index of colormap=4 of Set1-8,mark=*},
+          % Mixes 10 percent gray in so the color is visible
+          {yellow!90!gray, mark=*},
+          {index of colormap=6 of Set1-8,mark=*},
+          {index of colormap=3 of Set1-8,mark=square*}}
+        ]
+        \foreach \m in {5,6,7,4} {
+          % forget plot has the annoying side effect of losing the place in the cycle list,
+          % so we have to manually shift to make it work
+          \pgfmathparse{\m-1}      
+          \pgfplotsset{cycle list shift=\pgfmathresult}
+          \addplot+[thick,mark=none, forget plot ] table [x=TIME, y=M\m_MED]{\uberitp};
+        }
+        \foreach \i in {1,...,10} {
+          \foreach \m in {5,6,7,4} {        
+            \addplot+[mark size=.4pt, very thin] table [x=M\m_R\i_T, y=M\m_R\i_F]{\uberraw};
+          }
+        }
+        \legend{Random $s=2^{15}$,Random $s=2^{16}$,Random $s=2^{17}$,Standard}
+      \end{axis}
+    \end{tikzpicture}
+  }
+  \\ %%% ------------
+  \subfloat[Hybrid ($\tau{=}1/s$) versus standard]{\label{fig:supp-uber-runs-hybrid}
+    \begin{tikzpicture}
+      \begin{axis}[font=\footnotesize,    
+        cycle list={
+          {index of colormap=0 of Set1-8,mark=*},
+          {index of colormap=1 of Set1-8,mark=*},
+          {index of colormap=2 of Set1-8,mark=*},
+          {index of colormap=3 of Set1-8,mark=square*}}
+        ]
+        \foreach \m in {1,2,3,4} {
+          % forget plot has the annoying side effect of losing the place in the cycle list,
+          % so we have to manually shift to make it work
+          \pgfmathparse{\m-1}      
+          \pgfplotsset{cycle list shift=\pgfmathresult}
+          \addplot+[thick,mark=none, forget plot ] table [x=TIME, y=M\m_MED]{\uberitp};
+        }
+        \foreach \i in {1,...,10} {
+          \foreach \m in {1,2,3,4} {        
+            \addplot+[mark size=.4pt, very thin] table [x=M\m_R\i_T, y=M\m_R\i_F]{\uberraw};
+          }
+        }
+        \legend{Hybrid $s=2^{15}$,Hybrid $s=2^{16}$,Hybrid $s=2^{17}$,Standard}
+      \end{axis}
+    \end{tikzpicture}
+  }
+  \caption{Comparison of \cprandlev (random and hybrid) with varying number of samples $s \in \set{2^{16},2^{17},2^{18}}$ and \cpals (standard)
+  to compute a rank $r=25$ CP decomposition of the
+  Uber tensor with 3.3 million nonzeros, showing individual runs for the plot in \cref{fig:uber-runs}.
+  The dotted lines represent the individual runs with
+  markers indicating epoch (5 iterations) for the randomized methods and one iteration for the standard method.
+  The solid lines show  medians.}
+  \label{fig:supp-uber}
+\end{figure} %
+
+
+\end{document}

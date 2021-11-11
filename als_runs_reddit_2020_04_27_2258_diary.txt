@@ -1,0 +1,97 @@
+Starting diary with name artifact_als_runs_reddit_2020_04_27_2258_diary.txt
+Repository directory: /home/bwlarse/tensor_toolbox_sparse
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/tensor_toolbox)
+  Remote Branch: master
+  Short Hash: [33mc8
+  Up-to-Date: true
+Repository directory: /home/bwlarse/cparls_sparse_experiments
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/cparls_sparse_experiments)
+  Remote Branch: master
+  Short Hash: [33m23
+  Up-to-Date: false
+  Statuses...
+     [31mM[m .gitignore
+     [31mM[m als_runs_uber.m
+    [31m??[m cp_runs_reddit.m
+    [31m??[m kahuna_slurm_batch.sh
+    [31m??[m kahuna_slurm_batch_zen.sh
+  ==== Diffs ====
+  [1mindex 3a750d6..d496bee 100644[m
+  [1m--- a/.gitignore[m
+  [1m+++ b/.gitignore[m
+  [36m@@ -26,7 +26,7 @@[m
+   *.tns.gz[m
+   *.tns[m
+   *.mat[m
+  [31m-*.out[m
+  [32m+[m[32mout*[m
+   artifact*[m
+   !profile*.mat[m
+   !small*.mat[m
+  [1mdiff --git a/als_runs_uber.m b/als_runs_uber.m[m
+  [1mindex ff73c9c..9313d2a 100644[m
+  [1m--- a/als_runs_uber.m[m
+  [1m+++ b/als_runs_uber.m[m
+  [36m@@ -22,9 +22,9 @@[m [mend[m
+   nruns = 1;[m
+   R = 25;[m
+   % Need to change this to be the path on Kahuna[m
+  [31m-%load ('/home/bwlarse/Tensors/tensor_data_uber/uber_tensor');[m
+  [32m+[m[32mload ('/home/bwlarse/Tensors/tensor_data_uber/uber_tensor');[m
+   tic;[m
+  [31m-load ('uber_tensor');[m
+  [32m+[m[32m%load ('uber_tensor');[m
+   toc[m
+   fprintf('\n---Loading in Uber Tensor---\n')[m
+   [m
+  ==== End Diffs ====
+
+---Loading in Log Count Reddit Tensor---
+Elapsed time is 371.091215 seconds.
+
+---Starting run 1/1---
+Generating random initialization: 
+Random Seed in Hex: 41d88e84f9000000
+Finding CP decomposition: 
+Random Seed in Hex: 41dcd52037800000
+
+CP_ALS (with trace):
+
+Tensor size: 8211298 x 176962 x 8116559 (1.179407e+19 total entries)
+Sparse tensor: 4687474081 (4e-08%) Nonzeros and 1.179407e+19 (100.00%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.885552e-02 f-delta = 1.9e-02 time = 12162.2 seconds 
+ Iter  2: f = 4.733919e-02 f-delta = 2.8e-02 time = 11738.4 seconds 
+ Iter  3: f = 5.141735e-02 f-delta = 4.1e-03 time = 13392.9 seconds 
+ Iter  4: f = 5.258782e-02 f-delta = 1.2e-03 time = 13122.9 seconds 
+ Iter  5: f = 5.314663e-02 f-delta = 5.6e-04 time = 11007.9 seconds 
+ Iter  6: f = 5.350616e-02 f-delta = 3.6e-04 time = 11116.9 seconds 
+ Iter  7: f = 5.379867e-02 f-delta = 2.9e-04 time = 11282.8 seconds 
+ Iter  8: f = 5.407211e-02 f-delta = 2.7e-04 time = 11345.5 seconds 
+ Iter  9: f = 5.434764e-02 f-delta = 2.8e-04 time = 11039.4 seconds 
+ Iter 10: f = 5.463583e-02 f-delta = 2.9e-04 time = 11249.1 seconds 
+ Iter 11: f = 5.493887e-02 f-delta = 3.0e-04 time = 10885.4 seconds 
+ Iter 12: f = 5.525083e-02 f-delta = 3.1e-04 time = 10874.3 seconds 
+ Iter 13: f = 5.556148e-02 f-delta = 3.1e-04 time = 10709.3 seconds 
+ Iter 14: f = 5.586172e-02 f-delta = 3.0e-04 time = 10770.7 seconds 
+ Iter 15: f = 5.614594e-02 f-delta = 2.8e-04 time = 10849.6 seconds 
+ Iter 16: f = 5.641118e-02 f-delta = 2.7e-04 time = 10772.8 seconds 
+ Iter 17: f = 5.665609e-02 f-delta = 2.4e-04 time = 11001.2 seconds 
+ Iter 18: f = 5.688087e-02 f-delta = 2.2e-04 time = 10783.3 seconds 
+ Iter 19: f = 5.708729e-02 f-delta = 2.1e-04 time = 10751.0 seconds 
+ Iter 20: f = 5.727797e-02 f-delta = 1.9e-04 time = 10705.4 seconds 
+ Iter 21: f = 5.745516e-02 f-delta = 1.8e-04 time = 10632.1 seconds 
+ Iter 22: f = 5.762008e-02 f-delta = 1.6e-04 time = 10886.6 seconds 
+ Iter 23: f = 5.777292e-02 f-delta = 1.5e-04 time = 10541.4 seconds 
+ Iter 24: f = 5.791341e-02 f-delta = 1.4e-04 time = 10532.6 seconds 
+ Iter 25: f = 5.804141e-02 f-delta = 1.3e-04 time = 10604.3 seconds 
+ Iter 26: f = 5.815729e-02 f-delta = 1.2e-04 time = 10544.9 seconds 
+ Iter 27: f = 5.826193e-02 f-delta = 1.0e-04 time = 10966.8 seconds 
+ Iter 28: f = 5.835666e-02 f-delta = 9.5e-05 time = 11170.6 seconds 
+ Final f = 5.835666e-02 
+Total Time (secs): 314920.149

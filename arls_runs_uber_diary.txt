@@ -1,0 +1,2642 @@
+Starting diary with name artifact_arls_runs_uber_2020_05_19_1234_diary.txt
+Repository directory: /home/bwlarse/tensor_toolbox_sparse
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/tensor_toolbox)
+  Remote Branch: master
+  Short Hash: c8
+  Up-to-Date: true
+Repository directory: /home/bwlarse/cparls_sparse_experiments
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/cparls_sparse_experiments)
+  Remote Branch: master
+  Short Hash: 7d
+  Up-to-Date: false
+  Statuses...
+     M als_runs_amazon.m
+     M als_runs_uber.m
+     M epsilon_runs_reddit.m
+     M fest_test_enron.m
+     M fest_test_reddit.m
+    ?? cp_runs_reddit.m
+  ==== Diffs ====
+  index f88e0d7..e6d11fe 100644
+  --- a/als_runs_amazon.m
+  +++ b/als_runs_amazon.m
+  @@ -18,8 +18,8 @@ if do_gitchecks
+       gitstatus(pwd);
+   end
+   
+  -%% Load in Log Count Reddit Tensor
+  -nruns = 1;
+  +%% Load in Amazon Tensor
+  +nruns = 5;
+   R = 25;
+   fprintf('\n---Loading in Amazon Tensor---\n')
+   tic;
+  @@ -29,8 +29,8 @@ toc
+   X = amazon;
+   clear amazon;
+   
+  -sz = size(reddit);
+  -N = ndims(reddit);
+  +sz = size(X);
+  +N = ndims(X);
+   
+   %% Set up  output
+   output = struct;
+  @@ -68,7 +68,7 @@ for rep = 1:nruns
+       
+       % Save out the model after each run
+       % sprintf
+  -    save('-v7.3', sprintf('%s-model%02i', aname, rep), 'M', 'info')    
+  +    save('-v7.3', sprintf('%s-model%02i', aname, rep), 'info')    
+   end
+   
+   % Save out the traces and fits for all runs
+  diff --git a/als_runs_uber.m b/als_runs_uber.m
+  index ff73c9c..9313d2a 100644
+  --- a/als_runs_uber.m
+  +++ b/als_runs_uber.m
+  @@ -22,9 +22,9 @@ end
+   nruns = 1;
+   R = 25;
+   % Need to change this to be the path on Kahuna
+  -%load ('/home/bwlarse/Tensors/tensor_data_uber/uber_tensor');
+  +load ('/home/bwlarse/Tensors/tensor_data_uber/uber_tensor');
+   tic;
+  -load ('uber_tensor');
+  +%load ('uber_tensor');
+   toc
+   fprintf('\n---Loading in Uber Tensor---\n')
+   
+  diff --git a/epsilon_runs_reddit.m b/epsilon_runs_reddit.m
+  index 530e3a8..49eb7b8 100644
+  --- a/epsilon_runs_reddit.m
+  +++ b/epsilon_runs_reddit.m
+  @@ -33,11 +33,11 @@ fprintf('\tLoaded solution with R=%d\n', R);
+   
+   %% Test at final solution
+   
+  -krng = [1 2 3];
+  +krng = [1];
+   srng = [2^17];
+   crng = {@(s) []};
+   trng = {@(s) [], @(s) 1/s};
+  -ntrials = 5; % Just for demo, use 10 for regular trials
+  +ntrials = 3; % Just for demo, use 10 for regular trials
+   
+   fprintf('\t Starting runs with loaded solution');
+   rnginit;
+  @@ -50,4 +50,4 @@ rnginit;
+   [results_rand,info_rand] = epsilon_runs_nofit(X,R,krng,srng,crng,trng,ntrials);
+   
+   %%
+  -save('-v7.3', aname,'results','info', 'results_rand', 'info_rand');
+  \ No newline at end of file
+  +save('-v7.3', aname,'results','info', 'results_rand', 'info_rand');
+  diff --git a/fest_test_enron.m b/fest_test_enron.m
+  index e58ff41..7ee9385 100644
+  --- a/fest_test_enron.m
+  +++ b/fest_test_enron.m
+  @@ -1,7 +1,7 @@
+   %% Estimated Fit Test for Enron Tensor
+   
+  -load ('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails');
+  -load('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_solutions')
+  +load ('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_log');
+  +load('/home/bwlarse/Tensors/tensor_data_enron_large/enron_emails_log_solution')
+   fprintf('\n---Loading in Enron Tensor---\n')
+   
+   X = enron;
+  diff --git a/fest_test_reddit.m b/fest_test_reddit.m
+  index 224db62..4886084 100644
+  --- a/fest_test_reddit.m
+  +++ b/fest_test_reddit.m
+  @@ -4,7 +4,7 @@ load ('/home/bwlarse/Tensors/tensor_data_reddit/reddit_log');
+   load('/home/bwlarse/Tensors/tensor_data_reddit/reddit_log_solution')
+   fprintf('\n---Loading in Reddit Tensor (with log counts)---\n')
+   
+  -X = enron;
+  +X = reddit;
+   P = M;
+   P_normal = normalize(P, 1);
+   
+  ==== End Diffs ====
+---Loading in Uber Tensor---
+---Setting up function estimators based on X---
+Random Seed in Hex: 41ea123768800000
+
+~~~~~Generating random initialization for run 1~~~~ 
+Random Seed in Hex: 41e59930d8000000
+
+---Starting run 1/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e2699698400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.775726e-01 f-delta =  2e-01 time = 7.8s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.823231e-01 f-delta =  5e-03 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.838293e-01 f-delta =  2e-03 time = 7.0s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.845979e-01 f-delta =  8e-04 time = 6.8s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.852704e-01 f-delta =  7e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.853278e-01 f-delta =  6e-05 time = 6.9s (fit time = 3.0s) newi = 1
+Iter  7x5: f = 1.857761e-01 f-delta =  5e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.858527e-01 f-delta =  8e-05 time = 6.7s (fit time = 2.8s) newi = 1
+Iter  9x5: f = 1.861322e-01 f-delta =  4e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.858761e-01 f-delta = -3e-04 time = 6.7s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.858441e-01 f-delta = -3e-04 time = 6.7s (fit time = 2.9s) newi = 2
+Iter 12x5: f = 1.861978e-01 f-delta =  7e-05 time = 6.9s (fit time = 2.8s) newi = 3
+
+Final f = 1.861322e-01
+Total time: 8.34e+01
+
+Total Time (secs): 83.457
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41efc8c8e0a00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.741855e-01 f-delta =  2e-01 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.791019e-01 f-delta =  5e-03 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.811648e-01 f-delta =  2e-03 time = 6.0s (fit time = 3.1s) newi = 0
+Iter  4x5: f = 1.828993e-01 f-delta =  2e-03 time = 6.0s (fit time = 3.2s) newi = 0
+Iter  5x5: f = 1.838676e-01 f-delta =  1e-03 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.839677e-01 f-delta =  1e-04 time = 5.7s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.848912e-01 f-delta =  9e-04 time = 5.6s (fit time = 2.8s) newi = 0
+Iter  8x5: f = 1.841414e-01 f-delta = -7e-04 time = 5.4s (fit time = 2.8s) newi = 1
+Iter  9x5: f = 1.849980e-01 f-delta =  1e-04 time = 5.4s (fit time = 2.8s) newi = 0
+Iter 10x5: f = 1.845457e-01 f-delta = -5e-04 time = 5.8s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.847539e-01 f-delta = -2e-04 time = 6.0s (fit time = 3.0s) newi = 2
+Iter 12x5: f = 1.846216e-01 f-delta = -4e-04 time = 5.4s (fit time = 2.8s) newi = 3
+
+Final f = 1.849980e-01
+Total time: 6.85e+01
+
+Total Time (secs): 68.546
+
+---Starting run 1/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e8dede2c000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.793052e-01 f-delta =  2e-01 time = 9.4s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.835179e-01 f-delta =  4e-03 time = 9.4s (fit time = 2.8s) newi = 0
+Iter  3x5: f = 1.853906e-01 f-delta =  2e-03 time = 9.5s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.865207e-01 f-delta =  1e-03 time = 9.5s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.870884e-01 f-delta =  6e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.875624e-01 f-delta =  5e-04 time = 9.4s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.873755e-01 f-delta = -2e-04 time = 9.5s (fit time = 3.0s) newi = 1
+Iter  8x5: f = 1.880177e-01 f-delta =  5e-04 time = 9.8s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.882131e-01 f-delta =  2e-04 time = 9.9s (fit time = 2.8s) newi = 0
+Iter 10x5: f = 1.882144e-01 f-delta =  1e-06 time = 10.1s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.882325e-01 f-delta =  2e-05 time = 10.1s (fit time = 3.0s) newi = 2
+Iter 12x5: f = 1.883655e-01 f-delta =  2e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter 13x5: f = 1.884341e-01 f-delta =  7e-05 time = 10.0s (fit time = 3.0s) newi = 1
+Iter 14x5: f = 1.882448e-01 f-delta = -1e-04 time = 9.6s (fit time = 3.0s) newi = 2
+Iter 15x5: f = 1.883981e-01 f-delta =  3e-05 time = 9.6s (fit time = 3.0s) newi = 3
+
+Final f = 1.883655e-01
+Total time: 1.45e+02
+
+Total Time (secs): 145.243
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41de7e23f1400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.768126e-01 f-delta =  2e-01 time = 6.9s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.838218e-01 f-delta =  7e-03 time = 7.3s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.854186e-01 f-delta =  2e-03 time = 7.5s (fit time = 3.1s) newi = 0
+Iter  4x5: f = 1.863724e-01 f-delta =  1e-03 time = 7.4s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.867867e-01 f-delta =  4e-04 time = 7.5s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.871213e-01 f-delta =  3e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.873042e-01 f-delta =  2e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.874033e-01 f-delta =  1e-04 time = 7.3s (fit time = 3.0s) newi = 1
+Iter  9x5: f = 1.873917e-01 f-delta =  9e-05 time = 7.1s (fit time = 2.9s) newi = 2
+Iter 10x5: f = 1.878170e-01 f-delta =  5e-04 time = 7.8s (fit time = 3.1s) newi = 0
+Iter 11x5: f = 1.878162e-01 f-delta = -8e-07 time = 7.0s (fit time = 2.8s) newi = 1
+Iter 12x5: f = 1.877516e-01 f-delta = -7e-05 time = 7.8s (fit time = 3.0s) newi = 2
+Iter 13x5: f = 1.875870e-01 f-delta = -2e-04 time = 7.4s (fit time = 2.8s) newi = 3
+
+Final f = 1.878170e-01
+Total time: 9.59e+01
+
+Total Time (secs): 95.886
+
+---Starting run 1/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e2e43a8c800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.797557e-01 f-delta =  2e-01 time = 15.0s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.850266e-01 f-delta =  5e-03 time = 15.4s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.873312e-01 f-delta =  2e-03 time = 15.3s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.883073e-01 f-delta =  1e-03 time = 16.3s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.887928e-01 f-delta =  5e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.890493e-01 f-delta =  3e-04 time = 15.8s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.892979e-01 f-delta =  2e-04 time = 15.7s (fit time = 3.1s) newi = 0
+Iter  8x5: f = 1.894162e-01 f-delta =  1e-04 time = 15.1s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.895217e-01 f-delta =  1e-04 time = 15.1s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.895771e-01 f-delta =  6e-05 time = 15.2s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.897536e-01 f-delta =  2e-04 time = 14.9s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.897731e-01 f-delta =  2e-05 time = 14.6s (fit time = 2.8s) newi = 1
+Iter 13x5: f = 1.897657e-01 f-delta =  1e-05 time = 14.7s (fit time = 2.9s) newi = 2
+Iter 14x5: f = 1.897392e-01 f-delta = -1e-05 time = 15.5s (fit time = 2.8s) newi = 3
+
+Final f = 1.897536e-01
+Total time: 2.14e+02
+
+Total Time (secs): 213.865
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41ed96b832e00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.779978e-01 f-delta =  2e-01 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.836966e-01 f-delta =  6e-03 time = 10.6s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.862272e-01 f-delta =  3e-03 time = 9.9s (fit time = 3.2s) newi = 0
+Iter  4x5: f = 1.876410e-01 f-delta =  1e-03 time = 10.2s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.884393e-01 f-delta =  8e-04 time = 10.6s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.888383e-01 f-delta =  4e-04 time = 10.1s (fit time = 2.8s) newi = 0
+Iter  7x5: f = 1.889583e-01 f-delta =  1e-04 time = 9.5s (fit time = 2.8s) newi = 0
+Iter  8x5: f = 1.889638e-01 f-delta =  6e-06 time = 9.6s (fit time = 3.0s) newi = 1
+Iter  9x5: f = 1.891398e-01 f-delta =  2e-04 time = 10.0s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.891891e-01 f-delta =  5e-05 time = 10.0s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.892956e-01 f-delta =  2e-04 time = 11.3s (fit time = 3.2s) newi = 0
+Iter 12x5: f = 1.894004e-01 f-delta =  1e-04 time = 10.3s (fit time = 2.8s) newi = 0
+Iter 13x5: f = 1.894482e-01 f-delta =  5e-05 time = 9.6s (fit time = 2.8s) newi = 1
+Iter 14x5: f = 1.894908e-01 f-delta =  9e-05 time = 9.6s (fit time = 2.9s) newi = 2
+Iter 15x5: f = 1.894082e-01 f-delta =  8e-06 time = 10.3s (fit time = 3.1s) newi = 3
+
+Final f = 1.894004e-01
+Total time: 1.52e+02
+
+Total Time (secs): 151.648
+
+~~~~~Generating random initialization for run 2~~~~ 
+Random Seed in Hex: 41a27ddf40000000
+
+---Starting run 2/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ecb7185da00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.777572e-01 f-delta =  2e-01 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.823040e-01 f-delta =  5e-03 time = 6.8s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.841729e-01 f-delta =  2e-03 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.851063e-01 f-delta =  9e-04 time = 6.9s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.856381e-01 f-delta =  5e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.859862e-01 f-delta =  3e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.861251e-01 f-delta =  1e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.865640e-01 f-delta =  4e-04 time = 6.7s (fit time = 2.8s) newi = 0
+Iter  9x5: f = 1.865382e-01 f-delta = -3e-05 time = 6.8s (fit time = 2.9s) newi = 1
+Iter 10x5: f = 1.870325e-01 f-delta =  5e-04 time = 6.7s (fit time = 2.8s) newi = 0
+Iter 11x5: f = 1.867761e-01 f-delta = -3e-04 time = 6.6s (fit time = 2.8s) newi = 1
+Iter 12x5: f = 1.868590e-01 f-delta = -2e-04 time = 6.7s (fit time = 2.8s) newi = 2
+Iter 13x5: f = 1.867835e-01 f-delta = -2e-04 time = 6.7s (fit time = 2.8s) newi = 3
+
+Final f = 1.870325e-01
+Total time: 8.81e+01
+
+Total Time (secs): 88.074
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41d670e2d4800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.752064e-01 f-delta =  2e-01 time = 5.4s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.803361e-01 f-delta =  5e-03 time = 5.7s (fit time = 2.8s) newi = 0
+Iter  3x5: f = 1.819884e-01 f-delta =  2e-03 time = 5.5s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.830686e-01 f-delta =  1e-03 time = 5.5s (fit time = 2.8s) newi = 0
+Iter  5x5: f = 1.838340e-01 f-delta =  8e-04 time = 5.7s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.847480e-01 f-delta =  9e-04 time = 5.8s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.851990e-01 f-delta =  5e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.854116e-01 f-delta =  2e-04 time = 5.8s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.852403e-01 f-delta = -2e-04 time = 5.7s (fit time = 3.0s) newi = 1
+Iter 10x5: f = 1.853490e-01 f-delta = -6e-05 time = 5.5s (fit time = 2.8s) newi = 2
+Iter 11x5: f = 1.856052e-01 f-delta =  2e-04 time = 5.7s (fit time = 3.0s) newi = 0
+Iter 12x5: f = 1.857002e-01 f-delta =  9e-05 time = 5.5s (fit time = 2.8s) newi = 1
+Iter 13x5: f = 1.856082e-01 f-delta =  3e-06 time = 5.5s (fit time = 2.8s) newi = 2
+Iter 14x5: f = 1.857057e-01 f-delta =  1e-04 time = 5.5s (fit time = 2.8s) newi = 0
+Iter 15x5: f = 1.853220e-01 f-delta = -4e-04 time = 5.5s (fit time = 2.8s) newi = 1
+Iter 16x5: f = 1.857459e-01 f-delta =  4e-05 time = 5.5s (fit time = 2.8s) newi = 2
+Iter 17x5: f = 1.859595e-01 f-delta =  3e-04 time = 5.5s (fit time = 2.8s) newi = 0
+Iter 18x5: f = 1.856665e-01 f-delta = -3e-04 time = 5.5s (fit time = 2.8s) newi = 1
+Iter 19x5: f = 1.859722e-01 f-delta =  1e-05 time = 5.5s (fit time = 2.8s) newi = 2
+Iter 20x5: f = 1.850832e-01 f-delta = -9e-04 time = 5.5s (fit time = 2.8s) newi = 3
+
+Final f = 1.859595e-01
+Total time: 1.12e+02
+
+Total Time (secs): 111.823
+
+---Starting run 2/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41eb0724f6200000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.739340e-01 f-delta =  2e-01 time = 9.4s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.813788e-01 f-delta =  7e-03 time = 9.5s (fit time = 2.8s) newi = 0
+Iter  3x5: f = 1.840961e-01 f-delta =  3e-03 time = 9.4s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.855188e-01 f-delta =  1e-03 time = 9.6s (fit time = 2.8s) newi = 0
+Iter  5x5: f = 1.864793e-01 f-delta =  1e-03 time = 9.8s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.869898e-01 f-delta =  5e-04 time = 10.0s (fit time = 2.8s) newi = 0
+Iter  7x5: f = 1.877766e-01 f-delta =  8e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.880960e-01 f-delta =  3e-04 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.882654e-01 f-delta =  2e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.883110e-01 f-delta =  5e-05 time = 9.6s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.884201e-01 f-delta =  2e-04 time = 10.1s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.885783e-01 f-delta =  2e-04 time = 10.2s (fit time = 2.9s) newi = 0
+Iter 13x5: f = 1.885679e-01 f-delta = -1e-05 time = 9.7s (fit time = 3.0s) newi = 1
+Iter 14x5: f = 1.885414e-01 f-delta = -4e-05 time = 9.7s (fit time = 2.9s) newi = 2
+Iter 15x5: f = 1.885515e-01 f-delta = -3e-05 time = 10.1s (fit time = 2.9s) newi = 3
+
+Final f = 1.885783e-01
+Total time: 1.46e+02
+
+Total Time (secs): 146.432
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41bc5a45b7000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.741159e-01 f-delta =  2e-01 time = 7.0s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.826587e-01 f-delta =  9e-03 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.852221e-01 f-delta =  3e-03 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.867555e-01 f-delta =  2e-03 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.873813e-01 f-delta =  6e-04 time = 7.2s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.874166e-01 f-delta =  4e-05 time = 7.4s (fit time = 3.0s) newi = 1
+Iter  7x5: f = 1.878642e-01 f-delta =  5e-04 time = 7.2s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.880267e-01 f-delta =  2e-04 time = 7.3s (fit time = 3.1s) newi = 0
+Iter  9x5: f = 1.883067e-01 f-delta =  3e-04 time = 7.7s (fit time = 3.0s) newi = 0
+Iter 10x5: f = 1.884464e-01 f-delta =  1e-04 time = 7.9s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.885342e-01 f-delta =  9e-05 time = 7.4s (fit time = 3.1s) newi = 1
+Iter 12x5: f = 1.884957e-01 f-delta =  5e-05 time = 7.2s (fit time = 2.9s) newi = 2
+Iter 13x5: f = 1.886939e-01 f-delta =  2e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter 14x5: f = 1.884704e-01 f-delta = -2e-04 time = 7.3s (fit time = 2.9s) newi = 1
+Iter 15x5: f = 1.884660e-01 f-delta = -2e-04 time = 7.1s (fit time = 2.9s) newi = 2
+Iter 16x5: f = 1.883821e-01 f-delta = -3e-04 time = 7.2s (fit time = 2.9s) newi = 3
+
+Final f = 1.886939e-01
+Total time: 1.17e+02
+
+Total Time (secs): 117.325
+
+---Starting run 2/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41b7622683000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.765850e-01 f-delta =  2e-01 time = 15.9s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.835228e-01 f-delta =  7e-03 time = 14.9s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.856194e-01 f-delta =  2e-03 time = 14.9s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.865176e-01 f-delta =  9e-04 time = 14.8s (fit time = 2.8s) newi = 0
+Iter  5x5: f = 1.869683e-01 f-delta =  5e-04 time = 15.2s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.872445e-01 f-delta =  3e-04 time = 15.2s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.876050e-01 f-delta =  4e-04 time = 14.8s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.879969e-01 f-delta =  4e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.883269e-01 f-delta =  3e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter 10x5: f = 1.886294e-01 f-delta =  3e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter 11x5: f = 1.888515e-01 f-delta =  2e-04 time = 14.8s (fit time = 2.8s) newi = 0
+Iter 12x5: f = 1.889955e-01 f-delta =  1e-04 time = 15.0s (fit time = 2.9s) newi = 0
+Iter 13x5: f = 1.891077e-01 f-delta =  1e-04 time = 14.8s (fit time = 3.0s) newi = 0
+Iter 14x5: f = 1.891268e-01 f-delta =  2e-05 time = 14.8s (fit time = 2.9s) newi = 1
+Iter 15x5: f = 1.893307e-01 f-delta =  2e-04 time = 15.4s (fit time = 2.9s) newi = 0
+Iter 16x5: f = 1.893007e-01 f-delta = -3e-05 time = 15.4s (fit time = 2.8s) newi = 1
+Iter 17x5: f = 1.893590e-01 f-delta =  3e-05 time = 15.1s (fit time = 2.9s) newi = 2
+Iter 18x5: f = 1.893746e-01 f-delta =  4e-05 time = 14.6s (fit time = 2.9s) newi = 3
+
+Final f = 1.893307e-01
+Total time: 2.71e+02
+
+Total Time (secs): 270.682
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e1074772e00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.780733e-01 f-delta =  2e-01 time = 10.2s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.846202e-01 f-delta =  7e-03 time = 10.0s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.865412e-01 f-delta =  2e-03 time = 9.9s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.875534e-01 f-delta =  1e-03 time = 9.9s (fit time = 3.1s) newi = 0
+Iter  5x5: f = 1.882680e-01 f-delta =  7e-04 time = 10.0s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.887634e-01 f-delta =  5e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.890960e-01 f-delta =  3e-04 time = 10.1s (fit time = 2.8s) newi = 0
+Iter  8x5: f = 1.891965e-01 f-delta =  1e-04 time = 10.0s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.892150e-01 f-delta =  2e-05 time = 10.0s (fit time = 3.0s) newi = 1
+Iter 10x5: f = 1.893049e-01 f-delta =  1e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.891975e-01 f-delta = -1e-04 time = 10.3s (fit time = 3.0s) newi = 1
+Iter 12x5: f = 1.893025e-01 f-delta = -2e-06 time = 9.9s (fit time = 3.0s) newi = 2
+Iter 13x5: f = 1.894063e-01 f-delta =  1e-04 time = 9.8s (fit time = 3.0s) newi = 0
+Iter 14x5: f = 1.894875e-01 f-delta =  8e-05 time = 9.8s (fit time = 3.0s) newi = 1
+Iter 15x5: f = 1.895284e-01 f-delta =  1e-04 time = 10.2s (fit time = 3.0s) newi = 0
+Iter 16x5: f = 1.895146e-01 f-delta = -1e-05 time = 9.9s (fit time = 3.0s) newi = 1
+Iter 17x5: f = 1.895289e-01 f-delta =  5e-07 time = 9.8s (fit time = 3.0s) newi = 2
+Iter 18x5: f = 1.894562e-01 f-delta = -7e-05 time = 9.8s (fit time = 3.0s) newi = 3
+
+Final f = 1.895284e-01
+Total time: 1.80e+02
+
+Total Time (secs): 179.682
+
+~~~~~Generating random initialization for run 3~~~~ 
+Random Seed in Hex: 41e52876a5c00000
+
+---Starting run 3/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e3c5dd2a000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.763579e-01 f-delta =  2e-01 time = 7.2s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.816712e-01 f-delta =  5e-03 time = 6.9s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.839094e-01 f-delta =  2e-03 time = 7.4s (fit time = 3.1s) newi = 0
+Iter  4x5: f = 1.853696e-01 f-delta =  1e-03 time = 7.0s (fit time = 2.8s) newi = 0
+Iter  5x5: f = 1.857688e-01 f-delta =  4e-04 time = 6.9s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.863257e-01 f-delta =  6e-04 time = 7.0s (fit time = 3.1s) newi = 0
+Iter  7x5: f = 1.861232e-01 f-delta = -2e-04 time = 6.7s (fit time = 2.9s) newi = 1
+Iter  8x5: f = 1.865295e-01 f-delta =  2e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.863383e-01 f-delta = -2e-04 time = 6.8s (fit time = 3.0s) newi = 1
+Iter 10x5: f = 1.863759e-01 f-delta = -2e-04 time = 6.7s (fit time = 3.0s) newi = 2
+Iter 11x5: f = 1.864153e-01 f-delta = -1e-04 time = 6.8s (fit time = 3.0s) newi = 3
+
+Final f = 1.865295e-01
+Total time: 7.66e+01
+
+Total Time (secs): 76.574
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41d3998fa9800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.764730e-01 f-delta =  2e-01 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.822702e-01 f-delta =  6e-03 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.839514e-01 f-delta =  2e-03 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.842951e-01 f-delta =  3e-04 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.853470e-01 f-delta =  1e-03 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.847246e-01 f-delta = -6e-04 time = 5.4s (fit time = 2.9s) newi = 1
+Iter  7x5: f = 1.845996e-01 f-delta = -7e-04 time = 5.6s (fit time = 2.9s) newi = 2
+Iter  8x5: f = 1.854666e-01 f-delta =  1e-04 time = 5.5s (fit time = 2.8s) newi = 0
+Iter  9x5: f = 1.853973e-01 f-delta = -7e-05 time = 5.4s (fit time = 2.8s) newi = 1
+Iter 10x5: f = 1.852161e-01 f-delta = -3e-04 time = 5.5s (fit time = 2.9s) newi = 2
+Iter 11x5: f = 1.850247e-01 f-delta = -4e-04 time = 5.4s (fit time = 2.8s) newi = 3
+
+Final f = 1.854666e-01
+Total time: 6.08e+01
+
+Total Time (secs): 60.843
+
+---Starting run 3/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41d7dfb33c400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.786880e-01 f-delta =  2e-01 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.843687e-01 f-delta =  6e-03 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.858062e-01 f-delta =  1e-03 time = 9.9s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.868981e-01 f-delta =  1e-03 time = 9.5s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.874758e-01 f-delta =  6e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.878187e-01 f-delta =  3e-04 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.880755e-01 f-delta =  3e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.882494e-01 f-delta =  2e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.883292e-01 f-delta =  8e-05 time = 9.7s (fit time = 3.0s) newi = 1
+Iter 10x5: f = 1.884684e-01 f-delta =  2e-04 time = 10.4s (fit time = 3.1s) newi = 0
+Iter 11x5: f = 1.884235e-01 f-delta = -4e-05 time = 9.6s (fit time = 2.9s) newi = 1
+Iter 12x5: f = 1.885076e-01 f-delta =  4e-05 time = 9.6s (fit time = 3.0s) newi = 2
+Iter 13x5: f = 1.885487e-01 f-delta =  8e-05 time = 10.0s (fit time = 2.9s) newi = 3
+
+Final f = 1.884684e-01
+Total time: 1.27e+02
+
+Total Time (secs): 126.633
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41d69409d4800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.769728e-01 f-delta =  2e-01 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.825345e-01 f-delta =  6e-03 time = 7.4s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.849306e-01 f-delta =  2e-03 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.865412e-01 f-delta =  2e-03 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.874875e-01 f-delta =  9e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.874550e-01 f-delta = -3e-05 time = 7.2s (fit time = 2.9s) newi = 1
+Iter  7x5: f = 1.876793e-01 f-delta =  2e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.879039e-01 f-delta =  2e-04 time = 7.2s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.879614e-01 f-delta =  6e-05 time = 7.2s (fit time = 3.0s) newi = 1
+Iter 10x5: f = 1.880615e-01 f-delta =  2e-04 time = 7.5s (fit time = 2.8s) newi = 0
+Iter 11x5: f = 1.880079e-01 f-delta = -5e-05 time = 7.5s (fit time = 3.0s) newi = 1
+Iter 12x5: f = 1.882180e-01 f-delta =  2e-04 time = 7.3s (fit time = 3.1s) newi = 0
+Iter 13x5: f = 1.881543e-01 f-delta = -6e-05 time = 7.6s (fit time = 3.1s) newi = 1
+Iter 14x5: f = 1.880615e-01 f-delta = -2e-04 time = 7.2s (fit time = 3.0s) newi = 2
+Iter 15x5: f = 1.880625e-01 f-delta = -2e-04 time = 7.3s (fit time = 3.0s) newi = 3
+
+Final f = 1.882180e-01
+Total time: 1.10e+02
+
+Total Time (secs): 109.549
+
+---Starting run 3/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41cb5ddf67000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.778990e-01 f-delta =  2e-01 time = 15.6s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.845890e-01 f-delta =  7e-03 time = 15.7s (fit time = 2.8s) newi = 0
+Iter  3x5: f = 1.860471e-01 f-delta =  1e-03 time = 15.9s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.869127e-01 f-delta =  9e-04 time = 16.1s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.877812e-01 f-delta =  9e-04 time = 14.7s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.881994e-01 f-delta =  4e-04 time = 15.1s (fit time = 3.2s) newi = 0
+Iter  7x5: f = 1.884887e-01 f-delta =  3e-04 time = 15.1s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.885596e-01 f-delta =  7e-05 time = 14.7s (fit time = 2.9s) newi = 1
+Iter  9x5: f = 1.887545e-01 f-delta =  3e-04 time = 14.7s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.889929e-01 f-delta =  2e-04 time = 14.7s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.891915e-01 f-delta =  2e-04 time = 14.6s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.892741e-01 f-delta =  8e-05 time = 14.7s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.893795e-01 f-delta =  2e-04 time = 14.9s (fit time = 3.1s) newi = 0
+Iter 14x5: f = 1.893995e-01 f-delta =  2e-05 time = 14.7s (fit time = 2.9s) newi = 1
+Iter 15x5: f = 1.894714e-01 f-delta =  9e-05 time = 14.8s (fit time = 2.9s) newi = 2
+Iter 16x5: f = 1.895675e-01 f-delta =  2e-04 time = 15.3s (fit time = 3.1s) newi = 0
+Iter 17x5: f = 1.895638e-01 f-delta = -4e-06 time = 15.0s (fit time = 3.1s) newi = 1
+Iter 18x5: f = 1.896225e-01 f-delta =  5e-05 time = 14.9s (fit time = 3.0s) newi = 2
+Iter 19x5: f = 1.895733e-01 f-delta =  6e-06 time = 15.0s (fit time = 3.1s) newi = 3
+
+Final f = 1.895675e-01
+Total time: 2.87e+02
+
+Total Time (secs): 286.689
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e1060510000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.781429e-01 f-delta =  2e-01 time = 10.0s (fit time = 3.1s) newi = 0
+Iter  2x5: f = 1.844784e-01 f-delta =  6e-03 time = 9.9s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.867918e-01 f-delta =  2e-03 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.878262e-01 f-delta =  1e-03 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.884479e-01 f-delta =  6e-04 time = 9.8s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.888053e-01 f-delta =  4e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.889814e-01 f-delta =  2e-04 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.891169e-01 f-delta =  1e-04 time = 10.0s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.892776e-01 f-delta =  2e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.892871e-01 f-delta =  1e-05 time = 9.6s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.893700e-01 f-delta =  9e-05 time = 10.0s (fit time = 3.1s) newi = 2
+Iter 12x5: f = 1.894554e-01 f-delta =  2e-04 time = 9.9s (fit time = 3.0s) newi = 0
+Iter 13x5: f = 1.894829e-01 f-delta =  3e-05 time = 9.5s (fit time = 2.9s) newi = 1
+Iter 14x5: f = 1.895710e-01 f-delta =  1e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter 15x5: f = 1.896199e-01 f-delta =  5e-05 time = 9.6s (fit time = 3.0s) newi = 1
+Iter 16x5: f = 1.895697e-01 f-delta = -1e-06 time = 9.6s (fit time = 3.0s) newi = 2
+Iter 17x5: f = 1.895174e-01 f-delta = -5e-05 time = 9.7s (fit time = 3.0s) newi = 3
+
+Final f = 1.895710e-01
+Total time: 1.66e+02
+
+Total Time (secs): 165.776
+
+~~~~~Generating random initialization for run 4~~~~ 
+Random Seed in Hex: 41dab23d3d800000
+
+---Starting run 4/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ea79c271a00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.757574e-01 f-delta =  2e-01 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.831970e-01 f-delta =  7e-03 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.848422e-01 f-delta =  2e-03 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.855502e-01 f-delta =  7e-04 time = 7.1s (fit time = 3.1s) newi = 0
+Iter  5x5: f = 1.860924e-01 f-delta =  5e-04 time = 7.0s (fit time = 3.1s) newi = 0
+Iter  6x5: f = 1.864739e-01 f-delta =  4e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.864399e-01 f-delta = -3e-05 time = 6.7s (fit time = 2.9s) newi = 1
+Iter  8x5: f = 1.865616e-01 f-delta =  9e-05 time = 6.7s (fit time = 2.9s) newi = 2
+Iter  9x5: f = 1.864375e-01 f-delta = -4e-05 time = 6.7s (fit time = 2.9s) newi = 3
+
+Final f = 1.864739e-01
+Total time: 6.19e+01
+
+Total Time (secs): 61.868
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41ef71a60f800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.758716e-01 f-delta =  2e-01 time = 5.4s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.819547e-01 f-delta =  6e-03 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.835412e-01 f-delta =  2e-03 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.844656e-01 f-delta =  9e-04 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.850688e-01 f-delta =  6e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.855335e-01 f-delta =  5e-04 time = 5.8s (fit time = 2.8s) newi = 0
+Iter  7x5: f = 1.855891e-01 f-delta =  6e-05 time = 5.7s (fit time = 2.9s) newi = 1
+Iter  8x5: f = 1.854317e-01 f-delta = -1e-04 time = 5.5s (fit time = 2.9s) newi = 2
+Iter  9x5: f = 1.857394e-01 f-delta =  2e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.852589e-01 f-delta = -5e-04 time = 5.5s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.861282e-01 f-delta =  4e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.856693e-01 f-delta = -5e-04 time = 5.5s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.861312e-01 f-delta =  3e-06 time = 5.7s (fit time = 3.0s) newi = 2
+Iter 14x5: f = 1.860691e-01 f-delta = -6e-05 time = 5.6s (fit time = 2.9s) newi = 3
+
+Final f = 1.861282e-01
+Total time: 7.85e+01
+
+Total Time (secs): 78.535
+
+---Starting run 4/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e55f66e3000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.787484e-01 f-delta =  2e-01 time = 9.8s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.837817e-01 f-delta =  5e-03 time = 10.2s (fit time = 2.8s) newi = 0
+Iter  3x5: f = 1.856828e-01 f-delta =  2e-03 time = 9.8s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.867422e-01 f-delta =  1e-03 time = 9.4s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.870866e-01 f-delta =  3e-04 time = 9.4s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.873488e-01 f-delta =  3e-04 time = 9.4s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.875063e-01 f-delta =  2e-04 time = 9.4s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.875662e-01 f-delta =  6e-05 time = 9.4s (fit time = 2.9s) newi = 1
+Iter  9x5: f = 1.876968e-01 f-delta =  2e-04 time = 9.4s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.878959e-01 f-delta =  2e-04 time = 9.4s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.879980e-01 f-delta =  1e-04 time = 9.6s (fit time = 3.1s) newi = 0
+Iter 12x5: f = 1.880051e-01 f-delta =  7e-06 time = 9.7s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.882255e-01 f-delta =  2e-04 time = 9.6s (fit time = 3.0s) newi = 0
+Iter 14x5: f = 1.884214e-01 f-delta =  2e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter 15x5: f = 1.882244e-01 f-delta = -2e-04 time = 9.6s (fit time = 3.0s) newi = 1
+Iter 16x5: f = 1.883160e-01 f-delta = -1e-04 time = 9.9s (fit time = 2.8s) newi = 2
+Iter 17x5: f = 1.885344e-01 f-delta =  1e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter 18x5: f = 1.884106e-01 f-delta = -1e-04 time = 10.7s (fit time = 3.4s) newi = 1
+Iter 19x5: f = 1.885853e-01 f-delta =  5e-05 time = 9.5s (fit time = 2.9s) newi = 2
+Iter 20x5: f = 1.885808e-01 f-delta =  5e-05 time = 9.5s (fit time = 2.9s) newi = 3
+
+Final f = 1.885344e-01
+Total time: 1.93e+02
+
+Total Time (secs): 193.430
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41b53afc8e000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.785914e-01 f-delta =  2e-01 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.834936e-01 f-delta =  5e-03 time = 7.8s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.849990e-01 f-delta =  2e-03 time = 7.8s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.860161e-01 f-delta =  1e-03 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.865592e-01 f-delta =  5e-04 time = 7.6s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.871797e-01 f-delta =  6e-04 time = 7.6s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.875273e-01 f-delta =  3e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.877260e-01 f-delta =  2e-04 time = 7.4s (fit time = 3.1s) newi = 0
+Iter  9x5: f = 1.877036e-01 f-delta = -2e-05 time = 7.1s (fit time = 2.8s) newi = 1
+Iter 10x5: f = 1.881445e-01 f-delta =  4e-04 time = 7.1s (fit time = 2.8s) newi = 0
+Iter 11x5: f = 1.879773e-01 f-delta = -2e-04 time = 7.1s (fit time = 2.8s) newi = 1
+Iter 12x5: f = 1.882163e-01 f-delta =  7e-05 time = 7.8s (fit time = 3.1s) newi = 2
+Iter 13x5: f = 1.879763e-01 f-delta = -2e-04 time = 7.3s (fit time = 2.9s) newi = 3
+
+Final f = 1.881445e-01
+Total time: 9.65e+01
+
+Total Time (secs): 96.490
+
+---Starting run 4/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e1bdb3e6800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.792007e-01 f-delta =  2e-01 time = 16.0s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.841144e-01 f-delta =  5e-03 time = 16.4s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.861488e-01 f-delta =  2e-03 time = 15.0s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.871795e-01 f-delta =  1e-03 time = 15.0s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.878630e-01 f-delta =  7e-04 time = 15.7s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.883034e-01 f-delta =  4e-04 time = 15.4s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.885889e-01 f-delta =  3e-04 time = 15.1s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.887735e-01 f-delta =  2e-04 time = 15.7s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.887522e-01 f-delta = -2e-05 time = 15.6s (fit time = 3.0s) newi = 1
+Iter 10x5: f = 1.889147e-01 f-delta =  1e-04 time = 15.1s (fit time = 3.0s) newi = 0
+Iter 11x5: f = 1.889558e-01 f-delta =  4e-05 time = 14.9s (fit time = 3.0s) newi = 1
+Iter 12x5: f = 1.889995e-01 f-delta =  8e-05 time = 14.9s (fit time = 3.0s) newi = 2
+Iter 13x5: f = 1.890975e-01 f-delta =  2e-04 time = 15.7s (fit time = 3.2s) newi = 0
+Iter 14x5: f = 1.890940e-01 f-delta = -4e-06 time = 15.2s (fit time = 2.9s) newi = 1
+Iter 15x5: f = 1.891726e-01 f-delta =  8e-05 time = 15.0s (fit time = 3.1s) newi = 2
+Iter 16x5: f = 1.893792e-01 f-delta =  3e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter 17x5: f = 1.895096e-01 f-delta =  1e-04 time = 15.0s (fit time = 2.9s) newi = 0
+Iter 18x5: f = 1.896196e-01 f-delta =  1e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter 19x5: f = 1.896285e-01 f-delta =  9e-06 time = 15.0s (fit time = 3.0s) newi = 1
+Iter 20x5: f = 1.896461e-01 f-delta =  3e-05 time = 14.9s (fit time = 2.9s) newi = 2
+Iter 21x5: f = 1.897013e-01 f-delta =  8e-05 time = 14.9s (fit time = 2.9s) newi = 3
+
+Final f = 1.896196e-01
+Total time: 3.21e+02
+
+Total Time (secs): 320.680
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41d903f4ec400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.765400e-01 f-delta =  2e-01 time = 9.7s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.838304e-01 f-delta =  7e-03 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.865890e-01 f-delta =  3e-03 time = 9.8s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.879995e-01 f-delta =  1e-03 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.887404e-01 f-delta =  7e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.889003e-01 f-delta =  2e-04 time = 10.1s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.889314e-01 f-delta =  3e-05 time = 10.0s (fit time = 3.0s) newi = 1
+Iter  8x5: f = 1.891208e-01 f-delta =  2e-04 time = 10.0s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.890755e-01 f-delta = -5e-05 time = 10.0s (fit time = 3.1s) newi = 1
+Iter 10x5: f = 1.891215e-01 f-delta =  7e-07 time = 10.0s (fit time = 3.0s) newi = 2
+Iter 11x5: f = 1.891807e-01 f-delta =  6e-05 time = 10.0s (fit time = 3.0s) newi = 3
+
+Final f = 1.891208e-01
+Total time: 1.09e+02
+
+Total Time (secs): 109.294
+
+~~~~~Generating random initialization for run 5~~~~ 
+Random Seed in Hex: 41e5851ac7e00000
+
+---Starting run 5/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41c0206e4c800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.757000e-01 f-delta =  2e-01 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.822655e-01 f-delta =  7e-03 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.839272e-01 f-delta =  2e-03 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.847101e-01 f-delta =  8e-04 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.853970e-01 f-delta =  7e-04 time = 7.1s (fit time = 3.2s) newi = 0
+Iter  6x5: f = 1.858044e-01 f-delta =  4e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.863425e-01 f-delta =  5e-04 time = 6.7s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.864981e-01 f-delta =  2e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.866014e-01 f-delta =  1e-04 time = 6.7s (fit time = 3.0s) newi = 0
+Iter 10x5: f = 1.865691e-01 f-delta = -3e-05 time = 7.0s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.867786e-01 f-delta =  2e-04 time = 6.7s (fit time = 3.0s) newi = 0
+Iter 12x5: f = 1.867969e-01 f-delta =  2e-05 time = 6.7s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.867231e-01 f-delta = -6e-05 time = 6.8s (fit time = 3.0s) newi = 2
+Iter 14x5: f = 1.867622e-01 f-delta = -2e-05 time = 7.1s (fit time = 3.0s) newi = 3
+
+Final f = 1.867786e-01
+Total time: 9.68e+01
+
+Total Time (secs): 96.835
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41c1497bc9000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.759132e-01 f-delta =  2e-01 time = 5.6s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.802030e-01 f-delta =  4e-03 time = 5.7s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.822654e-01 f-delta =  2e-03 time = 5.8s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.828199e-01 f-delta =  6e-04 time = 5.7s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.841561e-01 f-delta =  1e-03 time = 5.7s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.842291e-01 f-delta =  7e-05 time = 5.8s (fit time = 3.0s) newi = 1
+Iter  7x5: f = 1.843608e-01 f-delta =  2e-04 time = 5.7s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.850342e-01 f-delta =  7e-04 time = 5.7s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.856974e-01 f-delta =  7e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.850353e-01 f-delta = -7e-04 time = 5.7s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.854894e-01 f-delta = -2e-04 time = 5.8s (fit time = 3.0s) newi = 2
+Iter 12x5: f = 1.854825e-01 f-delta = -2e-04 time = 6.0s (fit time = 3.0s) newi = 3
+
+Final f = 1.856974e-01
+Total time: 6.91e+01
+
+Total Time (secs): 69.095
+
+---Starting run 5/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ebc00bf4600000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.764607e-01 f-delta =  2e-01 time = 10.0s (fit time = 3.1s) newi = 0
+Iter  2x5: f = 1.824120e-01 f-delta =  6e-03 time = 10.0s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.852057e-01 f-delta =  3e-03 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.864175e-01 f-delta =  1e-03 time = 9.5s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.873864e-01 f-delta =  1e-03 time = 10.1s (fit time = 3.1s) newi = 0
+Iter  6x5: f = 1.879906e-01 f-delta =  6e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.881433e-01 f-delta =  2e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.882510e-01 f-delta =  1e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.885096e-01 f-delta =  3e-04 time = 9.7s (fit time = 2.8s) newi = 0
+Iter 10x5: f = 1.884705e-01 f-delta = -4e-05 time = 9.6s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.885316e-01 f-delta =  2e-05 time = 9.6s (fit time = 3.0s) newi = 2
+Iter 12x5: f = 1.886093e-01 f-delta =  1e-04 time = 10.1s (fit time = 3.0s) newi = 3
+
+Final f = 1.885096e-01
+Total time: 1.18e+02
+
+Total Time (secs): 118.046
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41d9900dc2000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.767453e-01 f-delta =  2e-01 time = 7.0s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.828439e-01 f-delta =  6e-03 time = 7.5s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.841303e-01 f-delta =  1e-03 time = 7.7s (fit time = 3.1s) newi = 0
+Iter  4x5: f = 1.850069e-01 f-delta =  9e-04 time = 7.2s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.855192e-01 f-delta =  5e-04 time = 7.3s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.863483e-01 f-delta =  8e-04 time = 7.6s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.863429e-01 f-delta = -5e-06 time = 7.4s (fit time = 3.0s) newi = 1
+Iter  8x5: f = 1.863052e-01 f-delta = -4e-05 time = 7.2s (fit time = 2.9s) newi = 2
+Iter  9x5: f = 1.863278e-01 f-delta = -2e-05 time = 7.0s (fit time = 2.8s) newi = 3
+
+Final f = 1.863483e-01
+Total time: 6.65e+01
+
+Total Time (secs): 66.463
+
+---Starting run 5/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ebff5619400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.795333e-01 f-delta =  2e-01 time = 14.8s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.844313e-01 f-delta =  5e-03 time = 15.4s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.865182e-01 f-delta =  2e-03 time = 15.4s (fit time = 3.2s) newi = 0
+Iter  4x5: f = 1.876251e-01 f-delta =  1e-03 time = 14.9s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.880730e-01 f-delta =  4e-04 time = 14.7s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.883636e-01 f-delta =  3e-04 time = 15.1s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.886187e-01 f-delta =  3e-04 time = 14.6s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.888505e-01 f-delta =  2e-04 time = 14.8s (fit time = 2.8s) newi = 0
+Iter  9x5: f = 1.890114e-01 f-delta =  2e-04 time = 14.7s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.891644e-01 f-delta =  2e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter 11x5: f = 1.892598e-01 f-delta =  1e-04 time = 15.2s (fit time = 2.9s) newi = 1
+Iter 12x5: f = 1.893316e-01 f-delta =  2e-04 time = 14.9s (fit time = 2.9s) newi = 0
+Iter 13x5: f = 1.893533e-01 f-delta =  2e-05 time = 14.7s (fit time = 2.9s) newi = 1
+Iter 14x5: f = 1.893844e-01 f-delta =  5e-05 time = 14.9s (fit time = 2.9s) newi = 2
+Iter 15x5: f = 1.894509e-01 f-delta =  1e-04 time = 14.8s (fit time = 2.9s) newi = 0
+Iter 16x5: f = 1.894857e-01 f-delta =  3e-05 time = 14.9s (fit time = 2.9s) newi = 1
+Iter 17x5: f = 1.895330e-01 f-delta =  8e-05 time = 15.1s (fit time = 2.9s) newi = 2
+Iter 18x5: f = 1.894763e-01 f-delta =  3e-05 time = 15.0s (fit time = 3.0s) newi = 3
+
+Final f = 1.894509e-01
+Total time: 2.69e+02
+
+Total Time (secs): 269.149
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e0dd9c3d400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.770375e-01 f-delta =  2e-01 time = 9.4s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.817530e-01 f-delta =  5e-03 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.841578e-01 f-delta =  2e-03 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.849923e-01 f-delta =  8e-04 time = 10.0s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.856408e-01 f-delta =  6e-04 time = 10.0s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.865472e-01 f-delta =  9e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.869180e-01 f-delta =  4e-04 time = 9.7s (fit time = 3.1s) newi = 0
+Iter  8x5: f = 1.872966e-01 f-delta =  4e-04 time = 10.6s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.874745e-01 f-delta =  2e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.874280e-01 f-delta = -5e-05 time = 10.3s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.875380e-01 f-delta =  6e-05 time = 9.6s (fit time = 2.9s) newi = 2
+Iter 12x5: f = 1.876328e-01 f-delta =  2e-04 time = 10.3s (fit time = 3.0s) newi = 0
+Iter 13x5: f = 1.877849e-01 f-delta =  2e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter 14x5: f = 1.879487e-01 f-delta =  2e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter 15x5: f = 1.879164e-01 f-delta = -3e-05 time = 9.9s (fit time = 3.0s) newi = 1
+Iter 16x5: f = 1.880759e-01 f-delta =  1e-04 time = 9.9s (fit time = 3.2s) newi = 0
+Iter 17x5: f = 1.880649e-01 f-delta = -1e-05 time = 10.0s (fit time = 3.2s) newi = 1
+Iter 18x5: f = 1.880167e-01 f-delta = -6e-05 time = 9.9s (fit time = 3.0s) newi = 2
+Iter 19x5: f = 1.881285e-01 f-delta =  5e-05 time = 9.6s (fit time = 2.9s) newi = 3
+
+Final f = 1.880759e-01
+Total time: 1.88e+02
+
+Total Time (secs): 187.639
+
+~~~~~Generating random initialization for run 6~~~~ 
+Random Seed in Hex: 418b602c98000000
+
+---Starting run 6/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41edb986daa00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.758999e-01 f-delta =  2e-01 time = 6.7s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.813576e-01 f-delta =  5e-03 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.832079e-01 f-delta =  2e-03 time = 6.7s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.843347e-01 f-delta =  1e-03 time = 7.0s (fit time = 3.2s) newi = 0
+Iter  5x5: f = 1.850134e-01 f-delta =  7e-04 time = 7.1s (fit time = 3.2s) newi = 0
+Iter  6x5: f = 1.857739e-01 f-delta =  8e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.860181e-01 f-delta =  2e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.862055e-01 f-delta =  2e-04 time = 6.9s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.865383e-01 f-delta =  3e-04 time = 7.0s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.863022e-01 f-delta = -2e-04 time = 6.8s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.864798e-01 f-delta = -6e-05 time = 6.8s (fit time = 2.9s) newi = 2
+Iter 12x5: f = 1.866589e-01 f-delta =  1e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter 13x5: f = 1.870758e-01 f-delta =  4e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter 14x5: f = 1.872576e-01 f-delta =  2e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter 15x5: f = 1.870299e-01 f-delta = -2e-04 time = 6.8s (fit time = 3.0s) newi = 1
+Iter 16x5: f = 1.873079e-01 f-delta =  5e-05 time = 6.8s (fit time = 2.9s) newi = 2
+Iter 17x5: f = 1.869149e-01 f-delta = -3e-04 time = 6.7s (fit time = 2.9s) newi = 3
+
+Final f = 1.872576e-01
+Total time: 1.16e+02
+
+Total Time (secs): 116.465
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41d32f4ed5400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.779226e-01 f-delta =  2e-01 time = 5.4s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.828224e-01 f-delta =  5e-03 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.836000e-01 f-delta =  8e-04 time = 5.6s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.843902e-01 f-delta =  8e-04 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.837171e-01 f-delta = -7e-04 time = 5.6s (fit time = 2.9s) newi = 1
+Iter  6x5: f = 1.848622e-01 f-delta =  5e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.847918e-01 f-delta = -7e-05 time = 5.5s (fit time = 2.9s) newi = 1
+Iter  8x5: f = 1.858269e-01 f-delta =  1e-03 time = 5.6s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.858474e-01 f-delta =  2e-05 time = 6.0s (fit time = 3.1s) newi = 1
+Iter 10x5: f = 1.858437e-01 f-delta =  2e-05 time = 5.6s (fit time = 3.0s) newi = 2
+Iter 11x5: f = 1.860267e-01 f-delta =  2e-04 time = 5.7s (fit time = 3.0s) newi = 0
+Iter 12x5: f = 1.854845e-01 f-delta = -5e-04 time = 5.6s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.848626e-01 f-delta = -1e-03 time = 5.6s (fit time = 3.0s) newi = 2
+Iter 14x5: f = 1.861423e-01 f-delta =  1e-04 time = 6.1s (fit time = 2.9s) newi = 0
+Iter 15x5: f = 1.859435e-01 f-delta = -2e-04 time = 5.5s (fit time = 2.9s) newi = 1
+Iter 16x5: f = 1.861757e-01 f-delta =  3e-05 time = 5.5s (fit time = 2.9s) newi = 2
+Iter 17x5: f = 1.862871e-01 f-delta =  1e-04 time = 5.6s (fit time = 3.0s) newi = 0
+Iter 18x5: f = 1.858217e-01 f-delta = -5e-04 time = 5.7s (fit time = 3.0s) newi = 1
+Iter 19x5: f = 1.857945e-01 f-delta = -5e-04 time = 5.7s (fit time = 3.0s) newi = 2
+Iter 20x5: f = 1.863736e-01 f-delta =  9e-05 time = 5.8s (fit time = 2.9s) newi = 3
+
+Final f = 1.862871e-01
+Total time: 1.13e+02
+
+Total Time (secs): 113.446
+
+---Starting run 6/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ef79c3f7400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.801947e-01 f-delta =  2e-01 time = 9.4s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.847850e-01 f-delta =  5e-03 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.860285e-01 f-delta =  1e-03 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.868295e-01 f-delta =  8e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.873771e-01 f-delta =  5e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.877229e-01 f-delta =  3e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.881990e-01 f-delta =  5e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.883720e-01 f-delta =  2e-04 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.884706e-01 f-delta =  1e-04 time = 9.9s (fit time = 3.0s) newi = 1
+Iter 10x5: f = 1.886319e-01 f-delta =  3e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter 11x5: f = 1.886712e-01 f-delta =  4e-05 time = 9.7s (fit time = 3.0s) newi = 1
+Iter 12x5: f = 1.887400e-01 f-delta =  1e-04 time = 10.0s (fit time = 3.0s) newi = 0
+Iter 13x5: f = 1.886583e-01 f-delta = -8e-05 time = 9.6s (fit time = 3.0s) newi = 1
+Iter 14x5: f = 1.883689e-01 f-delta = -4e-04 time = 9.5s (fit time = 2.9s) newi = 2
+Iter 15x5: f = 1.887906e-01 f-delta =  5e-05 time = 9.9s (fit time = 3.0s) newi = 3
+
+Final f = 1.887400e-01
+Total time: 1.46e+02
+
+Total Time (secs): 145.674
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e89b2b07000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.773256e-01 f-delta =  2e-01 time = 6.9s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.832499e-01 f-delta =  6e-03 time = 7.0s (fit time = 2.8s) newi = 0
+Iter  3x5: f = 1.847686e-01 f-delta =  2e-03 time = 7.3s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.853912e-01 f-delta =  6e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.853792e-01 f-delta = -1e-05 time = 7.1s (fit time = 2.9s) newi = 1
+Iter  6x5: f = 1.859287e-01 f-delta =  5e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.861206e-01 f-delta =  2e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.866898e-01 f-delta =  6e-04 time = 7.1s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.866812e-01 f-delta = -9e-06 time = 7.1s (fit time = 2.9s) newi = 1
+Iter 10x5: f = 1.868394e-01 f-delta =  1e-04 time = 7.2s (fit time = 3.1s) newi = 0
+Iter 11x5: f = 1.869766e-01 f-delta =  1e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.868551e-01 f-delta = -1e-04 time = 7.1s (fit time = 3.0s) newi = 1
+Iter 13x5: f = 1.870669e-01 f-delta =  9e-05 time = 7.2s (fit time = 3.0s) newi = 2
+Iter 14x5: f = 1.872278e-01 f-delta =  3e-04 time = 7.1s (fit time = 3.0s) newi = 0
+Iter 15x5: f = 1.871611e-01 f-delta = -7e-05 time = 7.1s (fit time = 2.9s) newi = 1
+Iter 16x5: f = 1.870032e-01 f-delta = -2e-04 time = 7.0s (fit time = 2.9s) newi = 2
+Iter 17x5: f = 1.873508e-01 f-delta =  1e-04 time = 7.5s (fit time = 3.0s) newi = 0
+Iter 18x5: f = 1.871998e-01 f-delta = -2e-04 time = 7.1s (fit time = 2.9s) newi = 1
+Iter 19x5: f = 1.869146e-01 f-delta = -4e-04 time = 7.1s (fit time = 2.9s) newi = 2
+Iter 20x5: f = 1.870839e-01 f-delta = -3e-04 time = 7.1s (fit time = 2.9s) newi = 3
+
+Final f = 1.873508e-01
+Total time: 1.43e+02
+
+Total Time (secs): 143.103
+
+---Starting run 6/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e8d72c01800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.807615e-01 f-delta =  2e-01 time = 15.2s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.850723e-01 f-delta =  4e-03 time = 14.7s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.865574e-01 f-delta =  1e-03 time = 15.2s (fit time = 3.1s) newi = 0
+Iter  4x5: f = 1.877583e-01 f-delta =  1e-03 time = 15.0s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.882673e-01 f-delta =  5e-04 time = 14.9s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.884225e-01 f-delta =  2e-04 time = 14.6s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.887896e-01 f-delta =  4e-04 time = 14.7s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.891988e-01 f-delta =  4e-04 time = 15.0s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.892450e-01 f-delta =  5e-05 time = 14.7s (fit time = 3.1s) newi = 1
+Iter 10x5: f = 1.893719e-01 f-delta =  2e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter 11x5: f = 1.894609e-01 f-delta =  9e-05 time = 15.0s (fit time = 3.0s) newi = 1
+Iter 12x5: f = 1.893862e-01 f-delta =  1e-05 time = 14.9s (fit time = 3.0s) newi = 2
+Iter 13x5: f = 1.895236e-01 f-delta =  2e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter 14x5: f = 1.895347e-01 f-delta =  1e-05 time = 14.9s (fit time = 3.0s) newi = 1
+Iter 15x5: f = 1.896993e-01 f-delta =  2e-04 time = 15.2s (fit time = 3.0s) newi = 0
+Iter 16x5: f = 1.896659e-01 f-delta = -3e-05 time = 15.9s (fit time = 2.9s) newi = 1
+Iter 17x5: f = 1.898611e-01 f-delta =  2e-04 time = 15.5s (fit time = 3.2s) newi = 0
+Iter 18x5: f = 1.898739e-01 f-delta =  1e-05 time = 15.1s (fit time = 2.9s) newi = 1
+Iter 19x5: f = 1.898959e-01 f-delta =  3e-05 time = 15.0s (fit time = 3.0s) newi = 2
+Iter 20x5: f = 1.898924e-01 f-delta =  3e-05 time = 14.9s (fit time = 2.9s) newi = 3
+
+Final f = 1.898611e-01
+Total time: 3.01e+02
+
+Total Time (secs): 300.720
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e8673dd1a00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.767767e-01 f-delta =  2e-01 time = 10.3s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.817826e-01 f-delta =  5e-03 time = 10.0s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.847373e-01 f-delta =  3e-03 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.860602e-01 f-delta =  1e-03 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.871361e-01 f-delta =  1e-03 time = 9.6s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.875440e-01 f-delta =  4e-04 time = 9.7s (fit time = 2.8s) newi = 0
+Iter  7x5: f = 1.883376e-01 f-delta =  8e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.886202e-01 f-delta =  3e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.887739e-01 f-delta =  2e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.889682e-01 f-delta =  2e-04 time = 10.0s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.890364e-01 f-delta =  7e-05 time = 10.0s (fit time = 2.9s) newi = 1
+Iter 12x5: f = 1.891018e-01 f-delta =  1e-04 time = 9.9s (fit time = 3.0s) newi = 0
+Iter 13x5: f = 1.891217e-01 f-delta =  2e-05 time = 9.6s (fit time = 2.9s) newi = 1
+Iter 14x5: f = 1.893654e-01 f-delta =  3e-04 time = 9.6s (fit time = 2.8s) newi = 0
+Iter 15x5: f = 1.892213e-01 f-delta = -1e-04 time = 10.4s (fit time = 3.1s) newi = 1
+Iter 16x5: f = 1.894147e-01 f-delta =  5e-05 time = 10.2s (fit time = 2.9s) newi = 2
+Iter 17x5: f = 1.893442e-01 f-delta = -2e-05 time = 9.9s (fit time = 3.0s) newi = 3
+
+Final f = 1.893654e-01
+Total time: 1.68e+02
+
+Total Time (secs): 168.336
+
+~~~~~Generating random initialization for run 7~~~~ 
+Random Seed in Hex: 41ee96fec4600000
+
+---Starting run 7/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ebf90d9c600000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.770821e-01 f-delta =  2e-01 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.822528e-01 f-delta =  5e-03 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.838917e-01 f-delta =  2e-03 time = 7.8s (fit time = 3.1s) newi = 0
+Iter  4x5: f = 1.845845e-01 f-delta =  7e-04 time = 7.0s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.854544e-01 f-delta =  9e-04 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.854433e-01 f-delta = -1e-05 time = 6.8s (fit time = 3.0s) newi = 1
+Iter  7x5: f = 1.859621e-01 f-delta =  5e-04 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.848222e-01 f-delta = -1e-03 time = 6.8s (fit time = 3.0s) newi = 1
+Iter  9x5: f = 1.865025e-01 f-delta =  5e-04 time = 7.2s (fit time = 3.0s) newi = 0
+Iter 10x5: f = 1.862450e-01 f-delta = -3e-04 time = 6.8s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.865694e-01 f-delta =  7e-05 time = 6.8s (fit time = 2.9s) newi = 2
+Iter 12x5: f = 1.861486e-01 f-delta = -4e-04 time = 6.7s (fit time = 2.8s) newi = 3
+
+Final f = 1.865025e-01
+Total time: 8.40e+01
+
+Total Time (secs): 83.980
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41db428f86800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.770298e-01 f-delta =  2e-01 time = 5.6s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.826719e-01 f-delta =  6e-03 time = 5.9s (fit time = 3.2s) newi = 0
+Iter  3x5: f = 1.837573e-01 f-delta =  1e-03 time = 5.7s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.842764e-01 f-delta =  5e-04 time = 5.8s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.846118e-01 f-delta =  3e-04 time = 5.7s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.851180e-01 f-delta =  5e-04 time = 5.6s (fit time = 2.8s) newi = 0
+Iter  7x5: f = 1.846160e-01 f-delta = -5e-04 time = 5.9s (fit time = 2.8s) newi = 1
+Iter  8x5: f = 1.854756e-01 f-delta =  4e-04 time = 5.8s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.853152e-01 f-delta = -2e-04 time = 5.6s (fit time = 2.9s) newi = 1
+Iter 10x5: f = 1.849699e-01 f-delta = -5e-04 time = 5.7s (fit time = 3.0s) newi = 2
+Iter 11x5: f = 1.857989e-01 f-delta =  3e-04 time = 5.8s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.858657e-01 f-delta =  7e-05 time = 5.6s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.854253e-01 f-delta = -4e-04 time = 6.2s (fit time = 3.2s) newi = 2
+Iter 14x5: f = 1.856760e-01 f-delta = -1e-04 time = 6.1s (fit time = 3.0s) newi = 3
+
+Final f = 1.857989e-01
+Total time: 8.16e+01
+
+Total Time (secs): 81.580
+
+---Starting run 7/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e910eab9600000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.775379e-01 f-delta =  2e-01 time = 10.0s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.837313e-01 f-delta =  6e-03 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.857273e-01 f-delta =  2e-03 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.867888e-01 f-delta =  1e-03 time = 10.4s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.873023e-01 f-delta =  5e-04 time = 9.9s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.873349e-01 f-delta =  3e-05 time = 9.7s (fit time = 3.0s) newi = 1
+Iter  7x5: f = 1.875022e-01 f-delta =  2e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.877384e-01 f-delta =  2e-04 time = 9.9s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.877781e-01 f-delta =  4e-05 time = 10.0s (fit time = 2.9s) newi = 1
+Iter 10x5: f = 1.878863e-01 f-delta =  1e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.878183e-01 f-delta = -7e-05 time = 9.8s (fit time = 2.9s) newi = 1
+Iter 12x5: f = 1.878799e-01 f-delta = -6e-06 time = 9.6s (fit time = 3.0s) newi = 2
+Iter 13x5: f = 1.880486e-01 f-delta =  2e-04 time = 9.8s (fit time = 3.0s) newi = 0
+Iter 14x5: f = 1.882261e-01 f-delta =  2e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter 15x5: f = 1.886361e-01 f-delta =  4e-04 time = 9.6s (fit time = 3.0s) newi = 0
+Iter 16x5: f = 1.886579e-01 f-delta =  2e-05 time = 9.6s (fit time = 3.0s) newi = 1
+Iter 17x5: f = 1.886333e-01 f-delta = -3e-06 time = 9.6s (fit time = 3.0s) newi = 2
+Iter 18x5: f = 1.886665e-01 f-delta =  3e-05 time = 9.7s (fit time = 2.9s) newi = 3
+
+Final f = 1.886361e-01
+Total time: 1.76e+02
+
+Total Time (secs): 176.073
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41d334ca80000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.760127e-01 f-delta =  2e-01 time = 7.7s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.822704e-01 f-delta =  6e-03 time = 7.8s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.842272e-01 f-delta =  2e-03 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.856530e-01 f-delta =  1e-03 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.864150e-01 f-delta =  8e-04 time = 7.1s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.868540e-01 f-delta =  4e-04 time = 7.5s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.873102e-01 f-delta =  5e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.876910e-01 f-delta =  4e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.878626e-01 f-delta =  2e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.880184e-01 f-delta =  2e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.879264e-01 f-delta = -9e-05 time = 7.1s (fit time = 2.9s) newi = 1
+Iter 12x5: f = 1.883126e-01 f-delta =  3e-04 time = 7.2s (fit time = 2.8s) newi = 0
+Iter 13x5: f = 1.883591e-01 f-delta =  5e-05 time = 7.0s (fit time = 2.8s) newi = 1
+Iter 14x5: f = 1.884348e-01 f-delta =  1e-04 time = 7.0s (fit time = 2.8s) newi = 0
+Iter 15x5: f = 1.884080e-01 f-delta = -3e-05 time = 7.0s (fit time = 2.8s) newi = 1
+Iter 16x5: f = 1.883591e-01 f-delta = -8e-05 time = 7.1s (fit time = 2.9s) newi = 2
+Iter 17x5: f = 1.885501e-01 f-delta =  1e-04 time = 7.3s (fit time = 2.9s) newi = 0
+Iter 18x5: f = 1.885055e-01 f-delta = -4e-05 time = 7.1s (fit time = 2.9s) newi = 1
+Iter 19x5: f = 1.883732e-01 f-delta = -2e-04 time = 7.3s (fit time = 3.0s) newi = 2
+Iter 20x5: f = 1.884190e-01 f-delta = -1e-04 time = 7.3s (fit time = 3.0s) newi = 3
+
+Final f = 1.885501e-01
+Total time: 1.45e+02
+
+Total Time (secs): 145.258
+
+---Starting run 7/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e43fa695000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.804684e-01 f-delta =  2e-01 time = 15.0s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.856901e-01 f-delta =  5e-03 time = 16.0s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.875215e-01 f-delta =  2e-03 time = 15.3s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.882155e-01 f-delta =  7e-04 time = 15.7s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.887262e-01 f-delta =  5e-04 time = 14.6s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.889964e-01 f-delta =  3e-04 time = 14.7s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.892384e-01 f-delta =  2e-04 time = 14.7s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.893695e-01 f-delta =  1e-04 time = 15.3s (fit time = 3.1s) newi = 0
+Iter  9x5: f = 1.894581e-01 f-delta =  9e-05 time = 15.6s (fit time = 2.9s) newi = 1
+Iter 10x5: f = 1.895288e-01 f-delta =  2e-04 time = 15.0s (fit time = 3.1s) newi = 0
+Iter 11x5: f = 1.896838e-01 f-delta =  2e-04 time = 15.1s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.897095e-01 f-delta =  3e-05 time = 14.7s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.897955e-01 f-delta =  1e-04 time = 14.7s (fit time = 2.9s) newi = 0
+Iter 14x5: f = 1.898552e-01 f-delta =  6e-05 time = 14.6s (fit time = 2.8s) newi = 1
+Iter 15x5: f = 1.898636e-01 f-delta =  7e-05 time = 15.3s (fit time = 2.9s) newi = 2
+Iter 16x5: f = 1.899343e-01 f-delta =  1e-04 time = 14.9s (fit time = 2.9s) newi = 0
+Iter 17x5: f = 1.899677e-01 f-delta =  3e-05 time = 14.9s (fit time = 2.9s) newi = 1
+Iter 18x5: f = 1.899414e-01 f-delta =  7e-06 time = 14.9s (fit time = 3.0s) newi = 2
+Iter 19x5: f = 1.898695e-01 f-delta = -6e-05 time = 15.3s (fit time = 3.0s) newi = 3
+
+Final f = 1.899343e-01
+Total time: 2.87e+02
+
+Total Time (secs): 286.835
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41dd4e080e800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.773131e-01 f-delta =  2e-01 time = 9.6s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.830453e-01 f-delta =  6e-03 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.851922e-01 f-delta =  2e-03 time = 9.9s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.865557e-01 f-delta =  1e-03 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.873537e-01 f-delta =  8e-04 time = 10.2s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.878444e-01 f-delta =  5e-04 time = 10.3s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.881863e-01 f-delta =  3e-04 time = 9.9s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.884262e-01 f-delta =  2e-04 time = 10.2s (fit time = 3.2s) newi = 0
+Iter  9x5: f = 1.885099e-01 f-delta =  8e-05 time = 9.7s (fit time = 3.0s) newi = 1
+Iter 10x5: f = 1.886342e-01 f-delta =  2e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter 11x5: f = 1.887987e-01 f-delta =  2e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter 12x5: f = 1.886218e-01 f-delta = -2e-04 time = 10.2s (fit time = 3.1s) newi = 1
+Iter 13x5: f = 1.888399e-01 f-delta =  4e-05 time = 9.7s (fit time = 3.0s) newi = 2
+Iter 14x5: f = 1.889780e-01 f-delta =  2e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter 15x5: f = 1.890135e-01 f-delta =  4e-05 time = 10.2s (fit time = 3.0s) newi = 1
+Iter 16x5: f = 1.889804e-01 f-delta =  2e-06 time = 9.7s (fit time = 3.0s) newi = 2
+Iter 17x5: f = 1.891139e-01 f-delta =  1e-04 time = 9.7s (fit time = 3.0s) newi = 0
+Iter 18x5: f = 1.891211e-01 f-delta =  7e-06 time = 10.0s (fit time = 2.9s) newi = 1
+Iter 19x5: f = 1.890948e-01 f-delta = -2e-05 time = 9.9s (fit time = 3.0s) newi = 2
+Iter 20x5: f = 1.891865e-01 f-delta =  7e-05 time = 9.8s (fit time = 3.0s) newi = 3
+
+Final f = 1.891139e-01
+Total time: 1.98e+02
+
+Total Time (secs): 198.069
+
+~~~~~Generating random initialization for run 8~~~~ 
+Random Seed in Hex: 41e28ab05aa00000
+
+---Starting run 8/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ef233f76a00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.763532e-01 f-delta =  2e-01 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.815595e-01 f-delta =  5e-03 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.834672e-01 f-delta =  2e-03 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.845868e-01 f-delta =  1e-03 time = 6.9s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.852689e-01 f-delta =  7e-04 time = 6.9s (fit time = 3.1s) newi = 0
+Iter  6x5: f = 1.861155e-01 f-delta =  8e-04 time = 6.8s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.862142e-01 f-delta =  1e-04 time = 7.1s (fit time = 3.0s) newi = 1
+Iter  8x5: f = 1.865519e-01 f-delta =  4e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.867865e-01 f-delta =  2e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.867600e-01 f-delta = -3e-05 time = 6.8s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.869046e-01 f-delta =  1e-04 time = 6.8s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.867470e-01 f-delta = -2e-04 time = 6.8s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.870914e-01 f-delta =  2e-04 time = 6.8s (fit time = 2.9s) newi = 0
+Iter 14x5: f = 1.867839e-01 f-delta = -3e-04 time = 7.0s (fit time = 3.0s) newi = 1
+Iter 15x5: f = 1.869477e-01 f-delta = -1e-04 time = 7.0s (fit time = 2.9s) newi = 2
+Iter 16x5: f = 1.869687e-01 f-delta = -1e-04 time = 6.8s (fit time = 2.9s) newi = 3
+
+Final f = 1.870914e-01
+Total time: 1.10e+02
+
+Total Time (secs): 110.495
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41b3009822000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.770054e-01 f-delta =  2e-01 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.816165e-01 f-delta =  5e-03 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.836573e-01 f-delta =  2e-03 time = 5.9s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.846020e-01 f-delta =  9e-04 time = 5.5s (fit time = 2.8s) newi = 0
+Iter  5x5: f = 1.852509e-01 f-delta =  6e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.852884e-01 f-delta =  4e-05 time = 5.6s (fit time = 2.9s) newi = 1
+Iter  7x5: f = 1.849825e-01 f-delta = -3e-04 time = 5.5s (fit time = 2.8s) newi = 2
+Iter  8x5: f = 1.854863e-01 f-delta =  2e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.857720e-01 f-delta =  3e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.853887e-01 f-delta = -4e-04 time = 5.6s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.859147e-01 f-delta =  1e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.859746e-01 f-delta =  6e-05 time = 6.0s (fit time = 3.0s) newi = 1
+Iter 13x5: f = 1.857285e-01 f-delta = -2e-04 time = 5.6s (fit time = 3.0s) newi = 2
+Iter 14x5: f = 1.854561e-01 f-delta = -5e-04 time = 5.6s (fit time = 3.0s) newi = 3
+
+Final f = 1.859147e-01
+Total time: 7.95e+01
+
+Total Time (secs): 79.534
+
+---Starting run 8/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e4eb2e63200000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.793849e-01 f-delta =  2e-01 time = 9.7s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.836443e-01 f-delta =  4e-03 time = 9.8s (fit time = 3.1s) newi = 0
+Iter  3x5: f = 1.860027e-01 f-delta =  2e-03 time = 10.1s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.870565e-01 f-delta =  1e-03 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.875959e-01 f-delta =  5e-04 time = 10.5s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.879225e-01 f-delta =  3e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.879490e-01 f-delta =  3e-05 time = 9.7s (fit time = 2.9s) newi = 1
+Iter  8x5: f = 1.881107e-01 f-delta =  2e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.881902e-01 f-delta =  8e-05 time = 9.6s (fit time = 2.9s) newi = 1
+Iter 10x5: f = 1.882157e-01 f-delta =  1e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.881754e-01 f-delta = -4e-05 time = 10.2s (fit time = 3.0s) newi = 1
+Iter 12x5: f = 1.884986e-01 f-delta =  3e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter 13x5: f = 1.885066e-01 f-delta =  8e-06 time = 9.8s (fit time = 3.0s) newi = 1
+Iter 14x5: f = 1.885288e-01 f-delta =  3e-05 time = 9.7s (fit time = 2.9s) newi = 2
+Iter 15x5: f = 1.885298e-01 f-delta =  3e-05 time = 10.1s (fit time = 3.0s) newi = 3
+
+Final f = 1.884986e-01
+Total time: 1.48e+02
+
+Total Time (secs): 147.799
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e1104dca600000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.791058e-01 f-delta =  2e-01 time = 7.3s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.843731e-01 f-delta =  5e-03 time = 7.2s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.858816e-01 f-delta =  2e-03 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.867331e-01 f-delta =  9e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.873166e-01 f-delta =  6e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.877345e-01 f-delta =  4e-04 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.878883e-01 f-delta =  2e-04 time = 7.2s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.879719e-01 f-delta =  8e-05 time = 7.2s (fit time = 3.0s) newi = 1
+Iter  9x5: f = 1.880522e-01 f-delta =  2e-04 time = 7.5s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.880732e-01 f-delta =  2e-05 time = 7.6s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.878952e-01 f-delta = -2e-04 time = 7.2s (fit time = 3.0s) newi = 2
+Iter 12x5: f = 1.879529e-01 f-delta = -1e-04 time = 7.3s (fit time = 3.0s) newi = 3
+
+Final f = 1.880522e-01
+Total time: 8.76e+01
+
+Total Time (secs): 87.563
+
+---Starting run 8/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41af1190fe000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.790455e-01 f-delta =  2e-01 time = 15.1s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.833731e-01 f-delta =  4e-03 time = 15.0s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.853878e-01 f-delta =  2e-03 time = 15.8s (fit time = 3.1s) newi = 0
+Iter  4x5: f = 1.867315e-01 f-delta =  1e-03 time = 14.9s (fit time = 3.1s) newi = 0
+Iter  5x5: f = 1.877982e-01 f-delta =  1e-03 time = 15.1s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.884481e-01 f-delta =  6e-04 time = 15.6s (fit time = 3.1s) newi = 0
+Iter  7x5: f = 1.887440e-01 f-delta =  3e-04 time = 15.2s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.889342e-01 f-delta =  2e-04 time = 15.0s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.890699e-01 f-delta =  1e-04 time = 14.8s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.891499e-01 f-delta =  8e-05 time = 14.8s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.892885e-01 f-delta =  2e-04 time = 15.5s (fit time = 3.0s) newi = 0
+Iter 12x5: f = 1.893077e-01 f-delta =  2e-05 time = 15.7s (fit time = 3.0s) newi = 1
+Iter 13x5: f = 1.894247e-01 f-delta =  1e-04 time = 15.3s (fit time = 3.0s) newi = 0
+Iter 14x5: f = 1.894969e-01 f-delta =  7e-05 time = 14.9s (fit time = 3.0s) newi = 1
+Iter 15x5: f = 1.895501e-01 f-delta =  1e-04 time = 16.1s (fit time = 3.1s) newi = 0
+Iter 16x5: f = 1.893691e-01 f-delta = -2e-04 time = 15.1s (fit time = 3.2s) newi = 1
+Iter 17x5: f = 1.897013e-01 f-delta =  2e-04 time = 14.9s (fit time = 3.0s) newi = 0
+Iter 18x5: f = 1.897230e-01 f-delta =  2e-05 time = 14.9s (fit time = 3.0s) newi = 1
+Iter 19x5: f = 1.897739e-01 f-delta =  7e-05 time = 14.8s (fit time = 3.0s) newi = 2
+Iter 20x5: f = 1.898739e-01 f-delta =  2e-04 time = 15.3s (fit time = 3.0s) newi = 0
+Iter 21x5: f = 1.899515e-01 f-delta =  8e-05 time = 15.8s (fit time = 3.0s) newi = 1
+Iter 22x5: f = 1.899923e-01 f-delta =  1e-04 time = 16.7s (fit time = 3.3s) newi = 0
+Iter 23x5: f = 1.900172e-01 f-delta =  2e-05 time = 16.5s (fit time = 2.9s) newi = 1
+Iter 24x5: f = 1.900297e-01 f-delta =  4e-05 time = 15.8s (fit time = 3.0s) newi = 2
+Iter 25x5: f = 1.899873e-01 f-delta = -5e-06 time = 14.8s (fit time = 2.9s) newi = 3
+
+Final f = 1.899923e-01
+Total time: 3.84e+02
+
+Total Time (secs): 383.804
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e1ac2578400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.782814e-01 f-delta =  2e-01 time = 10.3s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.849518e-01 f-delta =  7e-03 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.866274e-01 f-delta =  2e-03 time = 10.2s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.875980e-01 f-delta =  1e-03 time = 10.0s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.884746e-01 f-delta =  9e-04 time = 9.8s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.888952e-01 f-delta =  4e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.891395e-01 f-delta =  2e-04 time = 10.1s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.892167e-01 f-delta =  8e-05 time = 9.8s (fit time = 3.0s) newi = 1
+Iter  9x5: f = 1.893225e-01 f-delta =  2e-04 time = 9.8s (fit time = 3.0s) newi = 0
+Iter 10x5: f = 1.892670e-01 f-delta = -6e-05 time = 10.1s (fit time = 3.0s) newi = 1
+Iter 11x5: f = 1.893616e-01 f-delta =  4e-05 time = 9.8s (fit time = 3.0s) newi = 2
+Iter 12x5: f = 1.894461e-01 f-delta =  1e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter 13x5: f = 1.895262e-01 f-delta =  8e-05 time = 10.1s (fit time = 3.2s) newi = 1
+Iter 14x5: f = 1.895026e-01 f-delta =  6e-05 time = 9.9s (fit time = 2.9s) newi = 2
+Iter 15x5: f = 1.895377e-01 f-delta =  9e-05 time = 9.7s (fit time = 2.9s) newi = 3
+
+Final f = 1.894461e-01
+Total time: 1.50e+02
+
+Total Time (secs): 149.534
+
+~~~~~Generating random initialization for run 9~~~~ 
+Random Seed in Hex: 41e7644993200000
+
+---Starting run 9/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41e14a212ac00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.763189e-01 f-delta =  2e-01 time = 6.7s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.817308e-01 f-delta =  5e-03 time = 7.0s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.832998e-01 f-delta =  2e-03 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.851817e-01 f-delta =  2e-03 time = 6.7s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.853807e-01 f-delta =  2e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.862524e-01 f-delta =  9e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.863272e-01 f-delta =  7e-05 time = 6.8s (fit time = 3.0s) newi = 1
+Iter  8x5: f = 1.864946e-01 f-delta =  2e-04 time = 6.8s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.867174e-01 f-delta =  2e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.865345e-01 f-delta = -2e-04 time = 6.8s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.866894e-01 f-delta = -3e-05 time = 6.7s (fit time = 3.0s) newi = 2
+Iter 12x5: f = 1.866279e-01 f-delta = -9e-05 time = 6.7s (fit time = 2.9s) newi = 3
+
+Final f = 1.867174e-01
+Total time: 8.22e+01
+
+Total Time (secs): 82.206
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e157740aa00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.745693e-01 f-delta =  2e-01 time = 5.5s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.811886e-01 f-delta =  7e-03 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.830551e-01 f-delta =  2e-03 time = 6.0s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.840028e-01 f-delta =  9e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.842119e-01 f-delta =  2e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.843315e-01 f-delta =  1e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.845306e-01 f-delta =  2e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.845282e-01 f-delta = -2e-06 time = 5.6s (fit time = 2.9s) newi = 1
+Iter  9x5: f = 1.848690e-01 f-delta =  3e-04 time = 5.5s (fit time = 2.8s) newi = 0
+Iter 10x5: f = 1.852787e-01 f-delta =  4e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.858434e-01 f-delta =  6e-04 time = 5.6s (fit time = 3.0s) newi = 0
+Iter 12x5: f = 1.855118e-01 f-delta = -3e-04 time = 5.6s (fit time = 2.9s) newi = 1
+Iter 13x5: f = 1.855317e-01 f-delta = -3e-04 time = 5.6s (fit time = 3.0s) newi = 2
+Iter 14x5: f = 1.856252e-01 f-delta = -2e-04 time = 5.8s (fit time = 2.9s) newi = 3
+
+Final f = 1.858434e-01
+Total time: 7.93e+01
+
+Total Time (secs): 79.345
+
+---Starting run 9/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ed4b3f65a00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.770051e-01 f-delta =  2e-01 time = 9.6s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.815043e-01 f-delta =  4e-03 time = 9.7s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.839450e-01 f-delta =  2e-03 time = 10.2s (fit time = 3.1s) newi = 0
+Iter  4x5: f = 1.862610e-01 f-delta =  2e-03 time = 10.1s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.877237e-01 f-delta =  1e-03 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.886107e-01 f-delta =  9e-04 time = 10.1s (fit time = 3.1s) newi = 0
+Iter  7x5: f = 1.886073e-01 f-delta = -3e-06 time = 10.0s (fit time = 3.0s) newi = 1
+Iter  8x5: f = 1.890269e-01 f-delta =  4e-04 time = 9.7s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.889052e-01 f-delta = -1e-04 time = 9.5s (fit time = 2.8s) newi = 1
+Iter 10x5: f = 1.891398e-01 f-delta =  1e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.890268e-01 f-delta = -1e-04 time = 9.5s (fit time = 2.9s) newi = 1
+Iter 12x5: f = 1.892758e-01 f-delta =  1e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter 13x5: f = 1.892536e-01 f-delta = -2e-05 time = 9.5s (fit time = 2.9s) newi = 1
+Iter 14x5: f = 1.892005e-01 f-delta = -8e-05 time = 9.6s (fit time = 3.0s) newi = 2
+Iter 15x5: f = 1.893155e-01 f-delta =  4e-05 time = 9.5s (fit time = 2.8s) newi = 3
+
+Final f = 1.892758e-01
+Total time: 1.46e+02
+
+Total Time (secs): 146.416
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41ee214e45c00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.769174e-01 f-delta =  2e-01 time = 7.5s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.836064e-01 f-delta =  7e-03 time = 7.3s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.852856e-01 f-delta =  2e-03 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.860880e-01 f-delta =  8e-04 time = 7.4s (fit time = 3.2s) newi = 0
+Iter  5x5: f = 1.866100e-01 f-delta =  5e-04 time = 7.3s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.870624e-01 f-delta =  5e-04 time = 7.4s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.873668e-01 f-delta =  3e-04 time = 7.4s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.876290e-01 f-delta =  3e-04 time = 7.3s (fit time = 2.8s) newi = 0
+Iter  9x5: f = 1.872450e-01 f-delta = -4e-04 time = 7.3s (fit time = 2.8s) newi = 1
+Iter 10x5: f = 1.878443e-01 f-delta =  2e-04 time = 7.1s (fit time = 2.8s) newi = 0
+Iter 11x5: f = 1.879054e-01 f-delta =  6e-05 time = 7.1s (fit time = 2.8s) newi = 1
+Iter 12x5: f = 1.878556e-01 f-delta =  1e-05 time = 7.8s (fit time = 3.1s) newi = 2
+Iter 13x5: f = 1.877913e-01 f-delta = -5e-05 time = 7.3s (fit time = 3.0s) newi = 3
+
+Final f = 1.878443e-01
+Total time: 9.60e+01
+
+Total Time (secs): 96.014
+
+---Starting run 9/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41ddc35cf6400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.770048e-01 f-delta =  2e-01 time = 16.2s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.827094e-01 f-delta =  6e-03 time = 16.4s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.859183e-01 f-delta =  3e-03 time = 15.3s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.870165e-01 f-delta =  1e-03 time = 15.6s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.874560e-01 f-delta =  4e-04 time = 16.1s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.878042e-01 f-delta =  3e-04 time = 15.7s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.881436e-01 f-delta =  3e-04 time = 15.4s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.885361e-01 f-delta =  4e-04 time = 15.5s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.886276e-01 f-delta =  9e-05 time = 15.9s (fit time = 2.9s) newi = 1
+Iter 10x5: f = 1.888240e-01 f-delta =  3e-04 time = 15.2s (fit time = 2.9s) newi = 0
+Iter 11x5: f = 1.889211e-01 f-delta =  1e-04 time = 15.7s (fit time = 3.0s) newi = 1
+Iter 12x5: f = 1.889533e-01 f-delta =  1e-04 time = 15.2s (fit time = 3.0s) newi = 0
+Iter 13x5: f = 1.889805e-01 f-delta =  3e-05 time = 15.9s (fit time = 3.0s) newi = 1
+Iter 14x5: f = 1.890043e-01 f-delta =  5e-05 time = 15.8s (fit time = 3.0s) newi = 2
+Iter 15x5: f = 1.890316e-01 f-delta =  8e-05 time = 15.8s (fit time = 3.1s) newi = 3
+
+Final f = 1.889533e-01
+Total time: 2.36e+02
+
+Total Time (secs): 236.266
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e78b64a7c00000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.787459e-01 f-delta =  2e-01 time = 10.1s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.840329e-01 f-delta =  5e-03 time = 10.1s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.856427e-01 f-delta =  2e-03 time = 10.7s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.861783e-01 f-delta =  5e-04 time = 10.0s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.867525e-01 f-delta =  6e-04 time = 9.8s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.872857e-01 f-delta =  5e-04 time = 10.2s (fit time = 3.1s) newi = 0
+Iter  7x5: f = 1.877646e-01 f-delta =  5e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.880127e-01 f-delta =  2e-04 time = 10.3s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.881554e-01 f-delta =  1e-04 time = 10.2s (fit time = 3.0s) newi = 0
+Iter 10x5: f = 1.884000e-01 f-delta =  2e-04 time = 9.9s (fit time = 3.0s) newi = 0
+Iter 11x5: f = 1.884830e-01 f-delta =  8e-05 time = 10.2s (fit time = 3.2s) newi = 1
+Iter 12x5: f = 1.885058e-01 f-delta =  1e-04 time = 10.7s (fit time = 3.2s) newi = 0
+Iter 13x5: f = 1.884198e-01 f-delta = -9e-05 time = 10.3s (fit time = 3.0s) newi = 1
+Iter 14x5: f = 1.886957e-01 f-delta =  2e-04 time = 11.0s (fit time = 2.9s) newi = 0
+Iter 15x5: f = 1.886892e-01 f-delta = -7e-06 time = 10.1s (fit time = 2.9s) newi = 1
+Iter 16x5: f = 1.888441e-01 f-delta =  1e-04 time = 9.9s (fit time = 2.9s) newi = 0
+Iter 17x5: f = 1.887899e-01 f-delta = -5e-05 time = 10.3s (fit time = 3.0s) newi = 1
+Iter 18x5: f = 1.890100e-01 f-delta =  2e-04 time = 10.3s (fit time = 2.9s) newi = 0
+Iter 19x5: f = 1.890424e-01 f-delta =  3e-05 time = 10.1s (fit time = 2.9s) newi = 1
+Iter 20x5: f = 1.891577e-01 f-delta =  1e-04 time = 10.3s (fit time = 3.0s) newi = 0
+Iter 21x5: f = 1.893216e-01 f-delta =  2e-04 time = 10.6s (fit time = 3.1s) newi = 0
+Iter 22x5: f = 1.892170e-01 f-delta = -1e-04 time = 10.0s (fit time = 3.0s) newi = 1
+Iter 23x5: f = 1.893678e-01 f-delta =  5e-05 time = 10.1s (fit time = 3.0s) newi = 2
+Iter 24x5: f = 1.895357e-01 f-delta =  2e-04 time = 10.2s (fit time = 2.9s) newi = 0
+Iter 25x5: f = 1.897204e-01 f-delta =  2e-04 time = 9.9s (fit time = 2.9s) newi = 0
+Iter 26x5: f = 1.898368e-01 f-delta =  1e-04 time = 10.2s (fit time = 2.9s) newi = 0
+Iter 27x5: f = 1.898183e-01 f-delta = -2e-05 time = 10.3s (fit time = 2.9s) newi = 1
+Iter 28x5: f = 1.898317e-01 f-delta = -5e-06 time = 10.0s (fit time = 2.9s) newi = 2
+Iter 29x5: f = 1.897197e-01 f-delta = -1e-04 time = 9.7s (fit time = 2.9s) newi = 3
+
+Final f = 1.898368e-01
+Total time: 2.96e+02
+
+Total Time (secs): 295.907
+
+~~~~~Generating random initialization for run 10~~~~ 
+Random Seed in Hex: 41bf1ec178000000
+
+---Starting run 10/10 with 32768 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41eba84fdf200000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 3.051758e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.772023e-01 f-delta =  2e-01 time = 7.3s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.832599e-01 f-delta =  6e-03 time = 6.7s (fit time = 2.8s) newi = 0
+Iter  3x5: f = 1.847036e-01 f-delta =  1e-03 time = 6.7s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.859373e-01 f-delta =  1e-03 time = 6.6s (fit time = 2.8s) newi = 0
+Iter  5x5: f = 1.861182e-01 f-delta =  2e-04 time = 6.7s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.864737e-01 f-delta =  4e-04 time = 6.9s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.865116e-01 f-delta =  4e-05 time = 7.1s (fit time = 2.9s) newi = 1
+Iter  8x5: f = 1.862303e-01 f-delta = -2e-04 time = 6.8s (fit time = 3.0s) newi = 2
+Iter  9x5: f = 1.860653e-01 f-delta = -4e-04 time = 6.7s (fit time = 2.9s) newi = 3
+
+Final f = 1.864737e-01
+Total time: 6.19e+01
+
+Total Time (secs): 61.865
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41e3956905400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 32768
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.768793e-01 f-delta =  2e-01 time = 5.6s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.827413e-01 f-delta =  6e-03 time = 5.7s (fit time = 2.8s) newi = 0
+Iter  3x5: f = 1.833927e-01 f-delta =  7e-04 time = 5.7s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.845067e-01 f-delta =  1e-03 time = 5.7s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.851215e-01 f-delta =  6e-04 time = 5.6s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.853222e-01 f-delta =  2e-04 time = 5.6s (fit time = 2.8s) newi = 0
+Iter  7x5: f = 1.855317e-01 f-delta =  2e-04 time = 5.7s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.854260e-01 f-delta = -1e-04 time = 5.8s (fit time = 3.0s) newi = 1
+Iter  9x5: f = 1.856307e-01 f-delta =  1e-04 time = 5.8s (fit time = 3.0s) newi = 2
+Iter 10x5: f = 1.857641e-01 f-delta =  2e-04 time = 5.8s (fit time = 3.0s) newi = 0
+Iter 11x5: f = 1.854547e-01 f-delta = -3e-04 time = 5.9s (fit time = 2.9s) newi = 1
+Iter 12x5: f = 1.856107e-01 f-delta = -2e-04 time = 6.0s (fit time = 3.1s) newi = 2
+Iter 13x5: f = 1.854751e-01 f-delta = -3e-04 time = 6.1s (fit time = 2.9s) newi = 3
+
+Final f = 1.857641e-01
+Total time: 7.55e+01
+
+Total Time (secs): 75.492
+
+---Starting run 10/10 with 65536 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41df4c9a34400000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 1.525879e-05
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.752791e-01 f-delta =  2e-01 time = 9.7s (fit time = 2.8s) newi = 0
+Iter  2x5: f = 1.816840e-01 f-delta =  6e-03 time = 10.2s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.842959e-01 f-delta =  3e-03 time = 9.9s (fit time = 2.9s) newi = 0
+Iter  4x5: f = 1.853540e-01 f-delta =  1e-03 time = 9.9s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.862344e-01 f-delta =  9e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.864171e-01 f-delta =  2e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.870153e-01 f-delta =  6e-04 time = 9.4s (fit time = 2.9s) newi = 0
+Iter  8x5: f = 1.871430e-01 f-delta =  1e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.874347e-01 f-delta =  3e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter 10x5: f = 1.875295e-01 f-delta =  9e-05 time = 9.5s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.876663e-01 f-delta =  2e-04 time = 9.6s (fit time = 2.9s) newi = 0
+Iter 12x5: f = 1.878457e-01 f-delta =  2e-04 time = 9.5s (fit time = 2.9s) newi = 0
+Iter 13x5: f = 1.878869e-01 f-delta =  4e-05 time = 9.6s (fit time = 3.0s) newi = 1
+Iter 14x5: f = 1.878925e-01 f-delta =  5e-05 time = 9.6s (fit time = 3.0s) newi = 2
+Iter 15x5: f = 1.876781e-01 f-delta = -2e-04 time = 9.5s (fit time = 2.8s) newi = 3
+
+Final f = 1.878457e-01
+Total time: 1.45e+02
+
+Total Time (secs): 144.931
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41c6879875800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 65536
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.782469e-01 f-delta =  2e-01 time = 7.1s (fit time = 3.0s) newi = 0
+Iter  2x5: f = 1.832069e-01 f-delta =  5e-03 time = 7.2s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.845894e-01 f-delta =  1e-03 time = 7.3s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.857318e-01 f-delta =  1e-03 time = 7.3s (fit time = 2.9s) newi = 0
+Iter  5x5: f = 1.864333e-01 f-delta =  7e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  6x5: f = 1.868300e-01 f-delta =  4e-04 time = 7.1s (fit time = 2.9s) newi = 0
+Iter  7x5: f = 1.874863e-01 f-delta =  7e-04 time = 7.0s (fit time = 2.8s) newi = 0
+Iter  8x5: f = 1.875892e-01 f-delta =  1e-04 time = 7.3s (fit time = 2.8s) newi = 0
+Iter  9x5: f = 1.878173e-01 f-delta =  2e-04 time = 7.3s (fit time = 3.0s) newi = 0
+Iter 10x5: f = 1.880498e-01 f-delta =  2e-04 time = 7.3s (fit time = 3.1s) newi = 0
+Iter 11x5: f = 1.879734e-01 f-delta = -8e-05 time = 7.3s (fit time = 2.9s) newi = 1
+Iter 12x5: f = 1.880838e-01 f-delta =  3e-05 time = 7.8s (fit time = 2.9s) newi = 2
+Iter 13x5: f = 1.880657e-01 f-delta =  2e-05 time = 7.2s (fit time = 2.9s) newi = 3
+
+Final f = 1.880498e-01
+Total time: 9.48e+01
+
+Total Time (secs): 94.845
+
+---Starting run 10/10 with 131072 samples---
+
+Finding CP decomposition (Deterministic Inclusion): 
+Random Seed in Hex: 41dfcfa525800000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 7.629395e-06
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.760811e-01 f-delta =  2e-01 time = 15.2s (fit time = 2.9s) newi = 0
+Iter  2x5: f = 1.831796e-01 f-delta =  7e-03 time = 15.6s (fit time = 3.0s) newi = 0
+Iter  3x5: f = 1.858963e-01 f-delta =  3e-03 time = 15.7s (fit time = 3.0s) newi = 0
+Iter  4x5: f = 1.872093e-01 f-delta =  1e-03 time = 15.0s (fit time = 3.0s) newi = 0
+Iter  5x5: f = 1.879727e-01 f-delta =  8e-04 time = 15.3s (fit time = 3.0s) newi = 0
+Iter  6x5: f = 1.883513e-01 f-delta =  4e-04 time = 15.4s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.886308e-01 f-delta =  3e-04 time = 15.1s (fit time = 3.0s) newi = 0
+Iter  8x5: f = 1.891060e-01 f-delta =  5e-04 time = 14.8s (fit time = 3.0s) newi = 0
+Iter  9x5: f = 1.892935e-01 f-delta =  2e-04 time = 14.8s (fit time = 3.0s) newi = 0
+Iter 10x5: f = 1.893784e-01 f-delta =  8e-05 time = 14.8s (fit time = 2.9s) newi = 1
+Iter 11x5: f = 1.894097e-01 f-delta =  1e-04 time = 15.0s (fit time = 3.2s) newi = 0
+Iter 12x5: f = 1.895090e-01 f-delta =  1e-04 time = 15.6s (fit time = 3.2s) newi = 1
+Iter 13x5: f = 1.894754e-01 f-delta =  7e-05 time = 15.6s (fit time = 3.0s) newi = 2
+Iter 14x5: f = 1.895740e-01 f-delta =  2e-04 time = 15.2s (fit time = 3.0s) newi = 0
+Iter 15x5: f = 1.895928e-01 f-delta =  2e-05 time = 14.9s (fit time = 3.0s) newi = 1
+Iter 16x5: f = 1.895681e-01 f-delta = -6e-06 time = 15.4s (fit time = 3.2s) newi = 2
+Iter 17x5: f = 1.896088e-01 f-delta =  3e-05 time = 15.2s (fit time = 3.0s) newi = 3
+
+Final f = 1.895740e-01
+Total time: 2.59e+02
+
+Total Time (secs): 258.990
+
+Finding CP decomposition (No Deterministic): 
+Random Seed in Hex: 41ed531241000000
+Preprocessing Finished 
+
+CP-ARLS with Leverage Score Sampling:
+
+Tensor size: 183 x 24 x 1140 x 1717 (8596812960 total entries)
+Sparse tensor: 3309490 (0.038%) Nonzeros and 8593503470 (99.96%) Zeros
+Finding CP decomposition with R=25
+Initialization: user-provided
+Fit change tolerance: 1.00e-04
+Epoch size: 5
+Max epochs without improvement: 3
+Max epochs overall: 50
+Row samples per solve: 131072
+Threshold for deterministic sampling: 
+Fit based on: True residual
+Calculate true final fit? 1
+
+Iter  1x5: f = 1.783212e-01 f-delta =  2e-01 time = 10.6s (fit time = 3.1s) newi = 0
+Iter  2x5: f = 1.839081e-01 f-delta =  6e-03 time = 10.2s (fit time = 2.9s) newi = 0
+Iter  3x5: f = 1.864604e-01 f-delta =  3e-03 time = 10.7s (fit time = 2.8s) newi = 0
+Iter  4x5: f = 1.872796e-01 f-delta =  8e-04 time = 9.8s (fit time = 2.8s) newi = 0
+Iter  5x5: f = 1.878196e-01 f-delta =  5e-04 time = 9.8s (fit time = 2.8s) newi = 0
+Iter  6x5: f = 1.882466e-01 f-delta =  4e-04 time = 10.1s (fit time = 3.0s) newi = 0
+Iter  7x5: f = 1.887926e-01 f-delta =  5e-04 time = 9.7s (fit time = 2.8s) newi = 0
+Iter  8x5: f = 1.889221e-01 f-delta =  1e-04 time = 9.8s (fit time = 2.9s) newi = 0
+Iter  9x5: f = 1.893467e-01 f-delta =  4e-04 time = 9.8s (fit time = 2.8s) newi = 0
+Iter 10x5: f = 1.891804e-01 f-delta = -2e-04 time = 10.0s (fit time = 2.8s) newi = 1
+Iter 11x5: f = 1.893074e-01 f-delta = -4e-05 time = 10.1s (fit time = 2.9s) newi = 2
+Iter 12x5: f = 1.892659e-01 f-delta = -8e-05 time = 9.9s (fit time = 2.9s) newi = 3
+
+Final f = 1.893467e-01
+Total time: 1.21e+02
+
+Total Time (secs): 121.040

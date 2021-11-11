@@ -1,0 +1,275 @@
+%% For various important things
+\usepackage{amssymb,amsfonts,amsmath}
+
+%% For mathscr
+\usepackage[mathscr]{eucal}
+
+%% For boldsymbol
+\usepackage{amsbsy}
+
+%% For \llbracket and \rrbracket, \varoast, \varoslash
+\usepackage{stmaryrd}
+
+%% For bm (bold math)
+\usepackage{bm}
+
+% For \set
+\usepackage{braket}  
+
+%% For special document commands, i.e., macros
+\usepackage{xparse}
+
+%% Intelligent spacing for text macros
+\usepackage{xspace}
+
+%% For color
+\usepackage{xcolor}
+
+%% For hyperlinks
+\usepackage{hyperref}
+
+%% Subfloats
+\usepackage[font=footnotesize,justification=Centering,singlelinecheck=false]{subfig}
+
+%% For smart cross-references
+\usepackage{cleveref}
+\crefformat{footnote}{#2\footnotemark[#1]#3}
+
+%% Setup for tikz plot
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\usetikzlibrary{plotmarks}
+\usepgfplotslibrary{colorbrewer}
+\usepgfplotslibrary{statistics}
+\usepgfplotslibrary{fillbetween}
+\pgfplotsset{compat=1.15}
+
+
+\pgfplotsset{cycle list/Set1-8} % Needed to initialize colormap before indexing later!
+\pgfplotstableset{col sep=comma}
+
+%% Algorithms
+\usepackage{algorithm, algpseudocode}
+\Crefname{ALC@unique}{Line}{Lines}
+\algnewcommand{\LineComment}[1]{\State \(\triangleright\) #1}
+
+%% Comments
+\usepackage{fixme}
+\fxsetup{
+  status=draft,
+  nomargin,
+  inline,
+  theme=color,
+}
+\fxsetup{marginface=\linespread{1}\footnotesize}
+\FXRegisterAuthor{tk}{tke}{TK}
+\FXRegisterAuthor{bl}{ble}{BL}
+
+%% ----------------------------------------------------------------------
+%% Macros
+%% ----------------------------------------------------------------------
+
+% Single-line "for" statement in algorithm
+\NewDocumentCommand{\LineFor}{m m}{%
+  \State\textbf{for} {#1}, \textbf{do} {#2}, \textbf{end}
+  }
+
+% Quad-text-quad
+\NewDocumentCommand \qtext {m} {\quad\text{#1}\quad}
+
+% Reals
+\NewDocumentCommand \Real {} {\mathbb{R}}
+
+% Naturals
+\NewDocumentCommand \Natural {} {\mathbb{N}}
+
+% Tensor
+\NewDocumentCommand \T { O{} m } {\boldsymbol{#1\mathscr{\MakeUppercase{#2}}}}
+
+% Transpose checker for macro
+\NewDocumentCommand \TCheck { m } {\IfBooleanT{#1}{^{\intercal}}}
+
+% Matrix
+\NewDocumentCommand \Mx { O{} m G{\BooleanFalse} t'} {{\bm{#1\mathbf{\MakeUppercase{#2}}}%
+    \IfBooleanT{#3}{^{\intercal}}%
+    \IfBooleanT{#4}{^{\intercal}}%
+  }} 
+
+% Vector
+\NewDocumentCommand \V { O{} m } {{\bm{#1\mathbf{\MakeLowercase{#2}}}}} 
+
+% --- LS Subproblem: ---
+\NewDocumentCommand \Z { t~ } {\Mx[\IfBooleanT{#1}{\tilde}]{Z}}
+\NewDocumentCommand \B { t' t~ t*} {\Mx[\IfBooleanT{#2}{\tilde}]{B}\IfBooleanT{#1}{^{\intercal}}\IfBooleanT{#3}{_{\ast}}}
+\NewDocumentCommand \A { } {\Mx{A}}
+\NewDocumentCommand \Xmat { t' t~} {\Mx[\IfBooleanT{#2}{\tilde}]{X}{#1}}
+\NewDocumentCommand \Om { t! } {\Mx[\IfBooleanT{#1}{\bar}]{\Omega}}
+\NewDocumentCommand \bvec { t~ t* } {\V[\IfBooleanT{#1}{\tilde}]{\alpha}\IfBooleanT{#2}{_{\ast}}}
+\NewDocumentCommand \xvec { } {\V{\nu}}
+\NewDocumentCommand \Vp { } {\V{p}}
+\NewDocumentCommand \Multi { } {\text{\sc multinomial}}
+\NewDocumentCommand \RandSample { } {\text{\sc randsample}}
+\NewDocumentCommand \RandSampleCombo { } {\text{\sc randsamplecombo}}
+\NewDocumentCommand \Prob { } {\text{\rm Pr}}
+\NewDocumentCommand \Exp { } {\mathbb{E}}
+\DeclareMathOperator{\range}{range}
+\NewDocumentCommand \levZ { s } {\IfBooleanT{#1}{\bar}\ell_i(\Z)}
+\NewDocumentCommand \levAk { } {\ell_{i_k}(\Ak)}
+
+\NewDocumentCommand \Vl { } {\V{\ell}}
+\NewDocumentCommand \Vw { } {\V{w}}
+\NewDocumentCommand \Vmax { } {\V{\alpha}}
+
+\DeclareDocumentCommand \det { } {\text{\rm\sffamily det}}
+\NewDocumentCommand \rnd { } {\text{\rm\sffamily rnd}}
+
+\NewDocumentCommand \ndet { } {s_{\text{\rm\sffamily det}}} 
+\NewDocumentCommand \sdet { } {s_{\text{\rm\sffamily det}}} 
+\NewDocumentCommand \srnd {s } {\IfBooleanT{#1}{\bar}s_{\text{\rm\sffamily rnd}}} 
+\NewDocumentCommand \pdet { } {p_{\text{\rm\sffamily det}}} 
+
+%\NewDocumentCommand{\pk}{G{k}}{\V{p}^{(#1)}}
+%\NewDocumentCommand{\pke}{G{k} G{i_k}}{p^{(#1)}_{#2}}
+\NewDocumentCommand{\pk}{G{k}}{\V{p}_{#1}}
+\NewDocumentCommand{\pke}{G{k} G{i_k}}{(\pk{#1})_{#2}}
+%\NewDocumentCommand{\pke}{G{k} G{i_k}}{p_{#1,#2}}
+
+\NewDocumentCommand \DetSet { } {\mathcal{D}} %{\Omega_{\text{\sffamily det}}} 
+\NewDocumentCommand \DetSetk { G{k} } {\mathcal{\bar D}_{#1}} 
+\NewDocumentCommand \DetMat { } {\Mx{\Omega}_{\text{\rm\sffamily det}}} 
+
+\NewDocumentCommand{\resid}{}{\mathcal{R}} 
+\NewDocumentCommand{\rdet}{}{\mathcal{R}_{\text{\rm\sffamily det}}}
+\NewDocumentCommand{\rrnd}{}{\mathcal{R}_{\text{\rm\sffamily rnd}}}
+
+
+% Alg Names
+\NewDocumentCommand{\SKRPLEV}{}{\textsc{SkrpLev}}
+\NewDocumentCommand{\DIDX}{}{\textsc{DetSkrp}}
+\NewDocumentCommand{\SIDX}{}{\textsc{RndSkrp}}
+\NewDocumentCommand{\CIDX}{}{\textsc{CombineRepeats}}
+
+\NewDocumentCommand{\idxdet}{}{\texttt{idet}}
+\NewDocumentCommand{\idxrnd}{}{\texttt{irnd}}
+\NewDocumentCommand{\wgtrnd}{}{\texttt{wrnd}}
+\NewDocumentCommand{\idx}{}{\texttt{idx}}
+\NewDocumentCommand{\wgt}{}{\texttt{wgt}}
+
+
+
+\NewDocumentCommand{\cpals}{}{{CP-ALS}\xspace}
+\NewDocumentCommand{\cprand}{}{{CP-ARLS}\xspace}
+\NewDocumentCommand{\cprandlev}{}{{CP-ARLS-LEV}\xspace}
+
+% --- Leverage Score Notation: ---
+
+% --- Data Tensor: X ---
+
+% Tensor X
+\NewDocumentCommand \X { } {\T{X}}
+
+% Mode-k Unfolding of tensor X
+\NewDocumentCommand \Xk { G{k} } {\Mx{X}_{(#1)}}
+
+% bwlarsen: This conflicts with the greek letter \xi
+%    used for the number of non-zeros
+% Single element of tensor X
+% \DeclareDocumentCommand \xi { s } 
+% {
+%   \IfBooleanTF{#1}
+%   {x(i_1,i_2,\dots,i_d)}
+%   {x_{i}}
+% }
+
+
+
+% --- Model Tensor: M ---
+
+% Tensor Model M
+\NewDocumentCommand \M {} {\T{M}}
+
+% Mode-k Unfolding of Tensor Model M
+\NewDocumentCommand \Mk { O{k} } {\Mx{M}_{(#1)}}
+%\NewDocumentCommand \Xk { O{k} } {\Mx{X}_{(#1)}}
+
+% Tensor Model Single Element
+\DeclareDocumentCommand \mi { s } 
+{
+  \IfBooleanTF{#1}
+  {m(i_1,i_2\dots,i_d)}
+  {m_{i}}
+}
+
+% --- Factor Matrix: A_k ---
+
+% Single factor matrix
+\NewDocumentCommand \Ak { G{k} t' t"  } { \Mx{A}_{#1}\IfBooleanTF{#2}{^{\intercal}}{}\IfBooleanTF{#3}{^{\phantom{\intercal}}}{} }
+
+% Set of all factor matrices
+\NewDocumentCommand \Akset { } {\set{\Ak | k=1,\dots,d}}
+
+% Factor matrix transposed with itself
+\NewDocumentCommand \AkAkt { G{k} } {\Ak{#1}'\Ak{#1}"}
+
+% Factor Matrix Element a^(k)_{i_k j}
+\NewDocumentCommand \Ake { G{k} G{i} G{j} } {
+  a_{#1}(#2_{#1},#3)
+}
+
+\NewDocumentCommand \Zk { G{k} t' t"} {\Mx{Z}_{#1}\IfBooleanTF{#2}{^{\intercal}}{}%
+  \IfBooleanTF{#3}{^{\phantom{\intercal}}}{}}
+
+% --- Scaling factors: lambda ---
+
+% Entire vector
+\NewDocumentCommand \lvec {} {\V{\lambda}}
+
+% Single entry
+\NewDocumentCommand \lj { G{j} } {\lambda_{#1}}
+
+% --- Ktensor format ---
+
+% Ktensor (* = weights)
+\NewDocumentCommand \KT { s G{d+1}} {
+  \llbracket 
+  \IfBooleanTF{#1}{\lvec;}{}
+  \Ak{1}, \Ak{2}, \dots,  \Ak{#2} \rrbracket
+}
+
+\DeclareMathOperator{\nnz}{nnz}
+
+% Commands used from CPRAND
+\newcommand{\modeidx}{\ensuremath{m}}
+\newcommand{\samplesize}{\ensuremath{S}}
+\newcommand{\trans}{\ensuremath{\mathsf{T}}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\krp}{KRP}
+
+\NewDocumentCommand \Akj {O{k} G{j}} {\V{a}_{#1}(:,#2)}
+
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\minimize}{minimize}
+
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\mcO}{\mathcal{O}}
+\newcommand{\Var}{\mathrm{Var}}
+
+
+
+% These are the added macros for our notation for the paper
+\newcommand{\bperp}{\ensuremath{\V{b}^{\perp}}}
+\newcommand{\UA}{\ensuremath{\Mx{U}_{\Mx{A}}}}
+\newcommand{\xopt}{\ensuremath{\V{x}_{\text{\rm\sffamily opt}}}}
+\newcommand{\xtildeopt}{\ensuremath{\widetilde{\V{x}}_{\text{\rm\sffamily opt}}}}
+\newcommand{\ytildeopt}{\ensuremath{\widetilde{\V{y}}_{\text{\rm\sffamily opt}}}}
+\newcommand{\yopt}{\ensuremath{\V{y}_{\text{\rm\sffamily opt}}}}
+
+\newenvironment{merged}{\color{gray}}{\color{black}}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "cprand_sparse"
+%%% End:

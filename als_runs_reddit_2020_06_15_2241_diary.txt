@@ -1,0 +1,136 @@
+Starting diary with name artifact_als_runs_reddit_2020_06_15_2241_diary.txt
+Repository directory: /home/bwlarse/tensor_toolbox_sparse
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/tensor_toolbox)
+  Remote Branch: master
+  Short Hash: [33mdd
+  Up-to-Date: false
+  Statuses...
+     [31mM[m cp_arls_trace.m
+  ==== Diffs ====
+  [1mindex 3e0b580..6b58e38 100644[m
+  [1m--- a/cp_arls_trace.m[m
+  [1m+++ b/cp_arls_trace.m[m
+  [36m@@ -252,7 +252,7 @@[m [mfor epoch = 1:maxepochs[m
+       end[m
+       [m
+       if (mod(epoch,printitn)==0) || ((printitn>0) && (flag==0))[m
+  [31m-        fprintf('Iter %2dx%d: f~ = %e f-delta = %6.0e time = %.1fs (fit time = %.1fs) newi = %i\n', epoch, epochsize, fit, fitchange, time_trace(epoch+1) - time_trace(epoch), fit_time, newi);[m
+  [32m+[m[32m        fprintf('Iter %2dx%d: f~ = %e time = %.1fs (fit time = %.1fs) newi = %i\n', epoch, epochsize, fit, time_trace(epoch+1) - time_trace(epoch), fit_time, newi);[m
+       end[m
+       [m
+       % Check for convergence[m
+  ==== End Diffs ====
+Repository directory: /home/bwlarse/cparls_sparse_experiments
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/cparls_sparse_experiments)
+  Remote Branch: master
+  Short Hash: [33m16
+  Up-to-Date: false
+  Statuses...
+     [31mM[m als_runs_enron.m
+     [31mM[m arls_runs_coil.m
+     [31mM[m arls_runs_enron.m
+    [31m??[m cp_runs_reddit.m
+  ==== Diffs ====
+  [1mindex 0130793..130e228 100644[m
+  [1m--- a/als_runs_enron.m[m
+  [1m+++ b/als_runs_enron.m[m
+  [36m@@ -57,4 +57,4 @@[m [mfor rep = 1:nruns[m
+   end[m
+   [m
+   % Save out the traces and fits for all runs[m
+  [31m-save('-v7.3', sprintf('%s-results', aname), 'output')[m
+  [32m+[m[32msave('-v7.3', sprintf('%s-results', aname), 'results')[m
+  [1mdiff --git a/arls_runs_coil.m b/arls_runs_coil.m[m
+  [1mindex cd8163e..9f87e64 100644[m
+  [1m--- a/arls_runs_coil.m[m
+  [1m+++ b/arls_runs_coil.m[m
+  [36m@@ -92,7 +92,7 @@[m [mfor rep = 1:nruns[m
+           fprintf('\nFinding CP decomposition (ARLS-Mixing): \n')[m
+           rnginit;[m
+           tic[m
+  [31m-        [M, ~, info] = cp_arls_trace(X,R,'init', Uinit, 'truefit', truefit,'epoch', 5,'newitol',3,'tol', 1e-4);[m
+  [32m+[m[32m        [M, ~, info] = cp_arls_trace(X,R,'init', Uinit,'nsamplsq',s, 'truefit', truefit,'epoch', 5,'newitol',3,'tol', 1e-4);[m
+           time = toc;[m
+           fprintf('Total Time (secs): %.3f\n', time)[m
+   [m
+  [1mdiff --git a/arls_runs_enron.m b/arls_runs_enron.m[m
+  [1mindex de3f6fb..e9cb337 100644[m
+  [1m--- a/arls_runs_enron.m[m
+  [1m+++ b/arls_runs_enron.m[m
+  [36m@@ -19,7 +19,7 @@[m [mif do_gitchecks[m
+   end[m
+   [m
+   %% User setup for script [m
+  [31m-nruns = 2;[m
+  [32m+[m[32mnruns = 10;[m
+   R = 25;[m
+   srng = 2.^(18:19);[m
+   truefit = false;[m
+  [36m@@ -40,7 +40,7 @@[m [mns = length(srng); % Number of s-values[m
+   results = cell(nruns,ns,2);[m
+   [m
+   %% Set up estimated f[m
+  [31m-rng('shuffle')[m
+  [32m+[m[32m%rng('shuffle')[m
+   fprintf('---Setting up function estimators based on X---\n');[m
+   rnginit;[m
+   [m
+  ==== End Diffs ====
+
+---Loading in Log Count Reddit Tensor---
+Elapsed time is 333.281185 seconds.
+
+---Starting run 1/1---
+Generating random initialization: 
+Random Seed in Hex: 41cdb11f27000000
+Finding CP decomposition: 
+Random Seed in Hex: 41dbdddbaec00000
+
+CP_ALS (with trace):
+
+Tensor size: 8211298 x 176962 x 8116559 (1.179407e+19 total entries)
+Sparse tensor: 4687474081 (4e-08%) Nonzeros and 1.179407e+19 (100.00%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.948084e-02 f-delta = 1.9e-02 time = 10295.2 seconds 
+ Iter  2: f = 4.735647e-02 f-delta = 2.8e-02 time = 10167.5 seconds 
+ Iter  3: f = 5.105916e-02 f-delta = 3.7e-03 time = 10268.4 seconds 
+ Iter  4: f = 5.226367e-02 f-delta = 1.2e-03 time = 10582.9 seconds 
+ Iter  5: f = 5.294030e-02 f-delta = 6.8e-04 time = 10063.6 seconds 
+ Iter  6: f = 5.338114e-02 f-delta = 4.4e-04 time = 9870.4 seconds 
+ Iter  7: f = 5.370085e-02 f-delta = 3.2e-04 time = 9629.7 seconds 
+ Iter  8: f = 5.396393e-02 f-delta = 2.6e-04 time = 10002.9 seconds 
+ Iter  9: f = 5.420499e-02 f-delta = 2.4e-04 time = 9998.4 seconds 
+ Iter 10: f = 5.443790e-02 f-delta = 2.3e-04 time = 9714.8 seconds 
+ Iter 11: f = 5.466437e-02 f-delta = 2.3e-04 time = 10083.7 seconds 
+ Iter 12: f = 5.488205e-02 f-delta = 2.2e-04 time = 9572.5 seconds 
+ Iter 13: f = 5.509001e-02 f-delta = 2.1e-04 time = 9400.8 seconds 
+ Iter 14: f = 5.529000e-02 f-delta = 2.0e-04 time = 9257.6 seconds 
+ Iter 15: f = 5.548479e-02 f-delta = 1.9e-04 time = 9457.5 seconds 
+ Iter 16: f = 5.567626e-02 f-delta = 1.9e-04 time = 10042.2 seconds 
+ Iter 17: f = 5.586458e-02 f-delta = 1.9e-04 time = 10039.1 seconds 
+ Iter 18: f = 5.604872e-02 f-delta = 1.8e-04 time = 9912.9 seconds 
+ Iter 19: f = 5.622765e-02 f-delta = 1.8e-04 time = 9442.0 seconds 
+ Iter 20: f = 5.640087e-02 f-delta = 1.7e-04 time = 9436.0 seconds 
+ Iter 21: f = 5.656818e-02 f-delta = 1.7e-04 time = 9751.2 seconds 
+ Iter 22: f = 5.672925e-02 f-delta = 1.6e-04 time = 9632.0 seconds 
+ Iter 23: f = 5.688373e-02 f-delta = 1.5e-04 time = 9725.0 seconds 
+ Iter 24: f = 5.703172e-02 f-delta = 1.5e-04 time = 9967.4 seconds 
+ Iter 25: f = 5.717431e-02 f-delta = 1.4e-04 time = 9506.1 seconds 
+ Iter 26: f = 5.731348e-02 f-delta = 1.4e-04 time = 9364.6 seconds 
+ Iter 27: f = 5.745158e-02 f-delta = 1.4e-04 time = 9548.7 seconds 
+ Iter 28: f = 5.759041e-02 f-delta = 1.4e-04 time = 9704.1 seconds 
+ Iter 29: f = 5.773054e-02 f-delta = 1.4e-04 time = 9770.3 seconds 
+ Iter 30: f = 5.787093e-02 f-delta = 1.4e-04 time = 9427.5 seconds 
+ Iter 31: f = 5.800922e-02 f-delta = 1.4e-04 time = 9477.0 seconds 
+ Iter 32: f = 5.814244e-02 f-delta = 1.3e-04 time = 9538.9 seconds 
+ Iter 33: f = 5.826789e-02 f-delta = 1.3e-04 time = 9401.3 seconds 
+ Iter 34: f = 5.838379e-02 f-delta = 1.2e-04 time = 9783.9 seconds 
+ Iter 35: f = 5.848944e-02 f-delta = 1.1e-04 time = 9883.4 seconds 
+ Iter 36: f = 5.858500e-02 f-delta = 9.6e-05 time = 9678.8 seconds 
+ Final f = 5.858500e-02 
+Total Time (secs): 354466.056

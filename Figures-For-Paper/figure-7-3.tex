@@ -1,0 +1,118 @@
+\documentclass{siamonline181217mod}
+
+
+% Macros from Tammy
+\input{setup}
+
+
+\begin{document}
+
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\uberraw}{data-uber-fittrace-raw.csv}
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\uberitp}{data-uber-fittrace-interpl.csv}
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\ubertime}{data-uber-totaltimes.csv}
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\uberfit}{data-uber-finalfits.csv}
+\begin{figure}
+  \centering
+  %%% ------------
+  \subfloat[Box plot of final fit and total time over 10 runs.]%
+  {\label{fig:uber-fit-time}%
+    %
+    \begin{tikzpicture}
+  \begin{axis}[
+    boxplot/draw direction = x,
+    y dir=reverse,
+    height=2.25in,width=0.45\textwidth,
+    font=\footnotesize,
+    xlabel = fit,
+    xticklabel style={%
+       /pgf/number format/.cd,
+           fixed,
+           fixed zerofill,
+           precision=3,
+           },
+    % This is how you specify the order through the colors
+    cycle list={[indices of colormap={4, 0, 5, 1, 6, 2, 3 of Set1-8}]},
+    ytick = {1, 2, 3, 4, 5, 6, 7},
+    yticklabel style = {align=center, font=\footnotesize}, % rotate=60},
+    yticklabels = {Random $s=2^{15}$,Hybrid $s=2^{15}$,Random $s=2^{16}$, Hybrid $s=2^{16}$, Random $s=2^{17}$,Hybrid $s=2^{17}$, Standard},
+    ]
+    \foreach \m in {5, 1, 6, 2, 7, 3, 4} {
+      \addplot+[boxplot, fill, draw=black] table[y=M\m] {\uberfit};
+    }
+  \end{axis}
+  \begin{axis}[
+    boxplot/draw direction = x,
+    y dir=reverse,
+    height=2.25in,width=0.5\textwidth,
+    xshift=2.425in,
+    font=\footnotesize,
+    xlabel = time (s),
+    xticklabel style={%
+       /pgf/number format/.cd,
+           fixed,
+           fixed zerofill,
+           precision=0,
+           },
+    % This is how you specify the order through the colors
+    cycle list={[indices of colormap={4, 0, 5, 1, 6, 2, 3 of Set1-8}]},
+    ytick = {1, 2, 3, 4, 5, 6, 7},
+    yticklabel style = {align=center, font=\footnotesize}, % rotate=60},
+    yticklabels = {,,,,,,},
+    ]
+    \foreach \m in {5, 1, 6, 2, 7, 3, 4} {
+      \addplot+[boxplot, fill, draw=black] table[y=M\m] {\ubertime};
+    }
+  \end{axis}
+  \end{tikzpicture}}
+  %%% ------------
+  \\
+  \subfloat[Median fit (computed exactly) across 10 runs plotted for all methods.
+  % Each marker represents one epoch for the randomized methods or one iteration for the standard method.
+  ]%
+  {\label{fig:uber-runs}%
+    % 
+  \begin{tikzpicture}
+  \begin{axis}[
+    height=2in,width=0.95\textwidth,
+    font=\footnotesize,    
+    xlabel = time (s),
+    ylabel = fit,
+    ymin = 0.17, ymax = 0.191,
+    yticklabel style={%
+       /pgf/number format/.cd,
+           fixed,
+           fixed zerofill,
+           precision=3,
+           },
+    unbounded coords=jump,
+    % This will work to move the legend outside
+    %legend pos = outer north east,
+    legend pos = south east,
+    legend style={font=\tiny},
+    cycle list={    
+      {index of colormap=4 of Set1-8,mark=*},
+      {index of colormap=0 of Set1-8,mark=*}, 
+      % Mixes 10 percent gray in so the color is visible
+      {yellow!90!gray},
+      {index of colormap=1 of Set1-8,mark=square*},
+      {index of colormap=6 of Set1-8,mark=*},
+      {index of colormap=2 of Set1-8,mark=*},
+      {index of colormap=3 of Set1-8,mark=*},}
+    ]
+    \foreach \m in {5, 1, 6, 2, 7, 3, 4} {
+      \addplot+[thick,mark=none] table [x=TIME, y=M\m_MED]{\uberitp};
+    }
+    \legend{Random $s=2^{15}$,Hybrid $s=2^{15}$,Random $s=2^{16}$,Hybrid $s=2^{16}$,Random $s=2^{17}$,Hybrid $s=2^{17}$,Standard}
+  \end{axis}
+\end{tikzpicture}}
+  
+\caption{Comparison of \cprandlev (random and hybrid) with varying number of samples $s \in \set{2^{16},2^{17},2^{18}}$ and \cpals (standard)
+  to compute a rank $r=25$ CP decomposition of the
+  Uber tensor with 3.3 million nonzeros.
+  Random uses $\tau=1$ and hybrid uses $\tau = 1/s$. Each experiment is run 10 times.}
+  \label{fig:uber}
+\end{figure} %
+
+
+
+\end{document}

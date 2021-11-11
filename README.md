@@ -1,91 +1,272 @@
-# CP-ARLS-Lev Experiments
+# Experiments for CP-ARLS-Lev Paper
 
+In this repository, we provide the codes, results, artifacts,
+and post-processing scripts used to create the results in the following paper:
 
+B. W. Larsen, T. G. Kolda. 
+Practical Leverage-Based Sampling for Low-Rank Tensor Decomposition. 
+arXiv:2006.16438, 2020. http://arxiv.org/abs/2006.16438
 
-## Getting started
+# Reproducing Experiments
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## Setup
+* Requires MATLAB, R2018a or later
+* Requires Tensor Toolbox for MATLAB (with `cp_arls_lev.m`) added to MATLAB path (https://gitlab.com/tensors/tensor_toolbox/-/tree/cp_arls_lev)
+* Requires this repository
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Running codes
+* Each experiment has two executable m-files of the form `<exp>_runs_<tensor>.m` and `<exp>_post_<tensor>.m`
+* First, run the file `<exp>_runs_<tensor>.m`. 
+  - Set `do_diary` to create a log and save the results
+  - Set `do_gitchecks` to false
+  - This will produce a file called `artifact_<exp>_runs_<tensor>_<YYYY_MM_DD_HHMM>_diary.txt` and another called `artifact_<exp>_runs_<tensor>_<YYYY_MM_DD_HHMM>-results.mat`
+* Second, run the file `<exp>_post_<tensor>.m` to analyze the output and produce the charts and diagrams used in the paper. 
+  - If needed, modify `<exp>_post_<tensor>.m` to read in the artifact file that was just produced.
 
-## Add your files
+# Original Experimental Environment
 
-- [ ] [Create](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+The experiments were run on Sandia's Kahuna cluster using a dedicated node and MATLAB 2018a.  Two types of nodes were used depending on the size of the tensor:
+* **Compute Nodes** - Dual Socket Intel E5-2683v3 2.00 GHz CPU with 256 GB memory; used for the smaller tensors Uber and Enron.
+* **Zen Nodes** - Dual Socket AMD Epyc 7601 2.20 GHz CPU with 1 TB memory; used for the larger tensors Amazon and Reddit. 
 
+## Helper files
+
+* `diarysetup.m` - Name and create the log file via MATLAB's diary command
+* `gitstatus.m` - Function to capture the GIT hash and any changes
+* `kahuna_slurm_batch.sh` - Script for submission of jobs to compute nodes on Sandia's Kahuna cluster
+* `kahuna_slurm_batch_1xgpu.sh` - Script for submission of jobs to 1xgpu nodes on Sandia's Kahuna cluster
+* `kahuna_slurm_batch_zen.sh` - Script for submission of jobs to zen nodes on Sandia's Kahuna cluster
+* `rnginit.m` - Function that controls the random state via printable strings
+
+## Submission of jobs to Kahuna
+The job call is formatted as follows:
 ```
-cd existing_repo
-git remote add origin https://gitlab.com/bwlarsen/cp-arls-lev-experiments.git
-git branch -M main
-git push -uf origin main
+sbatch kahuna_slurm_batch.sh "arls_runs_uber"
+sbatch kahuna_slurm_batch_zen.sh "arls_runs_reddit"
 ```
+The last argument is the name of the MATLAB script in double quotes, without the `.m` extension.
 
-## Integrate with your tools
+## Tensor Data
 
-- [ ] [Set up project integrations](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/project/integrations/)
+The experiments are based on four large-scale sparse tensors from FROSTT (http://frostt.io/), the largest having nearly 5B nonzeros:
+* **Uber**:  4-way count tensor of New York City Taxi Cab pickups between April--August 2014, comprising 183 days × 24 hours × 1,140 latitudes × 1,717 longitudes with 3M nonzeros.
+* **Amazon**: 3-way count tensor based on user review text of 5M users × 2M words × 2M reviews with 2B nonzeros.  
+* **Reddit**: 3-way log-count tensor of social network postings of 8M users × 200K subreddits × 8M words with 5B nonzeros.  
+* **Enron**: 4-way log-count tensor of emails from 6K senders × 6K receivers × 244K words × 1K days with 54M nonzeros.  
 
-## Collaborate with your team
+| Name     | Size                               | Nonzeros       | Density               |
+| :---     |    :----                           |   :----        |  :----                |
+| Uber     | 183 × 24 × 1,140 × 1,717           | 3,309,490      | 0.038%                |
+| Enron    | 6,066 × 5,699 × 244,268 × 1,176    | 54,202,099     | 5.5 ×10<sup>−7</sup>% |
+| Amazon   | 4,821,207 × 1,774,269 × 1,805,187  | 1,741,809,018  | 1.1 ×10<sup>−8</sup>% |
+| Reddit   | 8,211,298 × 176,962 × 8,116,559    | 4,687,474,081  | 4.0 ×10<sup>−8</sup>% |
 
-- [ ] [Invite team members and collaborators](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Automatically merge when pipeline succeeds](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Note that the log-count is a modification of the raw data on FROSTT for which each the function log(x+1) is applied to each element of the tensor.  The `.mat` tensors used in these experiments can be generated by downloading the associated `.tns` file from FROSTT and running the conversion script:
 
-## Test and Deploy
+* `conversion_script_uber.m` - Still need to copy off Kahuna
+* `conversion_script_enron.m`
+* `conversion_script_amazon.m` - Still need to copy off Kahuna
+* `conversion_script_reddit.m` - Still need to copy off Kahuna
 
-Use the built-in continuous integration in GitLab.
 
-- [ ] [Get started with GitLab CI/CD](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://docs.gitlab.com/ee/user/clusters/agent/)
+# Figures/Tables and Corresponding Codes
 
-***
+The `.csv` result files are currently only in the source for the paper.  They can be produced by running the post script on the associated artifact files.
 
-# Editing this README
+## Figure 7.1: Comparison of Combining Repeat Rows
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://gitlab.com/-/experiment/new_project_readme_content:d84c5af01a43d42e0d4462865040c47b?https://www.makeareadme.com/) for this template.
+These runs show that combining repeated rows can significantly decrease the time dedicated to solving the sampled system.
+This approach does not change the sampling methodology nor the solution; instead, it merely introduces a preprocessing step that removes redundancies in the linear system. 
+The runs compare four methods - combing rows (C) with not combining (N) for both random (R) and hybrid (H)  sampling schemes for least squares sketching - on a rank 10 solution of the Amazon tensor.
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
 
-## Name
-Choose a self-explaining name for your project.
+* `epsilon_runs_nofit.m` - Sub-function for performing repeated solves of a sampled linear system.  Hard-coded to not calculate the full residual [this is now an option in epsilon_runs and should be deprecated when re-factoring].
+* `epsilon_runs_amazon.m` - Calls epsilon_runs_nofit for the Amazon tensor.
+* `epsilon_post_amazon.m` - Produces data file `data-amazon-combinetime.csv`
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+Artifacts from runs and post:
+* `epsilon_runs_amazon-results.mat` - Results file
+* `epsilon_runs_amazon_diary.txt` - Log file
+* `data-amazon-combinetime.csv` - Post-processed data
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Figure 7.2: Comparison of Hybrid/Random Sampling
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+These runs illustrate the differences between random and hybrid sampling using a rank 10 solution to the Uber tensor.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+* `epsilon_runs.m` - Sub-function for performing repeated solves of a sampled linear system.
+* `epsilon_runs_uber.m` - Calls epsilon_runs for the uber tensor.
+* `epsilon_post_uber.m` - Produces data file `data-uber-epsilon.csv`
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+Artifacts from runs and post:
+* `epsilon_runs_uber-results.mat` - Results file
+* `epsilon_runs_uber_diary.txt` - Log file
+* `data-uber-epsilon.csv` - Post-processed data
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+## Figure 7.3, D.1: CP-ALS vs. CP-ARLS-Lev on Uber Tensor
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+These runs compute the rank 25 CP tensor decomposition using matrix sketching on the Uber tensor and compare it to the solution found by CP-ALS.
+On this relatively small tensor, leverage score sampling is able to perform as well as the standard method.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+* `als_runs_uber.m` - Runs `cp_als_trace.m` on the Uber tensor.
+* `arls_runs_uber.m` - Runs `cp_arls_lev.m` on the Uber tensor with different number of samples.
+* `arls_post_uber.m` - Exports data from ARLS runs to `.csv` file and generates temporary Matlab figures.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+Artifacts from runs and post:
+* `als_runs_uber-results.mat` - Results file from ALS runs
+* `als_runs_uber_diary.txt` - Log file from ALS runs
+* `arls_runs_uber-results.mat` - Results file from ARLS runs
+* `arls_runs_uber_diary.txt` - Log file from ARLS runs
+* `data-uber-fittrace-raw.csv` - Raw time and fit values for each individual run
+* `data-uber-fittrace-interpl.csv` - Interpolated fit curve across each set of 10 runs
+* `data-uber-totaltimes.csv` - Total time for each set of 10 runs
+* `data-uber-finalfits.csv` - Final fit for all runs
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## Figure 7.4: CP-ALS vs. CP-ARLS-Lev on Amazon Tensor
 
-## License
-For open source projects, say how it is licensed.
+These runs demonstrates how leverage score sampling scales favorably for massive sparse tensors,
+comparing CP-ALS (standard) and CP-ARLS-Lev (random and hybrid) on the Amazon tensor.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+* `als_runs_amazon.m` - Runs `cp_als_trace.m` on the Amazon tensor.
+* `arls_runs_amazon.m` - Runs `cp_arls_lev.m` on the Amazon tensor with different number of samples.
+* `arls_post_amazon.m` - Exports data from ARLS runs to `.csv` file and generates temporary Matlab figures.
+
+Artifacts from runs and post:
+* `als_runs_amazon-results.mat` - Combined results file from ALS runs
+* The experiments were split into two parts of 5 runs each.  The associated logs:
+	* `als_runs_amazon_2020_06_05_0950_diary.txt` 
+	* `als_runs_amazon_2020_06_08_1035_diary.txt`
+* `arls_runs_amazon-results.mat` - Results file from ARLS runs
+* `arls_runs_amazon_diary.txt` - Log file from ARLS runs
+* `data-amazon-fittrace-raw.csv` - Raw time and fit values for each individual run
+* `data-amazon-fittrace-interpl.csv` - Interpolated fit curve across 10 runs
+
+
+## Figure 7.5: CP-ALS vs. CP-ARLS-Lev on Reddit Tensor
+
+These runs demonstrates how leverage score sampling scales favorably for massive sparse tensors,
+comparing CP-ALS (standard) and CP-ARLS-Lev (random and hybrid) on the Reddit tensor.
+Furthermore, the factors (produced in the next section) provide useful and interpretable summaries of trends in the data.
+
+* `als_runs_reddit.m` - Runs `cp_als_trace.m` on the Reddit tensor.
+* `arls_runs_reddit.m` - Runs `cp_arls_lev.m` on the Amazon tensor with different number of samples.
+* `arls_post_reddit.m` - Exports data from ARLS runs to `.csv` file and generates temporary Matlab figures .
+
+Artifacts from runs and post:
+* `als_runs_reddit-results.mat` - Combined results file from ALS runs
+* The experiments were split into ten parts of 1 runs each.  The associated logs:
+	* `als_runs_reddit_2020_04_27_2258_diary.txt` 
+	* `als_runs_reddit_2020_04_27_2300_diary.txt`
+	* `als_runs_reddit_2020_04_27_2301_diary.txt`
+	* `als_runs_reddit_2020_04_27_2303_diary.txt`
+	* `als_runs_reddit_2020_04_29_2220_diary.txt`
+	* `als_runs_reddit_2020_06_01_0933_diary.txt`
+	* `als_runs_reddit_2020_06_03_1213_diary.txt`
+	* `als_runs_reddit_2020_06_08_1043_diary.txt`
+	* `als_runs_reddit_2020_06_14_1542_diary.txt`
+	* `als_runs_reddit_2020_06_15_2241_diary.txt`
+* `arls_runs_reddit-results.mat` - Combined results file from ARLS runs.  This can be produced by running the script `combine_reddit_als.m`
+* The experiments were split into three parts.  The associated logs:
+	* `arls_runs_reddit_2020_06_05_0946_diary.txt`
+	* `arls_runs_reddit_2020_06_05_0951_diary.txt`
+	* `arls_runs_reddit_2020_06_08_1038_diary.txt`
+* `data-reddit-fittrace-raw.csv` - Raw time and fit values for each individual run
+* `data-reddit-fittrace-interpl.csv` - Interpolated fit curve across 10 runs
+
+## Figure 7.6-7.8, Figures E.1-E.22: Example Reddit Factors
+
+* `arls_model_reddit.m` - Saves out the best model for the reddit CP-ALS runs. Is hard-coded with the random seeds for finding this model.
+* `save_top_factors.m` - Extract relevant counts and labels from solution factors.
+* `viz_factors_reddit_frequency.m` - Plot top factors along with word frequency.
+* `viz_reddit_component.m` - Function to visualize a single component.
+
+Three exemplary figures are shown in the main text (7.6 - 7.8).  The remaining 22 factors are included in the appendix (E.1 - E.22).
+
+## Figure 7.9: Comparison of Init Methods on Enron Tensor
+
+These runs use the Enron tensor to illustrate how performance can be improved for some
+tensors via randomized range finder (RRF) initialization.
+
+* `als_runs_enron.m` - Runs `cp_als_trace.m` on the Enron tensor.
+* `arls_runs_enron.m` - Runs `cp_arls_lev.m` on the Enron tensor with different number of samples, initialization methods.
+* `arls_post_enron.m` - Exports data from ARLS runs to `.csv` file and generates temporary Matlab figures.
+
+Artifacts from runs and post:
+* `als_runs_enron-results.mat` - Results file from ALS runs (1 is the runs with RRF, 2 is the random initializations)
+* `als_runs_enron_diary.txt` - Log file from ALS runs
+* `arls_runs_enron-results.mat` - Results file from ARLS runs
+* `arls_runs_enron_diary.txt` - Log file from ARLS runs
+* `data-enron-totaltimes.csv` - Total time for each set of 10 runs
+* `data-enron-finalfits.csv` - Final fit for all runs
+
+## Figure C.1: CP-ALS vs. CP-ARLS-Lev on Synthetic Dense Tensor
+
+These runs compare the performance of CP-ARLS-Lev on a synthetic dense tensor to both the standard CP-ALS method and CP-ARLS (with and without mixing).  The synthetic tensor is designed to have a number of concentrated leverage scores.
+
+* `arls_runs_synthetic.m` - Generates a synthetic dense tensor and runs all 4 methods with different number of samples.
+* `arls_post_synthetic_dense.m` - Exports data from ARLS runs to `.csv` file and generates temporary Matlab figures.
+
+Artifacts from runs and post:
+* `arls_runs_synthetic_dense-results.mat` - Results file
+* `als_runs_synthetic_dense_diary.txt` - Log file from runs
+* `data-synthetic-dense-order3.dat` - Total time for each set of 10 runs
+
+
+## Sub-functions
+
+Sub-functions for `epsilon_runs.m`:
+
+* `full_solve.m` - Does the full solve, to be compared to the sampled solution.
+* `full_relerr.m` - Calculates the full-full and full-sampled residuals, sharing some info between the two (like the MTTKRP) and then calculates the relative error (aka gamm).
+* `full_resid.m` - Helper for `full_relerr.m`. Not meant to be run on its own.
+
+Sub-functions for post scripts:
+
+* `interpl_plus.m`: Enhanced interpolation function that extends completed runs at their final value.
+* `write_vector.m`: Writes out data in an interpretable manner for pgfplots.
+
+## Testing scripts
+
+* `rescaling_test_script.m` - Just some very simple probabilistic sum tests to
+try and recreate and then correct the issues with some strange distributions (i.e., lots of entries mostly zero) and poor performance of the method.
+* `script_dampling_factors.m` - Testing for `damping_factors.m`
+* `matrix_orientation_tests.m` - Various tests to see the best orientation for the sampled matricized tensor when the tensor is sparse. Also compares the MATLAB built-in solvers to Brett's QR code, which is about 5X faster in these tests.
+* `script_sampled_solve.m` - Rudimentary tests for `sampled_solve.m`
+
+## Other Notes
+
+* IMPORTANT: There used to be a bug in saving out the results such that `info.finalfit` is the estimated fit and `info.tf_finalfit` is the true fit calculated at the end.  This is easy to fix, but all the current results were saved out this way.
+* If multiple results files were combined into one, the dates were left on the associated diaries.  The result files were combined in chronological order.
+
+
+# Status of Tensor Toolbox Merge
+
+## Files to merge into Tensor Toolbox (currently here)
+
+* `tt_sample_norm.m`: Samples elements proportional to their norm.  Used for dense experiments with concentrated leverage scores.
+* `cp_als_trace.m` and `cp_arls_trace.m`: Version of these functions that also return the time and fit trace. Should eventually be merged in to `cp_als.m` and `cp_arls.m`.
+
+
+## Files ALREADY merged in Tensor Toolbox Branch
+
+There are generally two things to check if scripts do not run with the public branch of Tensor Toolbox: (1) Make sure the script calls `cp_arls_lev` rather than `cp_arls_leverage`. (2) Make sure truefit is set to the appropriate string and the arguement finalfit is deleted.
+
+These are now available in the public branch.  Still need to be merged into master.
+
+* `cp_arls_lev.m` - Performs the CP-ARLS algorithm with leverage score sampling.
+* `tt_leverage_scores` - Calculates the SVD of a matrix and returns the leverage scores  
+* `tt_sampled_solve.m` - Main sub-function that samples by leverage scores, forms the sampled linear system, and returns the solution.  It has the following sub-functions:
+	* `find_deterministic_krp.m` - For a given threshold, return all indices with probability above this threshold.
+	* `sample_krp_leverage.m` - Sampler that uses *damped* leverage scores so that the maximum number of times that any particular multiindex is sampled is bounded.  Pass in `c=[]` to sampled with original leverage scores.
+	* `extract_krp_fibers.m` - Extracts fibers from KRP matrix. 
+	* `damping_factors.m` - Helper function for `sample_krp_leverage`. _This functionality was not used for any of the experiments in this paper._
+* New functions for class `@sptensor`
+	* `extract_sampled_fibers.m` - Creates matrix from sampled fibers
+	* `fiber_indices.m` - Computes the fiber indices in mode k for all nonzeros
+	* `rrf.m` - Takes in a tensor and set of linear indices for one of the mode unfoldings. Outputs an initialization U formed by random linear combinations of the fibers.
+* New functions for class `@tensor`
+	* `extract_sampled_fibers.m` - Creates matrix from sampled fibers
+
+
+
 

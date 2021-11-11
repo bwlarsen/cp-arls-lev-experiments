@@ -1,0 +1,92 @@
+\documentclass{siamonline181217mod}
+
+
+% Macros from Tammy
+\input{setup}
+
+
+\begin{document}
+
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\ubereps}{data-uber-epsilon.csv}
+\begin{figure}
+  \centering
+  \subfloat[Relative difference versus true residual, solid line indicates median of 10 runs]{\label{fig:uber-resids}~~
+    \begin{tikzpicture}[baseline]
+      \begin{axis}[
+        height=2in,width=0.32\textwidth,
+        font=\footnotesize,
+        ymode = log,    
+        xlabel = samples ($s$),
+        x label style={at={(0.5,-0.25)}},
+        % title = (a) Difference to True Residual,
+        unbounded coords=jump,
+        legend pos = north east,
+        cycle list={
+          {index of colormap=0 of Set1-8,mark=*},
+          {index of colormap=1 of Set1-8,mark=*}}
+        ]
+        \pgfplotsinvokeforeach {1,2} {
+          \addplot+[thick, mark=x] table[x=S, y=M#1]{\ubereps};
+        }
+        \pgfplotsinvokeforeach {1,2} {
+          \addplot+[name path={max#1},thin,mark=none] table[x=S, y=M#1_MAX]{\ubereps};
+        }
+        \pgfplotsinvokeforeach {1,2} {
+          \addplot+[name path={min#1},thin,mark=none] table[x=S, y=M#1_MIN]{\ubereps};
+        }
+        \pgfplotsinvokeforeach {1,2} {
+          \addplot+[.!20, fill opacity=0.5] fill between[of = max#1 and min#1];
+        }
+        \legend{random, hybrid}
+      \end{axis}
+    \end{tikzpicture}~~}%
+  \subfloat[Proportion of hybrid sample that is deterministic, i.e., $\sdet/s$]{\label{fig:uber-drows}~~
+    \begin{tikzpicture}[baseline]
+      \begin{axis}[
+          height=2 in,width=0.32\textwidth,
+          % xshift = 0.32\textwidth,
+          font=\footnotesize,
+          % title = {(b) Percent Rows with $p_i \geq \tau$ ($\sdet/s$)},
+          xlabel = samples ($s$),
+          ymin = 0,
+          /pgf/bar width=5pt,
+          xtick = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
+          xticklabel style = {align=center, font=\footnotesize, rotate=45},
+          xticklabels = {$2^{7}$,$2^{8}$,$2^{9}$,$2^{10}$,$2^{11}$,$2^{12}$,$2^{13}$,$2^{14}$,$2^{15}$,$2^{16}$,$2^{17}$,$2^{18}$,$2^{19}$},
+          ]
+          \addplot[ybar,fill=blue] table[y=SDET] {\ubereps};
+        \end{axis}   
+      \end{tikzpicture}~~}%    
+    \subfloat[Deterministic proportion, \\ i.e., $\pdet = \sum_{p_i\geq \tau} p_i$]{\label{fig:uber-dprop}~~
+      \begin{tikzpicture}[baseline]
+        \begin{axis}[
+          height=2 in,width=0.32\textwidth,
+          % xshift = 0.64\textwidth,
+          font=\footnotesize,
+          % title = {(c) Deterministic Proportion, $\pdet$},
+          xlabel = samples ($s$),
+          ymin = 0,
+          /pgf/bar width=5pt,
+          xtick = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13},
+          xticklabel style = {align=center, font=\footnotesize, rotate=45},
+          xticklabels = {$2^{7}$,$2^{8}$,$2^{9}$,$2^{10}$,$2^{11}$,$2^{12}$,$2^{13}$,$2^{14}$,$2^{15}$,$2^{16}$,$2^{17}$,$2^{18}$,$2^{19}$},
+          ]
+          \addplot[ybar,fill=blue] table[y=PDET] {\ubereps};
+        \end{axis}
+      \end{tikzpicture}~~}
+    \caption{Single least squares problem with $N =$ 46,977,120 rows, $r=10$ columns, and $n=183$ right-hand sides,
+      corresponding to solving for the first factor matrix in the Uber problem.
+      Random uses $\tau=1$ and hybrid uses $\tau=1/s$.
+    % The left panel compares the relative difference to the exact solution for the
+    % Random and Hybrid ($\tau = 1/s$) methods for each number of samples ($s$),
+    % where error bars show the range over ten independent trials and the solid line shows the median.
+    % For the Hybrid sampling, the middle panel shows $\sdet/s$, i.e., the percent of samples that were deterministically extracted, 
+    % and 
+    % the right panel shows $\pdet$, the sum of the probabilities for all the deterministic samples.
+  }
+  \label{fig:uber-epsilon}
+\end{figure} %
+
+
+
+\end{document}

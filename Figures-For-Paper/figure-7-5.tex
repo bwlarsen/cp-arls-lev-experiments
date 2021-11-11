@@ -1,0 +1,89 @@
+\documentclass{siamonline181217mod}
+
+
+% Macros from Tammy
+\input{setup}
+
+
+\begin{document}
+
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\redditraw}{data-reddit-fittrace-raw.csv}
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\reddititp}{data-reddit-fittrace-interpl.csv}
+\begin{figure}
+  \centering
+    \subfloat[Median statistics and best fit across 10 runs.  Total time and speedup do not include finding the true fit for runs of the randomized methods, which was done to compare to the Standard method.]%
+  {\label{tab:reddit-time}  
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    & \multicolumn{1}{|c|}{\bf Mean}
+    &
+    & \multicolumn{1}{c|}{\bf Time Per} &
+    \multicolumn{1}{c|}{\bf Median} &
+    \multicolumn{1}{c|}{\bf Best} \\ 
+    \multicolumn{1}{|c|}{\bf Method} &
+    \multicolumn{1}{|c|}{\bf Time (s)} &
+    \multicolumn{1}{c|}{\bf Speedup} &
+    \multicolumn{1}{c|}{\bf Epoch (s)} &
+    \multicolumn{1}{c|}{\bf Fit} &
+    \multicolumn{1}{c|}{\bf Fit} \\ 
+    \hline
+    Random $s=2^{17}$ & $2.16 \times 10^4$ & 16.27 & 1832.6 & 0.0585 & 0.0590 \\ 
+    Hybrid $s=2^{17}$ & $2.92 \times 10^4$ & 12.00 & 2231.0 & 0.0585 & 0.0589\\     
+    \hline
+    {Standard} & $3.51 \times 10^5$ & 1.00 & - & 0.0588 & 0.0593\\
+    \hline
+  \end{tabular}}
+\\
+  \subfloat[Individual runs with the bias-corrected estimated fit plotted for \cprandlev and true fit plotted for \cpals.]%
+  {\label{fig:reddit-runs}\begin{tikzpicture}
+  \begin{axis}[
+    height=2in,width=\textwidth,
+    font=\footnotesize,    
+    xlabel = time (s),
+    ylabel = fit,
+    ymin = 0.045, ymax = 0.0605,
+    xmin = 0.0,
+    scaled y ticks = false,
+    yticklabel style={%
+       /pgf/number format/.cd,
+           fixed,
+           fixed zerofill,
+           precision=3,
+           },
+    unbounded coords=jump,
+    %legend pos = outer north east,
+    legend pos = south east,
+    % legend style={font=\tiny},
+    cycle list={
+      {index of colormap=0 of Set1-8,mark=*},
+      %{index of colormap=1 of Set1-4,mark=*},
+      {index of colormap=3 of Set1-8,mark=square*}}
+    %cycle list={{red,mark=*},{orange,mark=*},{blue,mark=*},{brown,mark=square*}},
+    %cycle multi list={Set1-4},
+    ]
+    \foreach \m in {1,2} {
+      % forget plot has the annoying side effect of losing the place in the cycle list,
+      % so we have to manually shift to make it work
+      \pgfmathparse{\m-1}      
+      \pgfplotsset{cycle list shift=\pgfmathresult}
+      \addplot+[thick,mark=none, forget plot ] table [x=TIME, y=M\m_MED]{\reddititp};
+    }
+    \foreach \i in {1,...,10} {
+      \foreach \m in {1,2} {        
+        \addplot+[mark size=.4pt, very thin] table [x=M\m_R\i_T, y=M\m_R\i_F]{\redditraw};
+      }
+    }
+    \legend{Hybrid $s=2^{17}$,Standard}
+    % \legend{Median $s=2^{15}$,Median $s=2^{16}$,Median $s=2^{17}$,Median Standard,
+    %   Single Run $s=2^{15}$, Single Run $s=2^{16}$, Single Run $s=2^{17}$,Single Run Standard}
+  \end{axis}
+ \end{tikzpicture}}
+  \caption{Comparison of \cprandlev (random and hybrid) with number of samples $s=,2^{17}$ and \cpals (standard)
+   to compute a rank $r=25$ CP decomposition of the Reddit tensor with 4.68 billion nonzeros.  
+   Random uses $\tau=1$ and hybrid uses $\tau = 1/s$. Each experiment is run 10 times. }
+  \label{fig:reddit}
+\end{figure} %
+
+
+
+\end{document}

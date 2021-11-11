@@ -1,0 +1,91 @@
+\documentclass{siamonline181217mod}
+
+
+% Macros from Tammy
+\input{setup}
+
+
+\begin{document}
+
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\amazonraw}{data-amazon-fittrace-raw.csv}
+\pgfplotstabletranspose[input colnames to={IDs}, colnames from={IDs}]{\amazonitp}{data-amazon-fittrace-interpl.csv}
+\begin{figure}
+  \centering
+    \subfloat[Statistics for 10 runs.  Total time and speedup do not include finding the true fit for runs of the random and hybrid methods, which was only done to compare to the standard method.]%
+  {\label{tab:amazon-time}  
+  \begin{tabular}{|c|c|c|c|c|c|}
+    \hline
+    & \multicolumn{1}{|c|}{\bf Mean}
+    &
+    & \multicolumn{1}{c|}{\bf Time Per} &
+    \multicolumn{1}{c|}{\bf Median} &
+    \multicolumn{1}{c|}{\bf Best} \\ 
+    \multicolumn{1}{|c|}{\bf Method} &
+    \multicolumn{1}{|c|}{\bf Time (s)} &
+    \multicolumn{1}{c|}{\bf Speedup} &
+    \multicolumn{1}{c|}{\bf Epoch (s)} &
+    \multicolumn{1}{c|}{\bf Fit} &
+    \multicolumn{1}{c|}{\bf Fit} \\ 
+    \hline
+    Random $s=2^{16}$ & $2.18 \times 10^3$ & 12.97 & 333.6 & 0.3374 & 0.3380 \\ 
+    Hybrid $s=2^{16}$ & $2.83 \times 10^3$ & 10.00 & 346.5 & 0.3384 & 0.3391 \\ 
+    Random $s=2^{17}$ & $2.51 \times 10^3$ & 11.27 & 358.2 & 0.3387 & 0.3388 \\ 
+    Hybrid $s=2^{17}$ & $2.38 \times 10^3$ & 11.87 & 378.8 & 0.3387 & 0.3397\\     
+    \hline
+    \multicolumn{1}{|c|}{Standard} & $2.83 \times 10^4$ & 1.00 & N/A & 0.3393 & 0.3396\\
+    \hline
+  \end{tabular}}
+\\
+   \subfloat[Individual runs with bias-corrected estimated fit plotted for hybrid and true fit for standard.]%
+  {\label{fig:amazon-runs}\begin{tikzpicture}
+  \begin{axis}[
+    height=2in,width=\textwidth,
+    font=\footnotesize,    
+    xlabel = time (s),
+    ylabel = fit,
+    ymin = 0.33, ymax = 0.3405,
+    xmin = 0.0,
+    yticklabel style={%
+       /pgf/number format/.cd,
+           fixed,
+           fixed zerofill,
+           precision=3,
+           },
+    unbounded coords=jump,
+    %legend pos = outer north east,
+    legend pos = south east,
+    % legend style={font=\tiny},
+    cycle list={
+      {index of colormap=0 of Set1-8,mark=*},
+      {index of colormap=1 of Set1-8,mark=*},
+      {index of colormap=3 of Set1-8,mark=square*}}
+    %cycle list={{red,mark=*},{orange,mark=*},{blue,mark=*},{brown,mark=square*}},
+    %cycle multi list={Set1-4},
+    ]
+    \foreach \m in {1,2,3} {
+      % forget plot has the annoying side effect of losing the place in the cycle list,
+      % so we have to manually shift to make it work
+      \pgfmathparse{\m-1}      
+      \pgfplotsset{cycle list shift=\pgfmathresult}
+      \addplot+[thick,mark=none, forget plot ] table [x=TIME, y=M\m_MED]{\amazonitp};
+    }
+    \foreach \i in {1,...,10} {
+      \foreach \m in {1,2,3} {        
+        \addplot+[mark size=.4pt, very thin] table [x=M\m_R\i_T, y=M\m_R\i_F]{\amazonraw};
+      }
+    }
+    \legend{Hybrid $s=2^{16}$,Hybrid $s=2^{17}$,Standard}
+    % \legend{Median $s=2^{15}$,Median $s=2^{16}$,Median $s=2^{17}$,Median Standard,
+    %   Single Run $s=2^{15}$, Single Run $s=2^{16}$, Single Run $s=2^{17}$,Single Run Standard}
+  \end{axis}
+\end{tikzpicture}}
+  %
+ \caption{Comparison of \cprandlev (random and hybrid) with varying number of samples $s \in \set{2^{16},2^{17}}$ and \cpals (standard)
+   to compute a rank $r=25$ CP decomposition of the Amazon tensor with 1.7 billion nonzeros.
+   Random uses $\tau=1$ and hybrid uses $\tau = 1/s$. Each experiment is run 10 times. }
+  \label{fig:amazon}
+\end{figure} %
+
+
+
+\end{document}

@@ -1,0 +1,126 @@
+Starting diary with name artifact_als_runs_reddit_2020_04_27_2303_diary.txt
+Repository directory: /home/bwlarse/tensor_toolbox_sparse
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/tensor_toolbox)
+  Remote Branch: master
+  Short Hash: [33mc8
+  Up-to-Date: true
+Repository directory: /home/bwlarse/cparls_sparse_experiments
+  Local Branch: master
+  Remote: origin (https://gitlab.com/bwlarsen/cparls_sparse_experiments)
+  Remote Branch: master
+  Short Hash: [33m23
+  Up-to-Date: false
+  Statuses...
+     [31mM[m .gitignore
+     [31mM[m als_runs_amazon.m
+     [31mM[m als_runs_uber.m
+    [31m??[m cp_runs_reddit.m
+    [31m??[m kahuna_slurm_batch.sh
+    [31m??[m kahuna_slurm_batch_zen.sh
+  ==== Diffs ====
+  [1mindex 3a750d6..d496bee 100644[m
+  [1m--- a/.gitignore[m
+  [1m+++ b/.gitignore[m
+  [36m@@ -26,7 +26,7 @@[m
+   *.tns.gz[m
+   *.tns[m
+   *.mat[m
+  [31m-*.out[m
+  [32m+[m[32mout*[m
+   artifact*[m
+   !profile*.mat[m
+   !small*.mat[m
+  [1mdiff --git a/als_runs_amazon.m b/als_runs_amazon.m[m
+  [1mindex f88e0d7..c50c39d 100644[m
+  [1m--- a/als_runs_amazon.m[m
+  [1m+++ b/als_runs_amazon.m[m
+  [36m@@ -18,8 +18,8 @@[m [mif do_gitchecks[m
+       gitstatus(pwd);[m
+   end[m
+   [m
+  [31m-%% Load in Log Count Reddit Tensor[m
+  [31m-nruns = 1;[m
+  [32m+[m[32m%% Load in Amazon Tensor[m
+  [32m+[m[32mnruns = 5;[m
+   R = 25;[m
+   fprintf('\n---Loading in Amazon Tensor---\n')[m
+   tic;[m
+  [1mdiff --git a/als_runs_uber.m b/als_runs_uber.m[m
+  [1mindex ff73c9c..9313d2a 100644[m
+  [1m--- a/als_runs_uber.m[m
+  [1m+++ b/als_runs_uber.m[m
+  [36m@@ -22,9 +22,9 @@[m [mend[m
+   nruns = 1;[m
+   R = 25;[m
+   % Need to change this to be the path on Kahuna[m
+  [31m-%load ('/home/bwlarse/Tensors/tensor_data_uber/uber_tensor');[m
+  [32m+[m[32mload ('/home/bwlarse/Tensors/tensor_data_uber/uber_tensor');[m
+   tic;[m
+  [31m-load ('uber_tensor');[m
+  [32m+[m[32m%load ('uber_tensor');[m
+   toc[m
+   fprintf('\n---Loading in Uber Tensor---\n')[m
+   [m
+  ==== End Diffs ====
+
+---Loading in Log Count Reddit Tensor---
+Elapsed time is 367.844329 seconds.
+
+---Starting run 1/1---
+Generating random initialization: 
+Random Seed in Hex: 41edf393a6800000
+Finding CP decomposition: 
+Random Seed in Hex: 41e66746dcc00000
+
+CP_ALS (with trace):
+
+Tensor size: 8211298 x 176962 x 8116559 (1.179407e+19 total entries)
+Sparse tensor: 4687474081 (4e-08%) Nonzeros and 1.179407e+19 (100.00%) Zeros
+Finding CP decomposition with R=25
+Fit change tolerance: 1.000000e-04
+Max iterations: 50
+
+ Iter  1: f = 1.910353e-02 f-delta = 1.9e-02 time = 12908.4 seconds 
+ Iter  2: f = 4.739322e-02 f-delta = 2.8e-02 time = 12405.9 seconds 
+ Iter  3: f = 5.141900e-02 f-delta = 4.0e-03 time = 13042.4 seconds 
+ Iter  4: f = 5.252964e-02 f-delta = 1.1e-03 time = 12125.6 seconds 
+ Iter  5: f = 5.304732e-02 f-delta = 5.2e-04 time = 12329.1 seconds 
+ Iter  6: f = 5.338217e-02 f-delta = 3.3e-04 time = 11921.3 seconds 
+ Iter  7: f = 5.365376e-02 f-delta = 2.7e-04 time = 11769.7 seconds 
+ Iter  8: f = 5.390365e-02 f-delta = 2.5e-04 time = 11198.5 seconds 
+ Iter  9: f = 5.414652e-02 f-delta = 2.4e-04 time = 11382.5 seconds 
+ Iter 10: f = 5.438545e-02 f-delta = 2.4e-04 time = 11589.7 seconds 
+ Iter 11: f = 5.461950e-02 f-delta = 2.3e-04 time = 11791.9 seconds 
+ Iter 12: f = 5.484759e-02 f-delta = 2.3e-04 time = 11324.1 seconds 
+ Iter 13: f = 5.506977e-02 f-delta = 2.2e-04 time = 11138.1 seconds 
+ Iter 14: f = 5.528684e-02 f-delta = 2.2e-04 time = 10809.7 seconds 
+ Iter 15: f = 5.549983e-02 f-delta = 2.1e-04 time = 11594.9 seconds 
+ Iter 16: f = 5.570971e-02 f-delta = 2.1e-04 time = 11241.6 seconds 
+ Iter 17: f = 5.591733e-02 f-delta = 2.1e-04 time = 11155.3 seconds 
+ Iter 18: f = 5.612308e-02 f-delta = 2.1e-04 time = 11256.1 seconds 
+ Iter 19: f = 5.632665e-02 f-delta = 2.0e-04 time = 10708.0 seconds 
+ Iter 20: f = 5.652688e-02 f-delta = 2.0e-04 time = 10833.4 seconds 
+ Iter 21: f = 5.672224e-02 f-delta = 2.0e-04 time = 10534.1 seconds 
+ Iter 22: f = 5.691128e-02 f-delta = 1.9e-04 time = 10850.1 seconds 
+ Iter 23: f = 5.709287e-02 f-delta = 1.8e-04 time = 10944.0 seconds 
+ Iter 24: f = 5.726612e-02 f-delta = 1.7e-04 time = 11377.4 seconds 
+ Iter 25: f = 5.743037e-02 f-delta = 1.6e-04 time = 11717.0 seconds 
+ Iter 26: f = 5.758529e-02 f-delta = 1.5e-04 time = 11758.4 seconds 
+ Iter 27: f = 5.773101e-02 f-delta = 1.5e-04 time = 11529.9 seconds 
+ Iter 28: f = 5.786818e-02 f-delta = 1.4e-04 time = 11752.8 seconds 
+ Iter 29: f = 5.799790e-02 f-delta = 1.3e-04 time = 11655.8 seconds 
+ Iter 30: f = 5.812154e-02 f-delta = 1.2e-04 time = 11574.9 seconds 
+ Iter 31: f = 5.824060e-02 f-delta = 1.2e-04 time = 11000.1 seconds 
+ Iter 32: f = 5.835651e-02 f-delta = 1.2e-04 time = 10908.9 seconds 
+ Iter 33: f = 5.847057e-02 f-delta = 1.1e-04 time = 11411.9 seconds 
+ Iter 34: f = 5.858375e-02 f-delta = 1.1e-04 time = 11391.5 seconds 
+ Iter 35: f = 5.869669e-02 f-delta = 1.1e-04 time = 11156.7 seconds 
+ Iter 36: f = 5.880955e-02 f-delta = 1.1e-04 time = 11260.5 seconds 
+ Iter 37: f = 5.892203e-02 f-delta = 1.1e-04 time = 11358.2 seconds 
+ Iter 38: f = 5.903340e-02 f-delta = 1.1e-04 time = 11093.9 seconds 
+ Iter 39: f = 5.914232e-02 f-delta = 1.1e-04 time = 10804.5 seconds 
+ Iter 40: f = 5.924666e-02 f-delta = 1.0e-04 time = 10844.0 seconds 
+ Iter 41: f = 5.934339e-02 f-delta = 9.7e-05 time = 10878.3 seconds 
+ Final f = 5.934339e-02 
+Total Time (secs): 471861.511
